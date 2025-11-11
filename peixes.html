@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Amoeba Evolution</title>
+  <title>Amoeba Evolution - Peixes</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -25,25 +25,12 @@
     <!-- Botão de upgrade -->
     <button id="upgradeBtn">🧬</button>
 
-    <!-- Botão de compra de amoeba -->
-    <button id="buyAmoebaBtn">➕ Amoeba</button>
+    <!-- Botão de compra de peixe -->
+    <button id="buyAmoebaBtn">➕ Peixe</button>
 
-    
-    <!--novo nivel-->
-    <button id="newlevelbtn" class="hidden" onclick="window.location.href='peixes.html';" style="display: none;">🐟 Novo Nível peixes</button>
+    <!-- Botão voltar para amoebas -->
+    <button id="backToAmoebasBtn" onclick="window.location.href='index.html';">🌍 Voltar às Amoebas</button>
 
-    <script>
-    // Verificar se o nível dos peixes está desbloqueado ao carregar a página
-    document.addEventListener('DOMContentLoaded', function() {
-        const nivelDesbloqueado = localStorage.getItem("nivel_peixes_desbloqueado");
-        const newLevelBtn = document.getElementById("newlevelbtn");
-        
-        if (nivelDesbloqueado === "true") {
-            newLevelBtn.classList.remove("hidden");
-            newLevelBtn.style.display = "block";
-        }
-    });
-    </script>
     <!-- Pop-up de Upgrades -->
     <div id="upgrade-popup" class="hidden">
       <div class="popup-content">
@@ -53,31 +40,31 @@
       </div>
     </div>
 
-    <!-- Pop-up de Compra de Amoebas -->
+    <!-- Pop-up de Compra de Peixes -->
     <div id="buy-popup" class="hidden">
       <div class="popup-content">
-        <h2>🧫 Comprar Amoebas</h2>
+        <h2>🐟 Comprar Peixes</h2>
         <div id="buy-list"></div>
         <button id="closeBuy">Fechar</button>
       </div>
     </div>
 
-    <!-- Pop-up Educativo de Nova Amoeba -->
+    <!-- Pop-up Educativo de Novo Peixe -->
     <div id="info-popup" class="hidden">
       <div class="popup-content">
-        <h2>🔬 Nova Amoeba Desbloqueada!</h2>
-        <img id="info-image" src="assets/images/amoeba.jpg" alt="Amoeba" />
+        <h2>🔬 Novo Peixe Desbloqueado!</h2>
+        <img id="info-image" src="assets/images/fundoPeixes.jpg" alt="Peixe" />
         <p id="info-date"><strong>📅 Descoberta:</strong> 1800</p>
-        <p id="info-habitat"><strong>🌍 Habitat:</strong> Lagos e rios de água doce</p>
+        <p id="info-habitat"><strong>🌊 Habitat:</strong> Oceanos e mares</p>
         <p id="info-description">
-          Esta é uma amoeba incrível, conhecida por sua capacidade de adaptação e por ser um dos seres vivos mais simples do planeta.
+          Este é um peixe incrível, adaptado para vida aquática com características únicas.
         </p>
         <button id="closeInfo">Fechar</button>
       </div>
     </div>
   </div>
 
-<script src="js/main.js"></script>
+<script src="js/peixes.js"></script> <!-- Novo arquivo para peixes -->
 
 </body>
 </html>

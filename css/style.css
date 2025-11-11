@@ -240,3 +240,94 @@ canvas {
   background: #ff5c53;
   transform: scale(1.05);
 }
+/* ===== Botão Novo Nível ===== */
+#newlevelbtn {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    background: linear-gradient(45deg, #1e90ff, #00ced1);
+    border: none;
+    border-radius: 15px;
+    width: 180px;
+    height: 50px;
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(30, 144, 255, 0.5);
+    transition: transform 0.3s, box-shadow 0.3s;
+    z-index: 5;
+    display: none;
+}
+
+/* ===== Botão Voltar ===== */
+#backToAmoebasBtn {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    background: linear-gradient(45deg, #ff6b6b, #ffa500);
+    border: none;
+    border-radius: 15px;
+    width: 180px;
+    height: 50px;
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(255, 107, 107, 0.5);
+    transition: transform 0.3s, box-shadow 0.3s;
+    z-index: 5;
+}
+
+#newlevelbtn:not(.hidden),
+#backToAmoebasBtn {
+    display: block !important;
+}
+
+#newlevelbtn.hidden {
+    display: none !important;
+}
+
+#newlevelbtn:hover,
+#backToAmoebasBtn:hover {
+    transform: scale(1.1);
+}
+
+/* Estilos específicos para peixes */
+.library-peixes header {
+  background: linear-gradient(45deg, #1976d2, #42a5f5) !important;
+}
+
+.library-peixes .amoeba-card {
+  background: linear-gradient(135deg, #e3f2fd, #bbdefb) !important;
+  border: 2px solid #64b5f6;
+}
+
+.library-peixes .amoeba-card:hover {
+  box-shadow: 0 6px 15px rgba(33, 150, 243, 0.4);
+}
+
+.library-peixes .locked {
+  font-size: 50px;
+  color: #78909c;
+  margin: 20px 0;
+}
+
+/* Melhorias gerais para ambas as bibliotecas */
+.amoeba-card p {
+  margin: 8px 0;
+  line-height: 1.4;
+}
+
+.amoeba-card b {
+  color: #333;
+}
+
+.amoeba-img {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 3px solid #ddd;
+  background: #f5f5f5;
+}

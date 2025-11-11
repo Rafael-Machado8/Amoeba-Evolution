@@ -5,35 +5,35 @@ const amoebaLibrary = [
   { 
     level: 1, 
     name: "Ameba Inicial", 
-    img: "https://play.rosebud.ai/assets/amoebaBasic.png?Q2Oj",
+    img: "https://i.ibb.co/VY4dYcK/ameba1.png",
     habitat: "Poças de água doce",
     desc: "A forma mais simples de ameba, ainda frágil mas curiosa.",
   },
   { 
     level: 2, 
     name: "Ameba Evoluída", 
-    img: "https://play.rosebud.ai/assets/amoebaIntermediate.png?Ffr9",
+    img: "https://i.ibb.co/7yLfMmx/ameba2.png",
     habitat: "Lagos rasos",
     desc: "Já aprendeu a se dividir melhor, mais resistente e ativa.",
   },
   { 
     level: 3, 
     name: "Ameba Superior", 
-    img: "https://play.rosebud.ai/assets/amoebaEvolved.png?NNtf",
+    img: "https://i.ibb.co/Ws7tX7R/ameba3.png",
     habitat: "Águas paradas ricas em nutrientes",
     desc: "Ganha formas mais complexas e maior inteligência primitiva.",
   },
   { 
     level: 4, 
     name: "Ameba Mestre", 
-    img: "https://rosebud.ai/assets/amoeba4.png?80Vp",
+    img: "https://i.ibb.co/5W8wZbC/ameba4.png",
     habitat: "Ambientes extremos",
     desc: "Consegue sobreviver onde outras já teriam perecido.",
   },
   { 
     level: 5, 
     name: "Ameba Lendária", 
-    img: "https://rosebud.ai/assets/amoeba5.png?KeAk",
+    img: "https://i.ibb.co/HxNRdJQ/ameba5.png",
     habitat: "Locais misteriosos",
     desc: "Tão rara que poucos cientistas acreditam em sua existência.",
   }
@@ -74,3 +74,24 @@ amoebaLibrary.forEach(amoeba => {
 
   libraryGrid.appendChild(card);
 });
+
+
+
+// Verificar se estamos na biblioteca de peixes ou amoebas
+if (window.location.href.includes('library-peixes.html')) {
+    document.querySelector('h1').textContent = '🐠 Biblioteca dos Peixes';
+    document.querySelector('.back-btn').href = 'peixes.html';
+    
+    // Adicionar estilo específico para peixes
+    const style = document.createElement('style');
+    style.textContent = `
+        header {
+            background: linear-gradient(45deg, #1976d2, #42a5f5) !important;
+        }
+        .amoeba-card {
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb) !important;
+            border: 2px solid #64b5f6;
+        }
+    `;
+    document.head.appendChild(style);
+}

@@ -1,2 +1,0 @@
-# Amoeba-Evolution
-biologia
