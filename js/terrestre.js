@@ -1,6 +1,34 @@
+// terrestre.js - Código específico para o nível terrestre
+
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+
+// Fundo terrestre
+const bg = new Image();
+bg.src = "assets/images/fundo-terrestre.jpg";
+
+// ======== INFORMAÇÕES DOS ANIMAIS TERRESTRES ========
+const TERRESTRE_INFO = {
+  1: { name: "Coelho", img: "assets/images/animal1.jpg", date: "📅 Descoberta: 1758", habitat: "🌳 Habitat: Campos e florestas", desc: "Animal nível 1: rápido e adaptável, excelente reprodutor." },
+  2: { name: "Raposa", img: "assets/images/animal2.jpg", date: "📅 Descoberta: 1772", habitat: "🌳 Habitat: Bosques e áreas abertas", desc: "Animal nível 2: astuto e ágil caçador noturno." },
+  3: { name: "Lobo", img: "assets/images/animal3.jpg", date: "📅 Descoberta: 1792", habitat: "🌳 Habitat: Florestas e montanhas", desc: "Animal nível 3: vive em alcateias, caçador social." },
+  4: { name: "Urso Pardo", img: "assets/images/animal4.jpg", date: "📅 Descoberta: 1815", habitat: "🌳 Habitat: Florestas densas", desc: "Animal nível 4: poderoso, onívoro e territorial." },
+  5: { name: "Tigre", img: "assets/images/animal5.jpg", date: "📅 Descoberta: 1858", habitat: "🌳 Habitat: Selvas e savanas", desc: "Animal nível 5: ápice dos predadores terrestres." },
+  6: { name: "Elefante", img: "assets/images/animal1.jpg", date: "📅 Descoberta: 1827", habitat: "🌳 Habitat: Savanas e florestas", desc: "Animal nível 6: maior mamífero terrestre, inteligente." },
+  7: { name: "Leão", img: "assets/images/animal2.jpg", date: "📅 Descoberta: 1806", habitat: "🌳 Habitat: Savanas africanas", desc: "Animal nível 7: rei da selva, vive em grupos." },
+  8: { name: "Gorila", img: "assets/images/animal3.jpg", date: "📅 Descoberta: 1847", habitat: "🌳 Habitat: Florestas tropicais", desc: "Animal nível 8: primata inteligente, vive em bandos." },
+  9: { name: "Rinoceronte", img: "assets/images/animal4.jpg", date: "📅 Descoberta: 1862", habitat: "🌳 Habitat: Savanas e pradarias", desc: "Animal nível 9: herbívoro poderoso com chifre característico." },
+  10: { name: "Águia Real", img: "assets/images/animal5.jpg", date: "📅 Descoberta: 1888", habitat: "🌳 Habitat: Montanhas e penhascos", desc: "Animal nível 10: predador aéreo de visão aguçada." },
+  11: { name: "Puma", img: "assets/images/animal1.jpg", date: "📅 Descoberta: 1901", habitat: "🌳 Habitat: Montanhas e florestas", desc: "Animal nível 11: felino solitário e territorial." },
+  12: { name: "Lobo Guará", img: "assets/images/animal2.jpg", date: "📅 Descoberta: 1915", habitat: "🌳 Habitat: Cerrado e campos", desc: "Animal nível 12: canídeo de pernas longas, onívoro." },
+  13: { name: "Jaguar", img: "assets/images/animal3.jpg", date: "📅 Descoberta: 1928", habitat: "🌳 Habitat: Florestas tropicais", desc: "Animal nível 13: maior felino das Américas, nadador." },
+  14: { name: "Ornitorrinco", img: "assets/images/animal4.jpg", date: "📅 Descoberta: 1940", habitat: "🌳 Habitat: Rios e lagos", desc: "Animal nível 14: mamífero que bota ovos, venenoso." },
+  15: { name: "Dragão de Komodo", img: "assets/images/animal5.jpg", date: "📅 Descoberta: 1956", habitat: "🌳 Habitat: Ilhas da Indonésia", desc: "Animal nível 15: maior lagarto do mundo, venenoso." }
+};
+
 // ======== SISTEMA COMPARTILHADO DE SKINS E LOOTBOXES ========
 
-// Usar o mesmo sistema do main.js - os dados são compartilhados via localStorage
+// Usar o mesmo sistema compartilhado
 let inventory = JSON.parse(localStorage.getItem("skinInventory")) || {
   amoebas: {},
   peixes: {},
@@ -13,60 +41,164 @@ let equippedSkin = JSON.parse(localStorage.getItem("equippedSkin")) || {
   terrestre: null
 };
 
-// Skins específicas para peixes (adicione ao objeto SKINS existente no main.js)
-const PEIXES_SKINS = {
+// Skins específicas para terrestre
+const TERRESTRE_SKINS = {
   1: [
-    { id: 'peixe_1_1', name: 'Peixe Laranja Básico', rarity: 'common', color: '#FFA500' },
-    { id: 'peixe_1_2', name: 'Peixe Azul Básico', rarity: 'common', color: '#1E90FF' },
-    { id: 'peixe_1_3', name: 'Peixe Dourado', rarity: 'rare', color: '#FFD700' },
-    { id: 'peixe_1_4', name: 'Peixe Translúcido', rarity: 'epic', color: '#F0F8FF' },
-    { id: 'peixe_1_5', name: 'Peixe Aurora', rarity: 'legendary', color: 'linear-gradient(45deg, #00b4db, #0083b0)' }
+    { id: 'terrestre_1_1', name: 'Animal Marrom Básico', rarity: 'common', color: '#8B4513' },
+    { id: 'terrestre_1_2', name: 'Animal Cinza Básico', rarity: 'common', color: '#808080' },
+    { id: 'terrestre_1_3', name: 'Animal Dourado', rarity: 'rare', color: '#FFD700' },
+    { id: 'terrestre_1_4', name: 'Animal Prateado', rarity: 'epic', color: '#C0C0C0' },
+    { id: 'terrestre_1_5', name: 'Animal Místico', rarity: 'legendary', color: 'linear-gradient(45deg, #654ea3, #eaafc8)' }
   ],
   2: [
-    { id: 'peixe_2_1', name: 'Peixe Verde Água', rarity: 'common', color: '#20B2AA' },
-    { id: 'peixe_2_2', name: 'Peixe Roxo Profundo', rarity: 'common', color: '#9370DB' },
-    { id: 'peixe_2_3', name: 'Peixe Prateado', rarity: 'rare', color: '#C0C0C0' },
-    { id: 'peixe_2_4', name: 'Peixe Coral', rarity: 'epic', color: '#FF7F50' },
-    { id: 'peixe_2_5', name: 'Peixe Abissal', rarity: 'legendary', color: 'linear-gradient(45deg, #000080, #191970)' }
+    { id: 'terrestre_2_1', name: 'Animal Verde Floresta', rarity: 'common', color: '#228B22' },
+    { id: 'terrestre_2_2', name: 'Animal Laranja Terra', rarity: 'common', color: '#D2691E' },
+    { id: 'terrestre_2_3', name: 'Animal Bronze', rarity: 'rare', color: '#CD7F32' },
+    { id: 'terrestre_2_4', name: 'Animal Esmeralda', rarity: 'epic', color: '#50C878' },
+    { id: 'terrestre_2_5', name: 'Animal Celestial', rarity: 'legendary', color: 'linear-gradient(45deg, #ff7e5f, #feb47b)' }
   ],
   3: [
-    { id: 'peixe_3_1', name: 'Peixe Amarelo Sol', rarity: 'common', color: '#FFD700' },
-    { id: 'peixe_3_2', name: 'Peixe Verde Limão', rarity: 'common', color: '#32CD32' },
-    { id: 'peixe_3_3', name: 'Peixe Bronze', rarity: 'rare', color: '#CD7F32' },
-    { id: 'peixe_3_4', name: 'Peixe Esmeralda', rarity: 'epic', color: '#50C878' },
-    { id: 'peixe_3_5', name: 'Peixe Oceânico', rarity: 'legendary', color: 'linear-gradient(45deg, #1e3c72, #2a5298)' }
+    { id: 'terrestre_3_1', name: 'Animal Vermelho Rubi', rarity: 'common', color: '#DC143C' },
+    { id: 'terrestre_3_2', name: 'Animal Azul Profundo', rarity: 'common', color: '#000080' },
+    { id: 'terrestre_3_3', name: 'Animal Ametista', rarity: 'rare', color: '#9966CC' },
+    { id: 'terrestre_3_4', name: 'Animal Topázio', rarity: 'epic', color: '#FFC87C' },
+    { id: 'terrestre_3_5', name: 'Animal Vulcânico', rarity: 'legendary', color: 'linear-gradient(45deg, #c33764, #1d2671)' }
   ],
   4: [
-    { id: 'peixe_4_1', name: 'Peixe Vermelho Fogo', rarity: 'common', color: '#DC143C' },
-    { id: 'peixe_4_2', name: 'Peixe Azul Celeste', rarity: 'common', color: '#87CEEB' },
-    { id: 'peixe_4_3', name: 'Peixe Cristal', rarity: 'rare', color: '#B9F2FF' },
-    { id: 'peixe_4_4', name: 'Peixe Rubi', rarity: 'epic', color: '#E0115F' },
-    { id: 'peixe_4_5', name: 'Peixe Místico', rarity: 'legendary', color: 'linear-gradient(45deg, #667eea, #764ba2)' }
+    { id: 'terrestre_4_1', name: 'Animal Preto Ébano', rarity: 'common', color: '#2F4F4F' },
+    { id: 'terrestre_4_2', name: 'Animal Branco Neve', rarity: 'common', color: '#FFFAFA' },
+    { id: 'terrestre_4_3', name: 'Animal Platina', rarity: 'rare', color: '#E5E4E2' },
+    { id: 'terrestre_4_4', name: 'Animal Safira', rarity: 'epic', color: '#0F52BA' },
+    { id: 'terrestre_4_5', name: 'Animal Arco-íris', rarity: 'legendary', color: 'linear-gradient(45deg, #FF0000, #FFA500, #FFFF00, #008000, #0000FF, #4B0082, #EE82EE)' }
   ],
   5: [
-    { id: 'peixe_5_1', name: 'Peixe Negro Profundo', rarity: 'common', color: '#2F4F4F' },
-    { id: 'peixe_5_2', name: 'Peixe Branco Puro', rarity: 'common', color: '#F5F5F5' },
-    { id: 'peixe_5_3', name: 'Peixe Platina', rarity: 'rare', color: '#E5E4E2' },
-    { id: 'peixe_5_4', name: 'Peixe Diamante', rarity: 'epic', color: '#B9F2FF' },
-    { id: 'peixe_5_5', name: 'Peixe Lendário', rarity: 'legendary', color: 'linear-gradient(45deg, #ff0080, #ff8c00, #40e0d0)' }
+    { id: 'terrestre_5_1', name: 'Animal Camuflagem', rarity: 'common', color: '#556B2F' },
+    { id: 'terrestre_5_2', name: 'Animal Deserto', rarity: 'common', color: '#F4A460' },
+    { id: 'terrestre_5_3', name: 'Animal Ouro Rosa', rarity: 'rare', color: '#E6BE8A' },
+    { id: 'terrestre_5_4', name: 'Animal Diamante Negro', rarity: 'epic', color: '#0A0A0A' },
+    { id: 'terrestre_5_5', name: 'Animal Lendário', rarity: 'legendary', color: 'linear-gradient(45deg, #00c6ff, #0072ff)' }
   ]
 };
 
-// Preços das lootboxes (mesmo do main.js)
+// Preços das lootboxes
 const LOOTBOX_PRICES = {
   common: 500,
   rare: 5000,
   epic: 50000
 };
 
-// Probabilidades (mesmo do main.js)
+// Probabilidades para cada tipo de caixa
 const LOOTBOX_PROBABILITIES = {
-  common: { common: 0.60, rare: 0.30, epic: 0.10 },
-  rare: { common: 0.30, rare: 0.50, epic: 0.20 },
-  epic: { common: 0.10, rare: 0.30, epic: 0.60 }
+  common: {
+    common: 0.60,  // 60% chance de skin comum
+    rare: 0.30,    // 30% chance de skin rara
+    epic: 0.10     // 10% chance de skin épica
+  },
+  rare: {
+    common: 0.30,  // 30% chance de skin comum
+    rare: 0.50,    // 50% chance de skin rara
+    epic: 0.20     // 20% chance de skin épica
+  },
+  epic: {
+    common: 0.10,  // 10% chance de skin comum
+    rare: 0.30,    // 30% chance de skin rara
+    epic: 0.60     // 60% chance de skin épica
+  }
 };
 
-// ======== FUNÇÕES DO SISTEMA DE LOOTBOX PARA PEIXES ========
+// ======== VARIÁVEIS DO JOGO ========
+let discoveredLevels = new Set([1]);
+let amoebas = [
+    { x: 300, y: 300, size: 60, level: 1, dragging: false, dx: 1.2, dy: 0.6, animScale: 1 }
+];
+let coins = 0;
+let selectedAmoeba = null;
+let moneyAnimations = [];
+let spawnTimer = 0;
+let spawnInterval = 15000;
+let amoebaPrices = {};
+
+let upgrades = {
+    moreCoins: { name: "Mais moedas por animal", level: 0, max: 15, baseCost: 100, effect: 2 },
+    fasterSpawn: { name: "Spawn mais rápido", level: 0, max: 8, baseCost: 200, effect: 0.85 },
+    higherStart: { name: "Animais começam mais fortes", level: 0, max: 8, baseCost: 400, effect: 0 },
+    ima: { name: "Ímã mágico", level: 0, max: 5, baseCost: 2000, effect: 4 }
+};
+
+// ======== SISTEMA DE SAVE/LOAD PARA TERRESTRE ========
+function saveGame() {
+    const state = {
+        amoebas,
+        coins,
+        upgrades,
+        amoebaPrices,
+        discoveredLevels: [...discoveredLevels],
+        spawnTimer,
+        spawnInterval
+    };
+    localStorage.setItem("gameState_terrestre", JSON.stringify(state));
+}
+
+function loadGame() {
+    const saved = localStorage.getItem("gameState_terrestre");
+    if (!saved) {
+        resetGame();
+        return;
+    }
+
+    const state = JSON.parse(saved);
+    amoebas = state.amoebas || amoebas;
+    coins = state.coins || 0;
+    upgrades = state.upgrades || upgrades;
+    amoebaPrices = state.amoebaPrices || {};
+    discoveredLevels = new Set(state.discoveredLevels || [1]);
+    spawnTimer = state.spawnTimer || 0;
+    spawnInterval = state.spawnInterval || 15000;
+
+    document.getElementById("coins").innerText = `💰 ${coins}`;
+}
+
+function resetGame() {
+    amoebas = [
+        { x: 300, y: 300, size: 60, level: 1, dragging: false, dx: 1.2, dy: 0.6, animScale: 1 }
+    ];
+    coins = 0;
+    amoebaPrices = {};
+    discoveredLevels = new Set([1]);
+    spawnTimer = 0;
+    spawnInterval = 15000;
+    
+    upgrades = {
+        moreCoins: { name: "Mais moedas por animal", level: 0, max: 15, baseCost: 100, effect: 2 },
+        fasterSpawn: { name: "Spawn mais rápido", level: 0, max: 8, baseCost: 200, effect: 0.85 },
+        higherStart: { name: "Animais começam mais fortes", level: 0, max: 8, baseCost: 400, effect: 0 },
+        ima: { name: "Ímã mágico", level: 0, max: 5, baseCost: 2000, effect: 4 }
+    };
+    
+    document.getElementById("coins").innerText = `💰 ${coins}`;
+}
+
+// ======== SISTEMA DE DESCOBERTAS PARA TERRESTRE ========
+function saveDiscovered() {
+    localStorage.setItem("discoveredTerrestre", JSON.stringify([...discoveredLevels]));
+    
+    const discoveries = JSON.parse(localStorage.getItem("terrestreDiscoveries")) || {};
+    const currentDate = new Date().toLocaleDateString('pt-BR');
+    
+    discoveredLevels.forEach(level => {
+        if (!discoveries[level]) {
+            discoveries[level] = {
+                date: currentDate,
+                level: level,
+                name: TERRESTRE_INFO[level]?.name || `Animal Nível ${level}`
+            };
+        }
+    });
+    
+    localStorage.setItem("terrestreDiscoveries", JSON.stringify(discoveries));
+}
+
+// ======== FUNÇÕES DO SISTEMA DE LOOTBOX PARA TERRESTRE ========
 
 function buyLootbox(lootboxType) {
   const price = LOOTBOX_PRICES[lootboxType];
@@ -102,12 +234,11 @@ function openLootbox(lootboxType) {
   const categories = ['amoebas', 'peixes', 'terrestre'];
   const randomCategory = categories[Math.floor(Math.random() * categories.length)];
   
-  // Usar skins específicas para peixes quando a categoria for peixes
   const availableSkins = [];
   
-  if (randomCategory === 'peixes') {
-    for (let level in PEIXES_SKINS) {
-      PEIXES_SKINS[level].forEach(skin => {
+  if (randomCategory === 'terrestre') {
+    for (let level in TERRESTRE_SKINS) {
+      TERRESTRE_SKINS[level].forEach(skin => {
         if (skin.rarity === selectedRarity) {
           availableSkins.push({
             ...skin,
@@ -118,7 +249,6 @@ function openLootbox(lootboxType) {
       });
     }
   } else {
-    // Para outras categorias, usar as skins padrão (que estarão no localStorage)
     const allSkins = JSON.parse(localStorage.getItem("allSkins")) || {};
     if (allSkins[randomCategory]) {
       for (let level in allSkins[randomCategory]) {
@@ -138,12 +268,11 @@ function openLootbox(lootboxType) {
   if (availableSkins.length > 0) {
     return availableSkins[Math.floor(Math.random() * availableSkins.length)];
   } else {
-    // Fallback
     const fallbackSkins = [];
-    for (let level in PEIXES_SKINS) {
+    for (let level in TERRESTRE_SKINS) {
       fallbackSkins.push({
-        ...PEIXES_SKINS[level][0],
-        category: 'peixes',
+        ...TERRESTRE_SKINS[level][0],
+        category: 'terrestre',
         level: parseInt(level)
       });
     }
@@ -200,7 +329,7 @@ function unequipSkin(category) {
   renderInventory();
 }
 
-function renderInventory(tab = 'peixes') {
+function renderInventory(tab = 'terrestre') {
   const container = document.getElementById("inventory-content");
   container.innerHTML = '';
   
@@ -240,16 +369,87 @@ function renderInventory(tab = 'peixes') {
 }
 
 function getRarityName(rarity) {
-  const names = { common: 'Comum', rare: 'Rara', epic: 'Épica', legendary: 'Lendária' };
+  const names = {
+    common: 'Comum',
+    rare: 'Rara',
+    epic: 'Épica',
+    legendary: 'Lendária'
+  };
   return names[rarity] || rarity;
 }
 
 function getCategoryName(category) {
-  const names = { amoebas: 'Amoebas', peixes: 'Peixes', terrestre: 'Terrestre' };
+  const names = {
+    amoebas: 'Amoebas',
+    peixes: 'Peixes',
+    terrestre: 'Terrestre'
+  };
   return names[category] || category;
 }
 
-// ======== EVENT LISTENERS PARA PEIXES ========
+// ======== POPUPS ========
+function showInfoPopup(level) {
+    const info = TERRESTRE_INFO[level] || {
+        name: `Animal Nível ${level}`, 
+        img: "assets/images/animal1.jpg", 
+        date: `📅 Descoberta: ${1750 + level * 15}`,
+        habitat: "🌳 Habitat: Terrestre", 
+        desc: `Animal nível ${level}: espécie terrestre em estudo.`
+    };
+
+    const popup = document.getElementById("info-popup");
+    document.getElementById("info-image").src = info.img;
+    document.getElementById("info-date").textContent = info.date;
+    document.getElementById("info-habitat").textContent = info.habitat;
+    document.getElementById("info-description").textContent = info.desc;
+
+    popup.classList.remove("hidden");
+    popup.style.display = "block";
+    
+    saveDiscovered();
+    saveGame();
+}
+
+document.getElementById("closeInfo").addEventListener("click", () => {
+    const popup = document.getElementById("info-popup");
+    popup.classList.add("hidden");
+    popup.style.display = "none";
+    saveGame();
+});
+
+// ======== BOTÕES ========
+document.getElementById("upgradeBtn").addEventListener("click", () => {
+    const popup = document.getElementById("upgrade-popup");
+    popup.style.display = popup.style.display === "block" ? "none" : "block";
+    popup.classList.toggle("hidden");
+    renderUpgradeList();
+});
+
+document.getElementById("closeUpgrade").addEventListener("click", () => {
+    document.getElementById("upgrade-popup").style.display = "none";
+    document.getElementById("upgrade-popup").classList.add("hidden");
+    saveGame();
+});
+
+document.getElementById("libraryBtn").addEventListener("click", () => {
+    saveGame();
+    window.location.href = "library-terrestre.html";
+});
+
+document.getElementById("buyAmoebaBtn").addEventListener("click", () => {
+    const popup = document.getElementById("buy-popup");
+    popup.style.display = popup.style.display === "block" ? "none" : "block";
+    popup.classList.toggle("hidden");
+    renderBuyList();
+});
+
+document.getElementById("closeBuy").addEventListener("click", () => {
+    document.getElementById("buy-popup").style.display = "none";
+    document.getElementById("buy-popup").classList.add("hidden");
+    saveGame();
+});
+
+// ======== EVENT LISTENERS PARA LOOTBOXES ========
 
 document.getElementById("shopBtn").addEventListener("click", () => {
   const popup = document.getElementById("shop-popup");
@@ -297,185 +497,9 @@ document.getElementById("closeReward").addEventListener("click", () => {
   document.getElementById("reward-popup").classList.add("hidden");
 });
 
-// ======== ATUALIZAR FUNÇÃO GETCOLOR PARA PEIXES ========
-
-// Modifique a função getFishColor no peixes.js para usar skins:
-function getFishColor(level) {
-  // Verificar se há skin equipada para peixes
-  if (equippedSkin.peixes) {
-    for (let lvl in inventory.peixes) {
-      const skin = inventory.peixes[lvl].find(s => s.id === equippedSkin.peixes);
-      if (skin && parseInt(lvl) === level) {
-        return skin.color;
-      }
-    }
-  }
-  
-  // Cores padrão se não houver skin equipada
-  const colors = ["#FF6B6B", "#4ECDC4", "#45B7D1", "#96CEB4", "#FFEAA7"];
-  return colors[(level - 1) % colors.length];
-}
-
-
-
-// peixes.js - Código específico para o nível dos peixes
-
-const canvas = document.getElementById("gameCanvas");
-const ctx = canvas.getContext("2d");
-
-// Fundo aquático
-const bg = new Image();
-bg.src = "assets/images/fundo-aquatico.jpg";
-
-// ======== INFORMAÇÕES DOS PEIXES ========
-const PEIXES_INFO = {
-  1: { name: "Peixe Palhaço", img: "assets/images/peixe1.jpg", date: "📅 Descoberta: 1830", habitat: "🌊 Habitat: Recifes de coral", desc: "Peixe nível 1: colorido e adaptado à vida em anêmonas." },
-  2: { name: "Peixe Cirurgião", img: "assets/images/peixe2.jpg", date: "📅 Descoberta: 1855", habitat: "🌊 Habitat: Oceanos tropicais", desc: "Peixe nível 2: conhecido pela lâmina caudal característica." },
-  3: { name: "Peixe Mandarim", img: "assets/images/peixe3.jpg", date: "📅 Descoberta: 1880", habitat: "🌊 Habitat: Águas rasas", desc: "Peixe nível 3: um dos mais coloridos do oceano." },
-  4: { name: "Peixe Leão", img: "assets/images/peixe4.jpg", date: "📅 Descoberta: 1905", habitat: "🌊 Habitat: Recifes rochosos", desc: "Peixe nível 4: venenoso e com espinhos impressionantes." },
-  5: { name: "Tubarão Baleia", img: "assets/images/peixe5.jpg", date: "📅 Descoberta: 1828", habitat: "🌊 Habitat: Oceanos abertos", desc: "Peixe nível 5: maior peixe do mundo, completamente inofensivo." },
-  6: { name: "Peixe Legendário", img: "assets/images/peixe1.jpg", date: "📅 Descoberta: 2024", habitat: "🌊 Habitat: Abissal", desc: "Peixe nível 6: espécie raríssima das profundezas." }
-};
-
-// ======== VARIÁVEIS DO JOGO ========
-let discoveredLevels = new Set([1]);
-let amoebas = [
-    { x: 300, y: 300, size: 60, level: 1, dragging: false, dx: 1.5, dy: 0.8, animScale: 1 }
-];
-let coins = 0;
-let selectedAmoeba = null;
-let moneyAnimations = [];
-let spawnTimer = 0;
-let spawnInterval = 15000;
-let amoebaPrices = {};
-
-let upgrades = {
-    moreCoins: { name: "Mais moedas por peixe", level: 0, max: 10, baseCost: 50, effect: 1 },
-    fasterSpawn: { name: "Spawn mais rápido", level: 0, max: 5, baseCost: 100, effect: 0.9 },
-    higherStart: { name: "Peixes começam mais fortes", level: 0, max: 5, baseCost: 200, effect: 0 },
-    ima: { name: "Ímã mágico", level: 0, max: 3, baseCost: 1000, effect: 5 }
-};
-
-// ======== SISTEMA DE SAVE/LOAD PARA PEIXES ========
-function saveGame() {
-    const state = {
-        amoebas,
-        coins,
-        upgrades,
-        amoebaPrices,
-        discoveredLevels: [...discoveredLevels],
-        spawnTimer,
-        spawnInterval
-    };
-    localStorage.setItem("gameState_peixes", JSON.stringify(state));
-}
-
-function loadGame() {
-    const saved = localStorage.getItem("gameState_peixes");
-    if (!saved) {
-        resetGame();
-        return;
-    }
-
-    const state = JSON.parse(saved);
-    amoebas = state.amoebas || amoebas;
-    coins = state.coins || 0;
-    upgrades = state.upgrades || upgrades;
-    amoebaPrices = state.amoebaPrices || {};
-    discoveredLevels = new Set(state.discoveredLevels || [1]);
-    spawnTimer = state.spawnTimer || 0;
-    spawnInterval = state.spawnInterval || 15000;
-
-    document.getElementById("coins").innerText = `💰 ${coins}`;
-}
-
-function resetGame() {
-    amoebas = [
-        { x: 300, y: 300, size: 60, level: 1, dragging: false, dx: 1.5, dy: 0.8, animScale: 1 }
-    ];
-    coins = 0;
-    amoebaPrices = {};
-    discoveredLevels = new Set([1]);
-    spawnTimer = 0;
-    spawnInterval = 15000;
-    
-    upgrades = {
-        moreCoins: { name: "Mais moedas por peixe", level: 0, max: 10, baseCost: 50, effect: 1 },
-        fasterSpawn: { name: "Spawn mais rápido", level: 0, max: 5, baseCost: 100, effect: 0.9 },
-        higherStart: { name: "Peixes começam mais fortes", level: 0, max: 5, baseCost: 200, effect: 0 },
-        ima: { name: "Ímã mágico", level: 0, max: 3, baseCost: 1000, effect: 5 }
-    };
-    
-    document.getElementById("coins").innerText = `💰 ${coins}`;
-}
-
-// ======== POPUPS ========
-function saveDiscovered() {
-    localStorage.setItem("discoveredPeixes", JSON.stringify([...discoveredLevels]));
-}
-
-function showInfoPopup(level) {
-    const info = PEIXES_INFO[level] || {
-        name: `Peixe Nível ${level}`, 
-        img: "assets/images/peixe1.jpg", 
-        date: `📅 Descoberta: ${1800 + level * 30}`,
-        habitat: "🌊 Habitat: Oceanos", 
-        desc: `Peixe nível ${level}: espécie aquática em estudo.`
-    };
-
-    const popup = document.getElementById("info-popup");
-    document.getElementById("info-image").src = info.img;
-    document.getElementById("info-date").textContent = info.date;
-    document.getElementById("info-habitat").textContent = info.habitat;
-    document.getElementById("info-description").textContent = info.desc;
-
-    popup.classList.remove("hidden");
-    popup.style.display = "block";
-    saveGame();
-}
-
-document.getElementById("closeInfo").addEventListener("click", () => {
-    const popup = document.getElementById("info-popup");
-    popup.classList.add("hidden");
-    popup.style.display = "none";
-    saveGame();
-});
-
-// ======== BOTÕES ========
-document.getElementById("upgradeBtn").addEventListener("click", () => {
-    const popup = document.getElementById("upgrade-popup");
-    popup.style.display = popup.style.display === "block" ? "none" : "block";
-    popup.classList.toggle("hidden");
-    renderUpgradeList();
-});
-
-document.getElementById("closeUpgrade").addEventListener("click", () => {
-    document.getElementById("upgrade-popup").style.display = "none";
-    document.getElementById("upgrade-popup").classList.add("hidden");
-    saveGame();
-});
-
-document.getElementById("libraryBtn").addEventListener("click", () => {
-    saveGame();
-    window.location.href = "library-peixes.html";
-});
-
-document.getElementById("buyAmoebaBtn").addEventListener("click", () => {
-    const popup = document.getElementById("buy-popup");
-    popup.style.display = popup.style.display === "block" ? "none" : "block";
-    popup.classList.toggle("hidden");
-    renderBuyList();
-});
-
-document.getElementById("closeBuy").addEventListener("click", () => {
-    document.getElementById("buy-popup").style.display = "none";
-    document.getElementById("buy-popup").classList.add("hidden");
-    saveGame();
-});
-
 // ======== SISTEMA DE COMPRA ========
 function buyAmoeba(level = 1) {
-    const cost = amoebaPrices[level] || (50 * level);
+    const cost = amoebaPrices[level] || (100 * level);
     if (coins >= cost) {
         coins -= cost;
         spawnAmoeba(level);
@@ -496,10 +520,10 @@ function buyUpgrade(type) {
         coins -= cost;
         u.level++;
 
-        if (type === "moreCoins") u.effect = 1 + u.level;
-        if (type === "fasterSpawn") spawnInterval = 15000 * Math.pow(0.9, u.level);
+        if (type === "moreCoins") u.effect = 2 + u.level;
+        if (type === "fasterSpawn") spawnInterval = 15000 * Math.pow(0.85, u.level);
         if (type === "higherStart") u.effect = u.level;
-        if (type === "ima") u.effect = 6 - u.level;
+        if (type === "ima") u.effect = 8 - u.level;
 
         document.getElementById("coins").innerText = `💰 ${coins}`;
         saveGame();
@@ -536,18 +560,18 @@ function renderUpgradeList() {
     }
 }
 
-// ======== RENDER COMPRAR PEIXES ========
+// ======== RENDER COMPRAR ANIMAIS ========
 function renderBuyList() {
     const container = document.getElementById("buy-list");
     container.innerHTML = "";
 
     for (let level = 1; level <= 5; level++) {
-        const cost = amoebaPrices[level] || (50 * level);
+        const cost = amoebaPrices[level] || (100 * level);
 
         const item = document.createElement("div");
         item.className = "buy-item";
         item.innerHTML = `
-            <strong>Peixe Nível ${level}</strong> <br>
+            <strong>Animal Nível ${level}</strong> <br>
             Custo: 💰 ${cost} <br>
             <button>Comprar</button>
         `;
@@ -570,8 +594,8 @@ function spawnAmoeba(level = 1) {
         size: 60,
         level: lvl,
         dragging: false,
-        dx: (Math.random() * 2 - 1) * 2,
-        dy: (Math.random() * 2 - 1) * 2,
+        dx: (Math.random() * 2 - 1) * 1.5,
+        dy: (Math.random() * 2 - 1) * 1.5,
         animScale: 1
     };
 
@@ -649,8 +673,8 @@ function mergeAmoebas(a, b) {
         size: 60,
         level: newLevel,
         dragging: false,
-        dx: (Math.random() * 2 - 1) * 2,
-        dy: (Math.random() * 2 - 1) * 2,
+        dx: (Math.random() * 2 - 1) * 1.5,
+        dy: (Math.random() * 2 - 1) * 1.5,
         animScale: 1.5
     };
 
@@ -673,8 +697,19 @@ function isColliding(a, b) {
 }
 
 function getColor(level) {
-    const colors = ["#FF6B6B", "#4ECDC4", "#45B7D1", "#96CEB4", "#FFEAA7", "#DDA0DD"];
-    return colors[(level - 1) % colors.length];
+  // Verificar se há skin equipada para terrestre
+  if (equippedSkin.terrestre) {
+    for (let lvl in inventory.terrestre) {
+      const skin = inventory.terrestre[lvl].find(s => s.id === equippedSkin.terrestre);
+      if (skin && parseInt(lvl) === level) {
+        return skin.color;
+      }
+    }
+  }
+  
+  // Cores padrão se não houver skin equipada
+  const colors = ["#8BC34A", "#795548", "#FF9800", "#607D8B", "#E91E63", "#9C27B0", "#3F51B5", "#009688", "#FF5722", "#673AB7", "#CDDC39", "#00BCD4", "#FFC107", "#9E9E9E", "#4CAF50"];
+  return colors[(level - 1) % colors.length];
 }
 
 // ======== ÍMÃ ========
@@ -702,8 +737,8 @@ function updateAmoebas(deltaTime) {
             if (amoeba.y <= 0 || amoeba.y + amoeba.size >= canvas.height) amoeba.dy *= -1;
 
             if (Math.random() < 0.01) {
-                amoeba.dx = (Math.random() * 2 - 1) * 2;
-                amoeba.dy = (Math.random() * 2 - 1) * 2;
+                amoeba.dx = (Math.random() * 2 - 1) * 1.5;
+                amoeba.dy = (Math.random() * 2 - 1) * 1.5;
             }
         }
 
@@ -805,138 +840,5 @@ bg.onload = () => {
 
 window.addEventListener("beforeunload", saveGame);
 
-// Carregar discovered levels dos peixes
-discoveredLevels = new Set(JSON.parse(localStorage.getItem("discoveredPeixes")) || [1]);
-
-// ======== SISTEMA DE SAVE/LOAD PARA PEIXES ========
-function saveGame() {
-    const state = {
-        amoebas,
-        coins,
-        upgrades,
-        amoebaPrices,
-        discoveredLevels: [...discoveredLevels],
-        spawnTimer,
-        spawnInterval
-    };
-    localStorage.setItem("gameState_peixes", JSON.stringify(state));
-}
-
-function loadGame() {
-    const saved = localStorage.getItem("gameState_peixes");
-    if (!saved) {
-        // Se não há save para peixes, inicia do zero
-        resetGameForPeixes();
-        return;
-    }
-
-    const state = JSON.parse(saved);
-    amoebas = state.amoebas || amoebas;
-    coins = state.coins || 0;
-    upgrades = state.upgrades || upgrades;
-    amoebaPrices = state.amoebaPrices || {};
-    discoveredLevels = new Set(state.discoveredLevels || [1]);
-    spawnTimer = state.spawnTimer || 0;
-    spawnInterval = state.spawnInterval || 15000;
-
-    document.getElementById("coins").innerText = `💰 ${coins}`;
-}
-
-function resetGameForPeixes() {
-    amoebas = [
-        { x: 300, y: 300, size: 60, level: 1, dragging: false, dx: 1.5, dy: 0.8, animScale: 1 }
-    ];
-    coins = 0;
-    amoebaPrices = {};
-    discoveredLevels = new Set([1]);
-    spawnTimer = 0;
-    spawnInterval = 15000;
-    
-    upgrades = {
-        moreCoins: { name: "Mais moedas por peixe", level: 0, max: 10, baseCost: 50, effect: 1 },
-        fasterSpawn: { name: "Spawn mais rápido", level: 0, max: 5, baseCost: 100, effect: 0.9 },
-        higherStart: { name: "Peixes começam mais fortes", level: 0, max: 5, baseCost: 200, effect: 0 },
-        ima: { name: "Ímã mágico", level: 0, max: 3, baseCost: 1000, effect: 5 }
-    };
-    
-    document.getElementById("coins").innerText = `💰 ${coins}`;
-}
-
-// ======== SISTEMA DE DESCOBERTAS PARA PEIXES ========
-function saveDiscovered() {
-    localStorage.setItem("discoveredPeixes", JSON.stringify([...discoveredLevels]));
-    
-    // Salvar também as datas de descoberta
-    const discoveries = JSON.parse(localStorage.getItem("peixeDiscoveries")) || {};
-    const currentDate = new Date().toLocaleDateString('pt-BR');
-    
-    discoveredLevels.forEach(level => {
-        if (!discoveries[level]) {
-            discoveries[level] = {
-                date: currentDate,
-                level: level,
-                name: PEIXES_INFO[level]?.name || `Peixe Nível ${level}`
-            };
-        }
-    });
-    
-    localStorage.setItem("peixeDiscoveries", JSON.stringify(discoveries));
-}
-
-// Modifique a função showInfoPopup para salvar a data de descoberta
-function showInfoPopup(level) {
-    const info = PEIXES_INFO[level] || {
-        name: `Peixe Nível ${level}`, 
-        img: "assets/images/peixe1.jpg", 
-        date: `📅 Descoberta: ${1800 + level * 30}`,
-        habitat: "🌊 Habitat: Oceanos", 
-        desc: `Peixe nível ${level}: espécie aquática em estudo.`
-    };
-
-    const popup = document.getElementById("info-popup");
-    document.getElementById("info-image").src = info.img;
-    document.getElementById("info-date").textContent = info.date;
-    document.getElementById("info-habitat").textContent = info.habitat;
-    document.getElementById("info-description").textContent = info.desc;
-
-    popup.classList.remove("hidden");
-    popup.style.display = "block";
-    
-    // Salvar descoberta
-    saveDiscovered();
-    saveGame();
-}
-
-// ======== VERIFICAÇÃO DO NOVO NÍVEL TERRESTRE ========
-function checkNewLevelTerrestre() {
-    const hasLevel15 = amoebas.some(a => a.level >= 15);
-    const terrestreBtn = document.getElementById("newlevelbtn");
-    
-    if (hasLevel15) {
-        terrestreBtn.classList.remove("hidden");
-        terrestreBtn.style.display = "block";
-        terrestreBtn.textContent = "🌳 Novo Nível Terrestre";
-        terrestreBtn.onclick = function() { window.location.href = 'terrestre.html'; };
-        // Salvar que o nível foi desbloqueado
-        localStorage.setItem("nivel_terrestre_desbloqueado", "true");
-    }
-}
-
-// Modifique o game loop no peixes.js para incluir esta verificação:
-function gameLoop(timestamp) {
-    const deltaTime = timestamp - lastTime;
-    lastTime = timestamp;
-
-    updateAmoebas(deltaTime);
-    updateMoneyAnimations();
-    
-    // ✅ ADICIONAR VERIFICAÇÃO DO NOVO NÍVEL TERRESTRE
-    checkNewLevelTerrestre();
-    
-    drawBackground();
-    drawAmoebas();
-    drawMoneyAnimations();
-    drawSpawnBar();
-
-    requestAnimationFrame(gameLoop);
-}
+// Carregar discovered levels do terrestre
+discoveredLevels = new Set(JSON.parse(localStorage.getItem("discoveredTerrestre")) || [1]);

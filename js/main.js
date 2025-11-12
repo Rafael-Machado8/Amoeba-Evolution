@@ -330,6 +330,18 @@ function isColliding(a, b) {
 }
 
 function getColor(level) {
+  // Verificar se há skin equipada para amoebas
+  if (equippedSkin.amoebas) {
+    // Encontrar a skin equipada
+    for (let lvl in inventory.amoebas) {
+      const skin = inventory.amoebas[lvl].find(s => s.id === equippedSkin.amoebas);
+      if (skin && parseInt(lvl) === level) {
+        return skin.color;
+      }
+    }
+  }
+  
+  // Cores padrão se não houver skin equipada
   const colors = ["limegreen", "blue", "orange", "purple", "red", "gold"];
   return colors[(level - 1) % colors.length];
 }
@@ -437,6 +449,381 @@ function drawSpawnBar() {
   ctx.strokeStyle = "white";
   ctx.strokeRect(x, y, barWidth, barHeight);
 }
+
+
+
+
+// ======== SISTEMA DE SKINS E LOOTBOXES ========
+
+// Skins disponíveis para cada nível (5 skins por nível)
+const SKINS = {
+  amoebas: {
+    1: [
+      { id: 'amoeba_1_1', name: 'Amoeba Verde Clássica', rarity: 'common', color: '#4CAF50' },
+      { id: 'amoeba_1_2', name: 'Amoeba Azul Marinho', rarity: 'common', color: '#2196F3' },
+      { id: 'amoeba_1_3', name: 'Amoeba Dourada', rarity: 'rare', color: '#FFD700' },
+      { id: 'amoeba_1_4', name: 'Amoeba Cristal', rarity: 'epic', color: '#E3F2FD' },
+      { id: 'amoeba_1_5', name: 'Amoeba Arco-íris', rarity: 'legendary', color: 'linear-gradient(45deg, #FF0000, #FFA500, #FFFF00, #008000, #0000FF, #4B0082, #EE82EE)' }
+    ],
+    2: [
+      { id: 'amoeba_2_1', name: 'Amoeba Evoluída Verde', rarity: 'common', color: '#388E3C' },
+      { id: 'amoeba_2_2', name: 'Amoeba Evoluída Roxa', rarity: 'common', color: '#7B1FA2' },
+      { id: 'amoeba_2_3', name: 'Amoeba Evoluída Dourada', rarity: 'rare', color: '#FFC107' },
+      { id: 'amoeba_2_4', name: 'Amoeba Evoluída Diamante', rarity: 'epic', color: '#B3E5FC' },
+      { id: 'amoeba_2_5', name: 'Amoeba Evoluída Neon', rarity: 'legendary', color: '#00FF00' }
+    ],
+    3: [
+      { id: 'amoeba_3_1', name: 'Amoeba Superior Vermelha', rarity: 'common', color: '#F44336' },
+      { id: 'amoeba_3_2', name: 'Amoeba Superior Laranja', rarity: 'common', color: '#FF9800' },
+      { id: 'amoeba_3_3', name: 'Amoeba Superior Prateada', rarity: 'rare', color: '#E0E0E0' },
+      { id: 'amoeba_3_4', name: 'Amoeba Superior Cintilante', rarity: 'epic', color: '#FFF59D' },
+      { id: 'amoeba_3_5', name: 'Amoeba Superior Cósmica', rarity: 'legendary', color: 'linear-gradient(45deg, #000428, #004e92)' }
+    ],
+    4: [
+      { id: 'amoeba_4_1', name: 'Amoeba Mestre Verde Escuro', rarity: 'common', color: '#1B5E20' },
+      { id: 'amoeba_4_2', name: 'Amoeba Mestre Azul Royal', rarity: 'common', color: '#0D47A1' },
+      { id: 'amoeba_4_3', name: 'Amoeba Mestre Bronze', rarity: 'rare', color: '#CD7F32' },
+      { id: 'amoeba_4_4', name: 'Amoeba Mestre Esmeralda', rarity: 'epic', color: '#00C853' },
+      { id: 'amoeba_4_5', name: 'Amoeba Mestre Galáxia', rarity: 'legendary', color: 'linear-gradient(45deg, #667eea, #764ba2)' }
+    ],
+    5: [
+      { id: 'amoeba_5_1', name: 'Amoeba Lendária Preta', rarity: 'common', color: '#000000' },
+      { id: 'amoeba_5_2', name: 'Amoeba Lendária Branca', rarity: 'common', color: '#FFFFFF' },
+      { id: 'amoeba_5_3', name: 'Amoeba Lendária Platina', rarity: 'rare', color: '#E5E4E2' },
+      { id: 'amoeba_5_4', name: 'Amoeba Lendária Rubi', rarity: 'epic', color: '#E0115F' },
+      { id: 'amoeba_5_5', name: 'Amoeba Lendária Mítica', rarity: 'legendary', color: 'linear-gradient(45deg, #ff0080, #ff8c00, #40e0d0)' }
+    ]
+  },
+  peixes: {
+    1: [
+      { id: 'peixe_1_1', name: 'Peixe Laranja Básico', rarity: 'common', color: '#FFA500' },
+      { id: 'peixe_1_2', name: 'Peixe Azul Básico', rarity: 'common', color: '#1E90FF' },
+      { id: 'peixe_1_3', name: 'Peixe Dourado', rarity: 'rare', color: '#FFD700' },
+      { id: 'peixe_1_4', name: 'Peixe Translúcido', rarity: 'epic', color: '#F0F8FF' },
+      { id: 'peixe_1_5', name: 'Peixe Aurora', rarity: 'legendary', color: 'linear-gradient(45deg, #00b4db, #0083b0)' }
+    ],
+    // ... adicione mais níveis seguindo o mesmo padrão
+  },
+  terrestre: {
+    1: [
+      { id: 'terrestre_1_1', name: 'Animal Marrom Básico', rarity: 'common', color: '#8B4513' },
+      { id: 'terrestre_1_2', name: 'Animal Cinza Básico', rarity: 'common', color: '#808080' },
+      { id: 'terrestre_1_3', name: 'Animal Dourado', rarity: 'rare', color: '#FFD700' },
+      { id: 'terrestre_1_4', name: 'Animal Prateado', rarity: 'epic', color: '#C0C0C0' },
+      { id: 'terrestre_1_5', name: 'Animal Místico', rarity: 'legendary', color: 'linear-gradient(45deg, #654ea3, #eaafc8)' }
+    ],
+    // ... adicione mais níveis seguindo o mesmo padrão
+  }
+};
+
+// Preços das lootboxes
+const LOOTBOX_PRICES = {
+  common: 500,
+  rare: 5000,
+  epic: 50000
+};
+
+// Probabilidades para cada tipo de caixa
+const LOOTBOX_PROBABILITIES = {
+  common: {
+    common: 0.60,  // 60% chance de skin comum
+    rare: 0.30,    // 30% chance de skin rara
+    epic: 0.10     // 10% chance de skin épica
+  },
+  rare: {
+    common: 0.30,  // 30% chance de skin comum
+    rare: 0.50,    // 50% chance de skin rara
+    epic: 0.20     // 20% chance de skin épica
+  },
+  epic: {
+    common: 0.10,  // 10% chance de skin comum
+    rare: 0.30,    // 30% chance de skin rara
+    epic: 0.60     // 60% chance de skin épica
+  }
+};
+
+// Inventário do jogador
+let inventory = JSON.parse(localStorage.getItem("skinInventory")) || {
+  amoebas: {},
+  peixes: {},
+  terrestre: {}
+};
+
+// Skin equipada atual
+let equippedSkin = JSON.parse(localStorage.getItem("equippedSkin")) || {
+  amoebas: null,
+  peixes: null,
+  terrestre: null
+};
+
+// ======== FUNÇÕES DO SISTEMA DE LOOTBOX ========
+
+// Comprar uma lootbox
+function buyLootbox(lootboxType) {
+  const price = LOOTBOX_PRICES[lootboxType];
+  
+  if (coins >= price) {
+    coins -= price;
+    document.getElementById("coins").innerText = `💰 ${coins}`;
+    
+    // Abrir a caixa e ganhar uma skin
+    const skin = openLootbox(lootboxType);
+    
+    // Adicionar ao inventário
+    addToInventory(skin);
+    
+    // Mostrar popup de recompensa
+    showRewardPopup(skin);
+    
+    saveGame();
+  } else {
+    alert("Moedas insuficientes!");
+  }
+}
+
+// Abrir uma lootbox e retornar uma skin aleatória
+function openLootbox(lootboxType) {
+  const probabilities = LOOTBOX_PROBABILITIES[lootboxType];
+  const random = Math.random();
+  
+  let selectedRarity;
+  
+  // Determinar a raridade baseado nas probabilidades
+  if (random < probabilities.common) {
+    selectedRarity = 'common';
+  } else if (random < probabilities.common + probabilities.rare) {
+    selectedRarity = 'rare';
+  } else {
+    selectedRarity = 'epic';
+  }
+  
+  // Escolher uma categoria aleatória (amoebas, peixes, terrestre)
+  const categories = ['amoebas', 'peixes', 'terrestre'];
+  const randomCategory = categories[Math.floor(Math.random() * categories.length)];
+  
+  // Filtrar skins da raridade selecionada na categoria
+  const availableSkins = [];
+  for (let level in SKINS[randomCategory]) {
+    SKINS[randomCategory][level].forEach(skin => {
+      if (skin.rarity === selectedRarity) {
+        availableSkins.push({
+          ...skin,
+          category: randomCategory,
+          level: parseInt(level)
+        });
+      }
+    });
+  }
+  
+  // Escolher uma skin aleatória
+  if (availableSkins.length > 0) {
+    return availableSkins[Math.floor(Math.random() * availableSkins.length)];
+  } else {
+    // Fallback - pegar qualquer skin
+    const allSkins = [];
+    for (let category in SKINS) {
+      for (let level in SKINS[category]) {
+        allSkins.push({
+          ...SKINS[category][level][0],
+          category: category,
+          level: parseInt(level)
+        });
+      }
+    }
+    return allSkins[Math.floor(Math.random() * allSkins.length)];
+  }
+}
+
+// Adicionar skin ao inventário
+function addToInventory(skin) {
+  if (!inventory[skin.category][skin.level]) {
+    inventory[skin.category][skin.level] = [];
+  }
+  
+  // Verificar se a skin já existe no inventário
+  const skinExists = inventory[skin.category][skin.level].some(s => s.id === skin.id);
+  
+  if (!skinExists) {
+    inventory[skin.category][skin.level].push(skin);
+    localStorage.setItem("skinInventory", JSON.stringify(inventory));
+    return true; // Nova skin
+  } else {
+    return false; // Skin duplicada
+  }
+}
+
+// Mostrar popup de recompensa
+function showRewardPopup(skin) {
+  const popup = document.getElementById("reward-popup");
+  const rewardItem = document.getElementById("reward-item");
+  
+  const isNewSkin = addToInventory(skin);
+  
+  rewardItem.innerHTML = `
+    <div class="skin-reward ${skin.rarity}">
+      <div class="skin-preview" style="background: ${skin.color}"></div>
+      <h3>${skin.name}</h3>
+      <p class="rarity ${skin.rarity}">${getRarityName(skin.rarity)}</p>
+      <p><strong>Categoria:</strong> ${getCategoryName(skin.category)}</p>
+      <p><strong>Nível:</strong> ${skin.level}</p>
+      ${isNewSkin ? '<p class="new-skin">✨ Nova Skin Desbloqueada!</p>' : '<p class="duplicate">🔄 Skin Duplicada</p>'}
+    </div>
+  `;
+  
+  popup.classList.remove("hidden");
+  popup.style.display = "block";
+}
+
+// Equipar uma skin
+function equipSkin(skinId, category) {
+  equippedSkin[category] = skinId;
+  localStorage.setItem("equippedSkin", JSON.stringify(equippedSkin));
+  
+  // Recarregar inventário para mostrar mudanças
+  renderInventory();
+}
+
+// Desequipar uma skin
+function unequipSkin(category) {
+  equippedSkin[category] = null;
+  localStorage.setItem("equippedSkin", JSON.stringify(equippedSkin));
+  
+  // Recarregar inventário para mostrar mudanças
+  renderInventory();
+}
+
+// ======== RENDERIZAÇÃO DO INVENTÁRIO ========
+
+// Renderizar inventário
+function renderInventory(tab = 'amoebas') {
+  const container = document.getElementById("inventory-content");
+  container.innerHTML = '';
+  
+  if (!inventory[tab] || Object.keys(inventory[tab]).length === 0) {
+    container.innerHTML = '<p class="no-skins">Nenhuma skin desbloqueada ainda!</p>';
+    return;
+  }
+  
+  for (let level in inventory[tab]) {
+    const levelSkins = inventory[tab][level];
+    const levelSection = document.createElement('div');
+    levelSection.className = 'level-section';
+    levelSection.innerHTML = `<h4>Nível ${level}</h4>`;
+    
+    const skinsGrid = document.createElement('div');
+    skinsGrid.className = 'skins-grid';
+    
+    levelSkins.forEach(skin => {
+      const isEquipped = equippedSkin[tab] === skin.id;
+      const skinElement = document.createElement('div');
+      skinElement.className = `skin-item ${skin.rarity} ${isEquipped ? 'equipped' : ''}`;
+      skinElement.innerHTML = `
+        <div class="skin-preview" style="background: ${skin.color}"></div>
+        <h5>${skin.name}</h5>
+        <p class="rarity">${getRarityName(skin.rarity)}</p>
+        ${isEquipped ? 
+          `<button class="unequip-btn" onclick="unequipSkin('${tab}')">Desequipar</button>` :
+          `<button class="equip-btn" onclick="equipSkin('${skin.id}', '${tab}')">Equipar</button>`
+        }
+      `;
+      skinsGrid.appendChild(skinElement);
+    });
+    
+    levelSection.appendChild(skinsGrid);
+    container.appendChild(levelSection);
+  }
+}
+
+// ======== FUNÇÕES UTILITÁRIAS ========
+
+function getRarityName(rarity) {
+  const names = {
+    common: 'Comum',
+    rare: 'Rara',
+    epic: 'Épica',
+    legendary: 'Lendária'
+  };
+  return names[rarity] || rarity;
+}
+
+function getCategoryName(category) {
+  const names = {
+    amoebas: 'Amoebas',
+    peixes: 'Peixes',
+    terrestre: 'Terrestre'
+  };
+  return names[category] || category;
+}
+
+// ======== EVENT LISTENERS ========
+
+// Botão da Loja
+document.getElementById("shopBtn").addEventListener("click", () => {
+  const popup = document.getElementById("shop-popup");
+  popup.style.display = "block";
+  popup.classList.remove("hidden");
+});
+
+// Fechar Loja
+document.getElementById("closeShop").addEventListener("click", () => {
+  document.getElementById("shop-popup").style.display = "none";
+  document.getElementById("shop-popup").classList.add("hidden");
+});
+
+// Botões de compra de lootbox
+document.querySelectorAll(".buy-lootbox").forEach(button => {
+  button.addEventListener("click", (e) => {
+    const lootboxType = e.target.dataset.type;
+    buyLootbox(lootboxType);
+  });
+});
+
+// Botão do Inventário
+document.getElementById("inventoryBtn").addEventListener("click", () => {
+  const popup = document.getElementById("inventory-popup");
+  popup.style.display = "block";
+  popup.classList.remove("hidden");
+  renderInventory();
+});
+
+// Fechar Inventário
+document.getElementById("closeInventory").addEventListener("click", () => {
+  document.getElementById("inventory-popup").style.display = "none";
+  document.getElementById("inventory-popup").classList.add("hidden");
+});
+
+// Tabs do Inventário
+document.querySelectorAll(".tab-button").forEach(button => {
+  button.addEventListener("click", (e) => {
+    // Remover classe active de todas as tabs
+    document.querySelectorAll(".tab-button").forEach(btn => {
+      btn.classList.remove("active");
+    });
+    
+    // Adicionar classe active à tab clicada
+    e.target.classList.add("active");
+    
+    // Renderizar conteúdo da tab
+    const tab = e.target.dataset.tab;
+    renderInventory(tab);
+  });
+});
+
+// Fechar Recompensa
+document.getElementById("closeReward").addEventListener("click", () => {
+  document.getElementById("reward-popup").style.display = "none";
+  document.getElementById("reward-popup").classList.add("hidden");
+});
+
+
+
+
+
+
+
+
+
+
 
 // ======== LOOP DO JOGO ========
 let lastTime = 0;
@@ -733,3 +1120,15 @@ function checkNewLevelUnlock() {
         newLevelBtn.style.display = "none";
     }
 }
+
+function initializeAllSkins() {
+  const allSkins = {
+    amoebas: SKINS.amoebas,
+    peixes: PEIXES_SKINS, 
+    terrestre: TERRESTRE_SKINS 
+  };
+  localStorage.setItem("allSkins", JSON.stringify(allSkins));
+}
+
+// Chame esta função uma vez no main.js
+initializeAllSkins();

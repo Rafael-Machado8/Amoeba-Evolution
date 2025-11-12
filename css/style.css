@@ -331,3 +331,311 @@ canvas {
   border: 3px solid #ddd;
   background: #f5f5f5;
 }
+
+/* Botão Terrestre */
+#newlevelbtn {
+    background: linear-gradient(45deg, #388e3c, #4caf50) !important;
+}
+
+#backToPeixesBtn {
+    
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    background: linear-gradient(45deg, #c4f17b, #a4f844);
+    border: none;
+    border-radius: 15px;
+    width: 180px;
+    height: 50px;
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(255, 107, 107, 0.5);
+    transition: transform 0.3s, box-shadow 0.3s;
+    z-index: 5;
+}
+
+/* ===== SISTEMA DE LOOTBOXES ===== */
+.lootbox-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin: 20px 0;
+}
+
+.lootbox-item {
+  background: #f5f5f5;
+  border-radius: 15px;
+  padding: 20px;
+  text-align: center;
+  transition: transform 0.3s, box-shadow 0.3s;
+  border: 3px solid #ddd;
+}
+
+.lootbox-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+
+.lootbox-icon {
+  font-size: 48px;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 15px;
+  border: 3px solid;
+}
+
+.lootbox-icon.common {
+  background: #b0b0b0;
+  border-color: #808080;
+}
+
+.lootbox-icon.rare {
+  background: #4CAF50;
+  border-color: #388E3C;
+}
+
+.lootbox-icon.epic {
+  background: #9C27B0;
+  border-color: #7B1FA2;
+}
+
+.lootbox-item h4 {
+  margin: 10px 0;
+  color: #333;
+}
+
+.lootbox-item p {
+  margin: 8px 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.price {
+  font-size: 18px !important;
+  font-weight: bold;
+  color: #FFD700 !important;
+}
+
+.buy-lootbox {
+  background: #4CAF50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s;
+  margin-top: 10px;
+}
+
+.buy-lootbox:hover {
+  background: #45a049;
+}
+
+/* ===== POPUP DE RECOMPENSA ===== */
+.reward-content {
+  text-align: center;
+}
+
+.skin-reward {
+  padding: 20px;
+  border-radius: 15px;
+  margin: 20px 0;
+  border: 3px solid;
+}
+
+.skin-reward.common {
+  background: #f5f5f5;
+  border-color: #b0b0b0;
+}
+
+.skin-reward.rare {
+  background: #E8F5E8;
+  border-color: #4CAF50;
+}
+
+.skin-reward.epic {
+  background: #F3E5F5;
+  border-color: #9C27B0;
+}
+
+.skin-reward.legendary {
+  background: #FFF8E1;
+  border-color: #FFC107;
+}
+
+.skin-preview {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  margin: 0 auto 15px;
+  border: 3px solid #333;
+}
+
+.rarity {
+  font-weight: bold;
+  padding: 5px 10px;
+  border-radius: 15px;
+  display: inline-block;
+  margin: 5px;
+}
+
+.rarity.common {
+  background: #b0b0b0;
+  color: white;
+}
+
+.rarity.rare {
+  background: #4CAF50;
+  color: white;
+}
+
+.rarity.epic {
+  background: #9C27B0;
+  color: white;
+}
+
+.rarity.legendary {
+  background: #FFC107;
+  color: #333;
+}
+
+.new-skin {
+  color: #4CAF50;
+  font-weight: bold;
+}
+
+.duplicate {
+  color: #FF9800;
+  font-weight: bold;
+}
+
+/* ===== INVENTÁRIO ===== */
+.inventory-tabs {
+  display: flex;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #ddd;
+}
+
+.tab-button {
+  background: none;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all 0.3s;
+}
+
+.tab-button.active {
+  border-bottom-color: #4CAF50;
+  background: #E8F5E8;
+}
+
+.inventory-content {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.level-section {
+  margin-bottom: 30px;
+}
+
+.level-section h4 {
+  color: #333;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 5px;
+  margin-bottom: 15px;
+}
+
+.skins-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 15px;
+}
+
+.skin-item {
+  background: #f9f9f9;
+  border-radius: 10px;
+  padding: 15px;
+  text-align: center;
+  border: 2px solid;
+  transition: transform 0.3s;
+}
+
+.skin-item:hover {
+  transform: scale(1.05);
+}
+
+.skin-item.common {
+  border-color: #b0b0b0;
+}
+
+.skin-item.rare {
+  border-color: #4CAF50;
+}
+
+.skin-item.epic {
+  border-color: #9C27B0;
+}
+
+.skin-item.legendary {
+  border-color: #FFC107;
+}
+
+.skin-item.equipped {
+  background: #E3F2FD;
+  border-color: #2196F3;
+}
+
+.skin-item h5 {
+  margin: 10px 0 5px;
+  font-size: 14px;
+}
+
+.skin-item .skin-preview {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin: 0 auto;
+  border: 2px solid #333;
+}
+
+.equip-btn, .unequip-btn {
+  background: #4CAF50;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 15px;
+  cursor: pointer;
+  font-size: 12px;
+  margin-top: 8px;
+}
+
+.unequip-btn {
+  background: #F44336;
+}
+
+.equip-btn:hover {
+  background: #45a049;
+}
+
+.unequip-btn:hover {
+  background: #d32f2f;
+}
+
+.no-skins {
+  text-align: center;
+  color: #666;
+  font-style: italic;
+  padding: 40px;
+}
+
+.hidden {
+  display: none !important;
+}

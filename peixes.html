@@ -5,6 +5,9 @@
   <title>Amoeba Evolution - Peixes</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
+
+
+  
 <body>
   <div id="game-container">
     <canvas id="gameCanvas" width="1280" height="720"></canvas>
@@ -18,6 +21,72 @@
     <div id="ui-buttons">
       <button id="homeBtn">🏠 Home</button>
       <button id="shopBtn">🛒 Shop</button>
+        
+        <!-- Popup de Loja (Lootboxes) -->
+        <div id="shop-popup" class="hidden">
+          <div class="popup-content">
+            <h2>🛒 Loja - Caixas Misteriosas</h2>
+            <div class="lootbox-section">
+              <div class="lootbox-container">
+                <!-- Caixa Comum -->
+                <div class="lootbox-item">
+                  <div class="lootbox-icon common">📦</div>
+                  <h4>Caixa Comum</h4>
+                  <p>• 60% Comum<br>• 30% Rara<br>• 10% Épica</p>
+                  <p class="price">💰 500</p>
+                  <button class="buy-lootbox" data-type="common">Comprar</button>
+                </div>
+                
+                <!-- Caixa Rara -->
+                <div class="lootbox-item">
+                  <div class="lootbox-icon rare">🎁</div>
+                  <h4>Caixa Rara</h4>
+                  <p>• 30% Comum<br>• 50% Rara<br>• 20% Épica</p>
+                  <p class="price">💰 5.000</p>
+                  <button class="buy-lootbox" data-type="rare">Comprar</button>
+                </div>
+                
+                <!-- Caixa Épica -->
+                <div class="lootbox-item">
+                  <div class="lootbox-icon epic">💎</div>
+                  <h4>Caixa Épica</h4>
+                  <p>• 10% Comum<br>• 30% Rara<br>• 60% Épica</p>
+                  <p class="price">💰 50.000</p>
+                  <button class="buy-lootbox" data-type="epic">Comprar</button>
+                </div>
+              </div>
+            </div>
+            <button id="closeShop">Fechar</button>
+          </div>
+        </div>
+
+        <!-- Popup de Recompensa -->
+        <div id="reward-popup" class="hidden">
+          <div class="popup-content reward-content">
+            <h2>🎉 Parabéns!</h2>
+            <div id="reward-item"></div>
+            <button id="closeReward">Fechar</button>
+          </div>
+        </div>
+
+        <!-- Popup de Inventário -->
+        <div id="inventory-popup" class="hidden">
+          <div class="popup-content">
+            <h2>🎒 Inventário de Skins</h2>
+            <div class="inventory-tabs">
+              <button class="tab-button active" data-tab="amoebas">🦠 Amoebas</button>
+              <button class="tab-button" data-tab="peixes">🐟 Peixes</button>
+              <button class="tab-button" data-tab="terrestre">🌳 Terrestre</button>
+            </div>
+            <div id="inventory-content" class="inventory-content">
+              <!-- Itens serão carregados aqui -->
+            </div>
+            <button id="closeInventory">Fechar</button>
+          </div>
+        </div>
+
+
+
       <button id="libraryBtn">📚 Biblioteca</button>
       <button id="inventoryBtn">🎒 Inventário</button>
     </div>
@@ -28,8 +97,12 @@
     <!-- Botão de compra de peixe -->
     <button id="buyAmoebaBtn">➕ Peixe</button>
 
-    <!-- Botão voltar para amoebas -->
+  
+    <!--novo nivel-->
+    <button id="newlevelbtn" class="hidden" style="display: none;">🌳 Novo Nível Terrestre</button>
+      <!-- Botão voltar para amoebas -->
     <button id="backToAmoebasBtn" onclick="window.location.href='index.html';">🌍 Voltar às Amoebas</button>
+
 
     <!-- Pop-up de Upgrades -->
     <div id="upgrade-popup" class="hidden">
@@ -53,7 +126,7 @@
     <div id="info-popup" class="hidden">
       <div class="popup-content">
         <h2>🔬 Novo Peixe Desbloqueado!</h2>
-        <img id="info-image" src="assets/images/fundo-aquatico.jpg" alt="Peixe" />
+        <img id="info-image" src="assets/images/fundoPeixes.jpg" alt="Peixe" />
         <p id="info-date"><strong>📅 Descoberta:</strong> 1800</p>
         <p id="info-habitat"><strong>🌊 Habitat:</strong> Oceanos e mares</p>
         <p id="info-description">
