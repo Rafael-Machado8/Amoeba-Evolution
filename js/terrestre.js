@@ -1,4 +1,44 @@
 // terrestre.js - Código específico para o nível terrestre
+// ======== SISTEMA MELHORADO DE POPUPS ========
+function showPopup(popupId) {
+  // Esconder todos os popups primeiro
+  hideAllPopups();
+  
+  const popup = document.getElementById(popupId);
+  if (popup) {
+    popup.style.display = "block";
+    popup.classList.remove("hidden");
+    
+    // Adicionar fundo escuro
+    const background = document.createElement('div');
+    background.className = 'popup-background active';
+    background.id = 'popup-background';
+    background.onclick = hideAllPopups;
+    document.body.appendChild(background);
+  }
+}
+
+function hideAllPopups() {
+  // Esconder todos os popups
+  const popups = document.querySelectorAll('[id$="-popup"]');
+  popups.forEach(popup => {
+    popup.style.display = "none";
+    popup.classList.add("hidden");
+  });
+  
+  // Remover fundo escuro
+  const background = document.getElementById('popup-background');
+  if (background) {
+    background.remove();
+  }
+}
+
+// Fechar popup com ESC
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    hideAllPopups();
+  }
+});
 
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
@@ -297,11 +337,9 @@ function addToInventory(skin) {
 }
 
 function showRewardPopup(skin) {
-  const popup = document.getElementById("reward-popup");
-  const rewardItem = document.getElementById("reward-item");
-  
   const isNewSkin = addToInventory(skin);
   
+  const rewardItem = document.getElementById("reward-item");
   rewardItem.innerHTML = `
     <div class="skin-reward ${skin.rarity}">
       <div class="skin-preview" style="background: ${skin.color}"></div>
@@ -309,12 +347,18 @@ function showRewardPopup(skin) {
       <p class="rarity ${skin.rarity}">${getRarityName(skin.rarity)}</p>
       <p><strong>Categoria:</strong> ${getCategoryName(skin.category)}</p>
       <p><strong>Nível:</strong> ${skin.level}</p>
-      ${isNewSkin ? '<p class="new-skin">✨ Nova Skin Desbloqueada!</p>' : '<p class="duplicate">🔄 Skin Duplicada</p>'}
+      ${isNewSkin ? '<p class="new-skin">✨ Nova Skin Desbloqueada!</p>' : '<p class="duplicate">🔄 Skin Duplicada + 💰 100</p>'}
     </div>
   `;
   
-  popup.classList.remove("hidden");
-  popup.style.display = "block";
+  // Se for skin duplicada, dar recompensa em moedas
+  if (!isNewSkin) {
+    coins += 100;
+    document.getElementById("coins").innerText = `💰 ${coins}`;
+    saveGame();
+  }
+  
+  showPopup("reward-popup");
 }
 
 function equipSkin(skinId, category) {
@@ -451,17 +495,28 @@ document.getElementById("closeBuy").addEventListener("click", () => {
 
 // ======== EVENT LISTENERS PARA LOOTBOXES ========
 
+// ======== EVENT LISTENERS CORRIGIDOS ========
+
+// Botão da Loja
 document.getElementById("shopBtn").addEventListener("click", () => {
-  const popup = document.getElementById("shop-popup");
-  popup.style.display = "block";
-  popup.classList.remove("hidden");
+  showPopup("shop-popup");
 });
 
-document.getElementById("closeShop").addEventListener("click", () => {
-  document.getElementById("shop-popup").style.display = "none";
-  document.getElementById("shop-popup").classList.add("hidden");
+// Botão do Inventário
+document.getElementById("inventoryBtn").addEventListener("click", () => {
+  showPopup("inventory-popup");
+  renderInventory();
 });
 
+// Botões de fechar
+document.getElementById("closeShop").addEventListener("click", hideAllPopups);
+document.getElementById("closeInventory").addEventListener("click", hideAllPopups);
+document.getElementById("closeReward").addEventListener("click", hideAllPopups);
+document.getElementById("closeUpgrade").addEventListener("click", hideAllPopups);
+document.getElementById("closeBuy").addEventListener("click", hideAllPopups);
+document.getElementById("closeInfo").addEventListener("click", hideAllPopups);
+
+// Botões de lootbox
 document.querySelectorAll(".buy-lootbox").forEach(button => {
   button.addEventListener("click", (e) => {
     const lootboxType = e.target.dataset.type;
@@ -469,18 +524,7 @@ document.querySelectorAll(".buy-lootbox").forEach(button => {
   });
 });
 
-document.getElementById("inventoryBtn").addEventListener("click", () => {
-  const popup = document.getElementById("inventory-popup");
-  popup.style.display = "block";
-  popup.classList.remove("hidden");
-  renderInventory();
-});
-
-document.getElementById("closeInventory").addEventListener("click", () => {
-  document.getElementById("inventory-popup").style.display = "none";
-  document.getElementById("inventory-popup").classList.add("hidden");
-});
-
+// Tabs do Inventário
 document.querySelectorAll(".tab-button").forEach(button => {
   button.addEventListener("click", (e) => {
     document.querySelectorAll(".tab-button").forEach(btn => {
@@ -699,9 +743,11 @@ function isColliding(a, b) {
 function getColor(level) {
   // Verificar se há skin equipada para terrestre
   if (equippedSkin.terrestre) {
+    // Procurar a skin equipada em todos os níveis
     for (let lvl in inventory.terrestre) {
       const skin = inventory.terrestre[lvl].find(s => s.id === equippedSkin.terrestre);
-      if (skin && parseInt(lvl) === level) {
+      if (skin) {
+        // Usar a skin mesmo que o nível não corresponda exatamente
         return skin.color;
       }
     }
