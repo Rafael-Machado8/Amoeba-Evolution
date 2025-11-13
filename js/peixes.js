@@ -1063,11 +1063,12 @@ function checkNewLevelCeu() {
     const ceuBtn = document.getElementById("newlevelbtn");
     
     if (hasLevel15) {
-        ceuBtn.classList.remove("hidden");
-        ceuBtn.style.display = "block";
-        ceuBtn.textContent = "☁️ Novo Nível Céu";
-        ceuBtn.onclick = function() { window.location.href = 'ceu.html'; };
-        localStorage.setItem("nivel_ceu_desbloqueado", "true");
+        terrestreBtn.classList.remove("hidden");
+        terrestreBtn.style.display = "block";
+        terrestreBtn.textContent = "🌳 Novo Nível Terrestre";
+        terrestreBtn.onclick = function() { window.location.href = 'terrestre.html'; };
+        // Salvar que o nível foi desbloqueado
+        localStorage.setItem("nivel_terrestre_desbloqueado", "true");
     }
 }
 

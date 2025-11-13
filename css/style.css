@@ -900,3 +900,88 @@ canvas {
   background: #ff5252;
   transform: scale(1.05);
 }
+
+/* ===== BOTÃO DO NOVO NÍVEL CÉU (no terrestre) ===== */
+#newlevelbtn {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    background: linear-gradient(45deg, #87CEEB, #E0F7FA, #B3E5FC);
+    border: none;
+    border-radius: 15px;
+    width: 180px;
+    height: 50px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #0277BD;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(135, 206, 235, 0.5);
+    transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
+    z-index: 5;
+    display: none;
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+}
+
+#newlevelbtn:not(.hidden) {
+    display: block !important;
+}
+
+#newlevelbtn.hidden {
+    display: none !important;
+}
+
+#newlevelbtn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 8px 25px rgba(135, 206, 235, 0.7);
+    background: linear-gradient(45deg, #00BFFF, #87CEEB, #E0F7FA);
+    color: #01579B;
+}
+
+/* ===== BOTÃO VOLTAR DOS PEIXES (no terrestre) ===== */
+#backToPeixesBtn {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    background: linear-gradient(45deg, #c4f17b, #a4f844);
+    border: none;
+    border-radius: 15px;
+    width: 180px;
+    height: 50px;
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(164, 248, 68, 0.5);
+    transition: transform 0.3s, box-shadow 0.3s;
+    z-index: 5;
+}
+
+#backToPeixesBtn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 8px 25px rgba(164, 248, 68, 0.7);
+}
+
+/* ===== BOTÃO VOLTAR DO TERRESTRE (no céu) ===== */
+#backToTerrestreBtn {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    background: linear-gradient(45deg, #FF8C00, #FFA500);
+    border: none;
+    border-radius: 15px;
+    width: 180px;
+    height: 50px;
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(255, 140, 0, 0.5);
+    transition: transform 0.3s, box-shadow 0.3s;
+    z-index: 5;
+}
+
+#backToTerrestreBtn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 8px 25px rgba(255, 140, 0, 0.7);
+    background: linear-gradient(45deg, #FF4500, #FF8C00);
+}

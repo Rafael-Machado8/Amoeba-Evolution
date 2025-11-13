@@ -888,3 +888,128 @@ window.addEventListener("beforeunload", saveGame);
 
 // Carregar discovered levels do terrestre
 discoveredLevels = new Set(JSON.parse(localStorage.getItem("discoveredTerrestre")) || [1]);
+
+// ======== VERIFICAÇÃO DO NOVO NÍVEL CÉU ========
+function checkNewLevelCeu() {
+    const hasLevel15 = amoebas.some(a => a.level >= 15);
+    const ceuBtn = document.getElementById("newlevelbtn");
+    
+    console.log("Verificando nível céu:", { 
+        hasLevel15, 
+        amoebas: amoebas.map(a => a.level) 
+    });
+    
+    if (hasLevel15) {
+        ceuBtn.classList.remove("hidden");
+        ceuBtn.style.display = "block";
+        ceuBtn.onclick = function() { window.location.href = 'ceu.html'; };
+        localStorage.setItem("nivel_ceu_desbloqueado", "true");
+        console.log("✅ Botão do céu liberado!");
+    }
+}
+
+// Modifique a função mergeAmoebas no terrestre.js:
+function mergeAmoebas(a, b) {
+    const newLevel = a.level + 1;
+    
+    // Limitar o nível máximo a 15
+    if (newLevel > 15) {
+        console.log("🎯 Nível máximo do terrestre alcançado!");
+        return;
+    }
+    
+    const newAmoeba = {
+        x: (a.x + b.x) / 2,
+        y: (a.y + b.y) / 2,
+        size: 60,
+        level: newLevel,
+        dragging: false,
+        dx: (Math.random() * 2 - 1) * 1.5,
+        dy: (Math.random() * 2 - 1) * 1.5,
+        animScale: 1.5
+    };
+
+    amoebas = amoebas.filter(x => x !== a && x !== b);
+    amoebas.push(newAmoeba);
+
+    if (!discoveredLevels.has(newLevel)) {
+        discoveredLevels.add(newLevel);
+        showInfoPopup(newLevel);
+        saveDiscovered();
+    }
+    
+    // ✅ VERIFICAR SE DESBLOQUEOU CÉU APÓS FUSÃO
+    checkNewLevelCeu();
+    saveGame();
+}
+
+// Modifique a função spawnAmoeba no terrestre.js:
+function spawnAmoeba(level = 1) {
+    const lvl = level + upgrades.higherStart.effect;
+    const newAmoeba = {
+        x: Math.random() * (canvas.width - 60),
+        y: Math.random() * (canvas.height - 60),
+        size: 60,
+        level: lvl,
+        dragging: false,
+        dx: (Math.random() * 2 - 1) * 1.5,
+        dy: (Math.random() * 2 - 1) * 1.5,
+        animScale: 1
+    };
+
+    amoebas.push(newAmoeba);
+
+    if (!discoveredLevels.has(lvl)) {
+        discoveredLevels.add(lvl);
+        showInfoPopup(lvl);
+        saveDiscovered();
+    }
+    
+    // ✅ VERIFICAR SE DESBLOQUEOU CÉU APÓS SPAWN
+    checkNewLevelCeu();
+    saveGame();
+}
+
+// Modifique o game loop no terrestre.js:
+function gameLoop(timestamp) {
+    const deltaTime = timestamp - lastTime;
+    lastTime = timestamp;
+
+    updateAmoebas(deltaTime);
+    updateMoneyAnimations();
+    
+    // ✅ ADICIONAR VERIFICAÇÃO DO NOVO NÍVEL CÉU
+    checkNewLevelCeu();
+    
+    drawBackground();
+    drawAmoebas();
+    drawMoneyAnimations();
+    drawSpawnBar();
+
+    requestAnimationFrame(gameLoop);
+}
+
+// E adicione esta verificação no loadGame do terrestre.js:
+function loadGame() {
+    const saved = localStorage.getItem("gameState_terrestre");
+    if (!saved) {
+        resetGame();
+        return;
+    }
+
+    const state = JSON.parse(saved);
+    amoebas = state.amoebas || amoebas;
+    coins = state.coins || 0;
+    upgrades = state.upgrades || upgrades;
+    amoebaPrices = state.amoebaPrices || {};
+    discoveredLevels = new Set(state.discoveredLevels || [1]);
+    spawnTimer = state.spawnTimer || 0;
+    spawnInterval = state.spawnInterval || 15000;
+
+    document.getElementById("coins").innerText = `💰 ${coins}`;
+    
+    // ✅ VERIFICAR SE JÁ TEM NÍVEL 15 AO CARREGAR O JOGO
+    setTimeout(() => {
+        checkNewLevelCeu();
+    }, 1000);
+}
