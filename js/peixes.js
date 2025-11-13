@@ -231,11 +231,49 @@ function showRewardPopup(skin) {
   showPopup("reward-popup");
 }
 function equipSkin(skinId, category) {
-  equippedSkin[category] = skinId;
-  localStorage.setItem("equippedSkin", JSON.stringify(equippedSkin));
-  renderInventory();
+    console.log(`🎮 Tentando equipar skin: ${skinId} para ${category}`);
+    
+    // Verificar se a skin existe no inventário
+    let skinExiste = false;
+    let skinEncontrada = null;
+    
+    // Procurar a skin em todos os níveis do inventário
+    for (let level in inventory[category]) {
+        skinEncontrada = inventory[category][level].find(skin => skin.id === skinId);
+        if (skinEncontrada) {
+            skinExiste = true;
+           
+            break;
+        }
+    }
+    
+    if (!skinExiste) {
+        
+        alert("Erro: Skin não encontrada no inventário!");
+        return;
+    }
+    
+    // Equipar a skin
+    equippedSkin[category] = skinId;
+    localStorage.setItem("equippedSkin", JSON.stringify(equippedSkin));
+    
+       console.log("Nova configuração equipada:", equippedSkin);
+    
+    // Forçar atualização visual
+    renderInventory();
+    
+    // Atualizar as cores dos peixes no canvas
+    updateFishColors();
+    
+    
 }
 
+// Função para atualizar as cores dos peixes quando uma skin é equipada
+function updateFishColors() {
+    // Esta função força o redesenho dos peixes com as novas cores
+    // O game loop vai automaticamente chamar getFishColor() novamente
+    console.log("🔄 Atualizando cores dos peixes...");
+}
 function unequipSkin(category) {
   equippedSkin[category] = null;
   localStorage.setItem("equippedSkin", JSON.stringify(equippedSkin));
@@ -265,13 +303,14 @@ function renderInventory(tab = 'peixes') {
       const skinElement = document.createElement('div');
       skinElement.className = `skin-item ${skin.rarity} ${isEquipped ? 'equipped' : ''}`;
       skinElement.innerHTML = `
-        <div class="skin-preview" style="background: ${skin.color}"></div>
-        <h5>${skin.name}</h5>
-        <p class="rarity">${getRarityName(skin.rarity)}</p>
-        ${isEquipped ? 
-          `<button class="unequip-btn" onclick="unequipSkin('${tab}')">Desequipar</button>` :
-          `<button class="equip-btn" onclick="equipSkin('${skin.id}', '${tab}')">Equipar</button>`
-        }
+          <div class="skin-preview" style="background: ${skin.color}"></div>
+          <h5>${skin.name}</h5>
+          <p class="rarity">${getRarityName(skin.rarity)}</p>
+          <p class="skin-id"><small>ID: ${skin.id}</small></p>
+          ${isEquipped ? 
+              `<button class="unequip-btn" onclick="unequipSkin('${tab}')">✅ Equipada</button>` :
+              `<button class="equip-btn" onclick="equipSkin('${skin.id}', '${tab}')">Equipar</button>`
+          }
       `;
       skinsGrid.appendChild(skinElement);
     });
@@ -343,22 +382,34 @@ document.getElementById("closeReward").addEventListener("click", () => {
 
 // Modifique a função getFishColor no peixes.js para usar skins:
 function getFishColor(level) {
-  // Verificar se há skin equipada para peixes
-  if (equippedSkin.peixes) {
-    // Procurar a skin equipada em todos os níveis
-    for (let lvl in inventory.peixes) {
-      const skin = inventory.peixes[lvl].find(s => s.id === equippedSkin.peixes);
-      if (skin) {
-        // Se encontrou a skin, verificar se o nível corresponde
-        // Ou usar a skin mesmo que o nível não corresponda (para flexibilidade)
-        return skin.color;
-      }
+    console.log("🔍 Procurando skin para peixes nível", level);
+    console.log("Skins equipadas:", equippedSkin);
+    
+    // Verificar se há skin equipada para peixes
+    if (equippedSkin.peixes) {
+        console.log("✅ Skin equipada encontrada:", equippedSkin.peixes);
+        
+        // Procurar a skin equipada em todos os níveis do inventário de peixes
+        for (let lvl in inventory.peixes) {
+            const skinsNoNivel = inventory.peixes[lvl];
+            console.log(`📦 Nível ${lvl} tem ${skinsNoNivel.length} skins`);
+            
+            const skinEncontrada = skinsNoNivel.find(skin => skin.id === equippedSkin.peixes);
+            if (skinEncontrada) {
+                console.log("🎨 Aplicando skin:", skinEncontrada.name, "cor:", skinEncontrada.color);
+                return skinEncontrada.color;
+            }
+        }
+        console.log("❌ Skin equipada não encontrada no inventário");
+    } else {
+        console.log("❌ Nenhuma skin equipada para peixes");
     }
-  }
-  
-  // Cores padrão se não houver skin equipada
-  const colors = ["#FF6B6B", "#4ECDC4", "#45B7D1", "#96CEB4", "#FFEAA7"];
-  return colors[(level - 1) % colors.length];
+    
+    // Cores padrão se não houver skin equipada
+    const colors = ["#FF6B6B", "#4ECDC4", "#45B7D1", "#96CEB4", "#FFEAA7"];
+    const corPadrao = colors[(level - 1) % colors.length];
+    console.log("🎯 Usando cor padrão:", corPadrao);
+    return corPadrao;
 }
 
 
@@ -784,7 +835,8 @@ function drawAmoebas() {
         const scale = amoeba.animScale;
         const radius = (amoeba.size / 2) * scale;
 
-        ctx.fillStyle = getColor(amoeba.level);
+        // ✅ CORREÇÃO: Usar getFishColor em vez de getColor
+        ctx.fillStyle = getFishColor(amoeba.level);
         ctx.beginPath();
         ctx.arc(amoeba.x + amoeba.size / 2, amoeba.y + amoeba.size / 2, radius, 0, Math.PI * 2);
         ctx.fill();
