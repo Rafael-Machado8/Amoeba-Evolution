@@ -425,13 +425,24 @@ const bg = new Image();
 bg.src = "assets/images/fundo-aquatico.jpg";
 
 // ======== INFORMAÇÕES DOS PEIXES ========
+// ======== INFORMAÇÕES DOS PEIXES ========
 const PEIXES_INFO = {
   1: { name: "Peixe Palhaço", img: "assets/images/peixe1.jpg", date: "📅 Descoberta: 1830", habitat: "🌊 Habitat: Recifes de coral", desc: "Peixe nível 1: colorido e adaptado à vida em anêmonas." },
   2: { name: "Peixe Cirurgião", img: "assets/images/peixe2.jpg", date: "📅 Descoberta: 1855", habitat: "🌊 Habitat: Oceanos tropicais", desc: "Peixe nível 2: conhecido pela lâmina caudal característica." },
   3: { name: "Peixe Mandarim", img: "assets/images/peixe3.jpg", date: "📅 Descoberta: 1880", habitat: "🌊 Habitat: Águas rasas", desc: "Peixe nível 3: um dos mais coloridos do oceano." },
   4: { name: "Peixe Leão", img: "assets/images/peixe4.jpg", date: "📅 Descoberta: 1905", habitat: "🌊 Habitat: Recifes rochosos", desc: "Peixe nível 4: venenoso e com espinhos impressionantes." },
   5: { name: "Tubarão Baleia", img: "assets/images/peixe5.jpg", date: "📅 Descoberta: 1828", habitat: "🌊 Habitat: Oceanos abertos", desc: "Peixe nível 5: maior peixe do mundo, completamente inofensivo." },
-  6: { name: "Peixe Legendário", img: "assets/images/peixe1.jpg", date: "📅 Descoberta: 2024", habitat: "🌊 Habitat: Abissal", desc: "Peixe nível 6: espécie raríssima das profundezas." }
+  6: { name: "Cavalo Marinho", img: "assets/images/peixe1.jpg", date: "📅 Descoberta: 1876", habitat: "🌊 Habitat: Águas costeiras", desc: "Peixe nível 6: único onde o macho carrega os ovos." },
+  7: { name: "Peixe Papagaio", img: "assets/images/peixe2.jpg", date: "📅 Descoberta: 1892", habitat: "🌊 Habitat: Recifes de coral", desc: "Peixe nível 7: ajuda a criar areia dos corais com seu bico." },
+  8: { name: "Moreia", img: "assets/images/peixe3.jpg", date: "📅 Descoberta: 1912", habitat: "🌊 Habitat: Fendas rochosas", desc: "Peixe nível 8: corpo alongado e mandíbula poderosa." },
+  9: { name: "Peixe Balão", img: "assets/images/peixe4.jpg", date: "📅 Descoberta: 1925", habitat: "🌊 Habitat: Oceanos tropicais", desc: "Peixe nível 9: infla quando ameaçado, venenoso." },
+  10: { name: "Peixe Anjo", img: "assets/images/peixe5.jpg", date: "📅 Descoberta: 1938", habitat: "🌊 Habitat: Recifes rasos", desc: "Peixe nível 10: cores vibrantes e formato achatado." },
+  11: { name: "Peixe Espada", img: "assets/images/peixe1.jpg", date: "📅 Descoberta: 1950", habitat: "🌊 Habitat: Oceanos abertos", desc: "Peixe nível 11: nadador rápido com focinho alongado." },
+  12: { name: "Peixe Voador", img: "assets/images/peixe2.jpg", date: "📅 Descoberta: 1965", habitat: "🌊 Habitat: Superfície oceânica", desc: "Peixe nível 12: plana acima da água para escapar predadores." },
+  13: { name: "Peixe Pedra", img: "assets/images/peixe3.jpg", date: "📅 Descoberta: 1978", habitat: "🌊 Habitat: Fundo do mar", desc: "Peixe nível 13: mestre do disfarce e muito venenoso." },
+  14: { name: "Peixe Lanterna", img: "assets/images/peixe4.jpg", date: "📅 Descoberta: 1985", habitat: "🌊 Habitat: Zona abissal", desc: "Peixe nível 14: emite luz própria nas profundezas." },
+  15: { name: "Peixe Lua", img: "assets/images/peixe5.jpg", date: "📅 Descoberta: 1992", habitat: "🌊 Habitat: Oceanos temperados", desc: "Peixe nível 15: maior peixe ósseo do mundo." },
+  16: { name: "Peixe Lendário", img: "assets/images/peixe1.jpg", date: "📅 Descoberta: 2024", habitat: "🌊 Habitat: Abissal", desc: "Peixe nível 16: espécie raríssima das profundezas." }
 };
 
 // ======== VARIÁVEIS DO JOGO ========
@@ -740,6 +751,13 @@ canvas.addEventListener("mouseup", () => {
 // Fusão
 function mergeAmoebas(a, b) {
     const newLevel = a.level + 1;
+    
+    // Limitar o nível máximo a 16
+    if (newLevel > 16) {
+        console.log("🎯 Nível máximo alcançado!");
+        return;
+    }
+    
     const newAmoeba = {
         x: (a.x + b.x) / 2,
         y: (a.y + b.y) / 2,
@@ -1030,6 +1048,39 @@ function gameLoop(timestamp) {
     
     // ✅ ADICIONAR VERIFICAÇÃO DO NOVO NÍVEL TERRESTRE
     checkNewLevelTerrestre();
+    
+    drawBackground();
+    drawAmoebas();
+    drawMoneyAnimations();
+    drawSpawnBar();
+
+    requestAnimationFrame(gameLoop);
+}
+
+// ======== VERIFICAÇÃO DO NOVO NÍVEL CÉU ========
+function checkNewLevelCeu() {
+    const hasLevel15 = amoebas.some(a => a.level >= 15);
+    const ceuBtn = document.getElementById("newlevelbtn");
+    
+    if (hasLevel15) {
+        ceuBtn.classList.remove("hidden");
+        ceuBtn.style.display = "block";
+        ceuBtn.textContent = "☁️ Novo Nível Céu";
+        ceuBtn.onclick = function() { window.location.href = 'ceu.html'; };
+        localStorage.setItem("nivel_ceu_desbloqueado", "true");
+    }
+}
+
+// Modifique o game loop no peixes.js para incluir esta verificação:
+function gameLoop(timestamp) {
+    const deltaTime = timestamp - lastTime;
+    lastTime = timestamp;
+
+    updateAmoebas(deltaTime);
+    updateMoneyAnimations();
+    
+    // ✅ ADICIONAR VERIFICAÇÃO DO NOVO NÍVEL CÉU
+    checkNewLevelCeu();
     
     drawBackground();
     drawAmoebas();

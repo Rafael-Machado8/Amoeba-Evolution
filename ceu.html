@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Amoeba Evolution</title>
+  <title>Amoeba Evolution - Céu</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -18,7 +18,8 @@
     <div id="ui-buttons">
       <button id="homeBtn">🏠 Home</button>
       <button id="shopBtn">🛒 Shop</button>
-      <!-- Popup de Loja (Lootboxes) -->
+        
+        <!-- Popup de Loja (Lootboxes) -->
         <div id="shop-popup" class="hidden">
           <div class="popup-content">
             <h2>🛒 Loja - Caixas Misteriosas</h2>
@@ -56,31 +57,32 @@
           </div>
         </div>
 
-<!-- Popup de Recompensa -->
-<div id="reward-popup" class="hidden">
-  <div class="popup-content reward-content">
-    <h2>🎉 Parabéns!</h2>
-    <div id="reward-item"></div>
-    <button id="closeReward">Fechar</button>
-  </div>
-</div>
+        <!-- Popup de Recompensa -->
+        <div id="reward-popup" class="hidden">
+          <div class="popup-content reward-content">
+            <h2>🎉 Parabéns!</h2>
+            <div id="reward-item"></div>
+            <button id="closeReward">Fechar</button>
+          </div>
+        </div>
 
-<!-- Popup de Inventário -->
-<div id="inventory-popup" class="hidden">
-  <div class="popup-content">
-    <h2>🎒 Inventário de Skins</h2>
-    <div class="inventory-tabs">
-      <button class="tab-button active" data-tab="amoebas">🦠 Amoebas</button>
-      <button class="tab-button" data-tab="peixes">🐟 Peixes</button>
-      <button class="tab-button" data-tab="terrestre">🌳 Terrestre</button>
-      <button class="tab-button" data-tab="ceu">☁️ Céu</button>
-    </div>
-    <div id="inventory-content" class="inventory-content">
-      <!-- Itens serão carregados aqui -->
-    </div>
-    <button id="closeInventory">Fechar</button>
-  </div>
-</div>
+        <!-- Popup de Inventário -->
+        <div id="inventory-popup" class="hidden">
+          <div class="popup-content">
+            <h2>🎒 Inventário de Skins</h2>
+            <div class="inventory-tabs">
+              <button class="tab-button active" data-tab="amoebas">🦠 Amoebas</button>
+              <button class="tab-button" data-tab="peixes">🐟 Peixes</button>
+              <button class="tab-button" data-tab="terrestre">🌳 Terrestre</button>
+              <button class="tab-button" data-tab="ceu">☁️ Céu</button>
+            </div>
+            <div id="inventory-content" class="inventory-content">
+              <!-- Itens serão carregados aqui -->
+            </div>
+            <button id="closeInventory">Fechar</button>
+          </div>
+        </div>
+
       <button id="libraryBtn">📚 Biblioteca</button>
       <button id="inventoryBtn">🎒 Inventário</button>
     </div>
@@ -88,26 +90,12 @@
     <!-- Botão de upgrade -->
     <button id="upgradeBtn">🧬</button>
 
-    <!-- Botão de compra de amoeba -->
-    <button id="buyAmoebaBtn">➕ Amoeba</button>
+    <!-- Botão de compra de ave -->
+    <button id="buyAmoebaBtn">➕ Ave</button>
 
-    
-    <!--novo nivel-->
-    
-    <button id="newlevelbtn" class="hidden" onclick="window.location.href='peixes.html';" style="display: none;">🐟 Novo Nível peixes</button>
+    <!-- Botão voltar para terrestre -->
+    <button id="backToTerrestreBtn" onclick="window.location.href='terrestre.html';">🌳 Voltar ao Terrestre</button>
 
-    <script>
-    // Verificar se o nível dos peixes está desbloqueado ao carregar a página
-    document.addEventListener('DOMContentLoaded', function() {
-        const nivelDesbloqueado = localStorage.getItem("nivel_peixes_desbloqueado");
-        const newLevelBtn = document.getElementById("newlevelbtn");
-        
-        if (nivelDesbloqueado === "true") {
-            newLevelBtn.classList.remove("hidden");
-            newLevelBtn.style.display = "block";
-        }
-    });
-    </script>
     <!-- Pop-up de Upgrades -->
     <div id="upgrade-popup" class="hidden">
       <div class="popup-content">
@@ -117,31 +105,31 @@
       </div>
     </div>
 
-    <!-- Pop-up de Compra de Amoebas -->
+    <!-- Pop-up de Compra de Aves -->
     <div id="buy-popup" class="hidden">
       <div class="popup-content">
-        <h2>🧫 Comprar Amoebas</h2>
+        <h2>🦅 Comprar Aves</h2>
         <div id="buy-list"></div>
         <button id="closeBuy">Fechar</button>
       </div>
     </div>
 
-    <!-- Pop-up Educativo de Nova Amoeba -->
+    <!-- Pop-up Educativo de Nova Ave -->
     <div id="info-popup" class="hidden">
       <div class="popup-content">
-        <h2>🔬 Nova Amoeba Desbloqueada!</h2>
-        <img id="info-image" src="assets/images/amoeba.jpg" alt="Amoeba" />
+        <h2>🔬 Nova Ave Desbloqueada!</h2>
+        <img id="info-image" src="assets/images/ave1.jpg" alt="Ave" />
         <p id="info-date"><strong>📅 Descoberta:</strong> 1800</p>
-        <p id="info-habitat"><strong>🌍 Habitat:</strong> Lagos e rios de água doce</p>
+        <p id="info-habitat"><strong>☁️ Habitat:</strong> Céu e atmosfera</p>
         <p id="info-description">
-          Esta é uma amoeba incrível, conhecida por sua capacidade de adaptação e por ser um dos seres vivos mais simples do planeta.
+          Esta é uma ave incrível, adaptada para vida aérea com características únicas.
         </p>
         <button id="closeInfo">Fechar</button>
       </div>
     </div>
   </div>
 
-<script src="js/main.js"></script>
+<script src="js/ceu.js"></script>
 
 </body>
 </html>

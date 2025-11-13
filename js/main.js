@@ -544,7 +544,7 @@ const SKINS = {
       { id: 'peixe_1_4', name: 'Peixe Translúcido', rarity: 'epic', color: '#F0F8FF' },
       { id: 'peixe_1_5', name: 'Peixe Aurora', rarity: 'legendary', color: 'linear-gradient(45deg, #00b4db, #0083b0)' }
     ],
-    // ... adicione mais níveis seguindo o mesmo padrão
+    
   },
   terrestre: {
     1: [
@@ -554,9 +554,48 @@ const SKINS = {
       { id: 'terrestre_1_4', name: 'Animal Prateado', rarity: 'epic', color: '#C0C0C0' },
       { id: 'terrestre_1_5', name: 'Animal Místico', rarity: 'legendary', color: 'linear-gradient(45deg, #654ea3, #eaafc8)' }
     ],
-    // ... adicione mais níveis seguindo o mesmo padrão
+    
+  },
+   ceu: {
+    1: [
+      { id: 'ceu_1_1', name: 'Ave Marrom Básica', rarity: 'common', color: '#8B4513' },
+      { id: 'ceu_1_2', name: 'Ave Cinza Básica', rarity: 'common', color: '#808080' },
+      { id: 'ceu_1_3', name: 'Ave Dourada', rarity: 'rare', color: '#FFD700' },
+      { id: 'ceu_1_4', name: 'Ave Prateada', rarity: 'epic', color: '#C0C0C0' },
+      { id: 'ceu_1_5', name: 'Ave Celestial', rarity: 'legendary', color: 'linear-gradient(45deg, #87CEEB, #E0F7FA)' }
+    ],
+    2: [
+      { id: 'ceu_2_1', name: 'Ave Azul Céu', rarity: 'common', color: '#87CEEB' },
+      { id: 'ceu_2_2', name: 'Ave Verde Pássaro', rarity: 'common', color: '#32CD32' },
+      { id: 'ceu_2_3', name: 'Ave Bronze Alada', rarity: 'rare', color: '#CD7F32' },
+      { id: 'ceu_2_4', name: 'Ave Topázio', rarity: 'epic', color: '#FFC87C' },
+      { id: 'ceu_2_5', name: 'Ave Aurora', rarity: 'legendary', color: 'linear-gradient(45deg, #FF7E5F, #FEB47B)' }
+    ],
+    3: [
+      { id: 'ceu_3_1', name: 'Ave Vermelha Cardinal', rarity: 'common', color: '#DC143C' },
+      { id: 'ceu_3_2', name: 'Ave Amarela Canário', rarity: 'common', color: '#FFFF00' },
+      { id: 'ceu_3_3', name: 'Ave Ametista', rarity: 'rare', color: '#9966CC' },
+      { id: 'ceu_3_4', name: 'Ave Esmeralda Alada', rarity: 'epic', color: '#50C878' },
+      { id: 'ceu_3_5', name: 'Ave Crepúsculo', rarity: 'legendary', color: 'linear-gradient(45deg, #654ea3, #eaafc8)' }
+    ],
+    4: [
+      { id: 'ceu_4_1', name: 'Ave Negra Corvo', rarity: 'common', color: '#2F4F4F' },
+      { id: 'ceu_4_2', name: 'Ave Branca Neve', rarity: 'common', color: '#FFFAFA' },
+      { id: 'ceu_4_3', name: 'Ave Platina', rarity: 'rare', color: '#E5E4E2' },
+      { id: 'ceu_4_4', name: 'Ave Safira Azul', rarity: 'epic', color: '#0F52BA' },
+      { id: 'ceu_4_5', name: 'Ave Arco-íris', rarity: 'legendary', color: 'linear-gradient(45deg, #FF0000, #FFA500, #FFFF00, #008000, #0000FF, #4B0082, #EE82EE)' }
+    ],
+    5: [
+      { id: 'ceu_5_1', name: 'Ave Laranja Flamejante', rarity: 'common', color: '#FF8C00' },
+      { id: 'ceu_5_2', name: 'Ave Roxa Real', rarity: 'common', color: '#9370DB' },
+      { id: 'ceu_5_3', name: 'Ave Ouro Rosa', rarity: 'rare', color: '#E6BE8A' },
+      { id: 'ceu_5_4', name: 'Ave Diamante Brilhante', rarity: 'epic', color: '#B9F2FF' },
+      { id: 'ceu_5_5', name: 'Ave Fênix Lendária', rarity: 'legendary', color: 'linear-gradient(45deg, #FF0000, #FF4500, #FFD700, #FFFF00)' }
+    ]
   }
 };
+
+
 
 // Preços das lootboxes
 const LOOTBOX_PRICES = {
@@ -584,20 +623,22 @@ const LOOTBOX_PROBABILITIES = {
   }
 };
 
+
 // Inventário do jogador
 let inventory = JSON.parse(localStorage.getItem("skinInventory")) || {
   amoebas: {},
   peixes: {},
-  terrestre: {}
+  terrestre: {},
+  ceu: {}  // ✅ ADICIONE A CATEGORIA CÉU
 };
 
 // Skin equipada atual
 let equippedSkin = JSON.parse(localStorage.getItem("equippedSkin")) || {
   amoebas: null,
   peixes: null,
-  terrestre: null
+  terrestre: null,
+  ceu: null  // ✅ ADICIONE A CATEGORIA CÉU
 };
-
 // ======== FUNÇÕES DO SISTEMA DE LOOTBOX ========
 
 // Comprar uma lootbox
@@ -795,7 +836,8 @@ function getCategoryName(category) {
   const names = {
     amoebas: 'Amoebas',
     peixes: 'Peixes',
-    terrestre: 'Terrestre'
+    terrestre: 'Terrestre',
+    ceu: 'Céu'
   };
   return names[category] || category;
 }
@@ -1159,7 +1201,8 @@ function initializeAllSkins() {
   const allSkins = {
     amoebas: SKINS.amoebas,
     peixes: PEIXES_SKINS, 
-    terrestre: TERRESTRE_SKINS 
+    terrestre: TERRESTRE_SKINS,
+    ceu: SKINS.ceu  // ✅ ADICIONE AS SKINS DO CÉU
   };
   localStorage.setItem("allSkins", JSON.stringify(allSkins));
 }
