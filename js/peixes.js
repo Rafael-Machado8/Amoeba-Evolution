@@ -1065,8 +1065,8 @@ function checkNewLevelCeu() {
     if (hasLevel15) {
         ceuBtn.classList.remove("hidden");
         ceuBtn.style.display = "block";
-        ceuBtn.textContent = "☁️ Novo Nível Céu";
-        ceuBtn.onclick = function() { window.location.href = 'ceu.html'; };
+        ceuBtn.textContent = "🌳 Novo Nível Terrestre ";
+        ceuBtn.onclick = function() { window.location.href = 'terrestre.html'; };
         localStorage.setItem("nivel_ceu_desbloqueado", "true");
     }
 }
