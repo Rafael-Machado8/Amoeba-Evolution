@@ -49,12 +49,146 @@ bg.src = "assets/images/fundo1.jpg";
 
 // ======== POPUP EDUCATIVO ========
 const AMOEBA_INFO = {
-  1: { name: "Ameba Inicial", img: "assets/images/amoeba.jpg", date: "📅 Descoberta: 1801", habitat: "🌍 Habitat: Lagos e rios de água doce", desc: "Amoeba nível 1: organismo simples, base para entender a evolução." },
-  2: { name: "Ameba Evoluída", img: "assets/images/amoeba.jpg", date: "📅 Descoberta: 1820", habitat: "🌍 Habitat: Poças e lagos rasos", desc: "Amoeba nível 2: melhor mobilidade e captação de alimento." },
-  3: { name: "Ameba Superior", img: "assets/images/amoeba.jpg", date: "📅 Descoberta: 1850", habitat: "🌍 Habitat: Água doce e úmida", desc: "Amoeba nível 3: adaptação superior a ambientes variados." },
-  4: { name: "Ameba Mestre", img: "assets/images/amoeba.jpg", date: "📅 Descoberta: 1885", habitat: "🌍 Habitat: Sedimentos de lago", desc: "Amoeba nível 4: metabolismo mais eficiente." },
-  5: { name: "Ameba Lendária", img: "assets/images/amoeba.jpg", date: "📅 Descoberta: 1910", habitat: "🌍 Habitat: Lagos frios", desc: "Amoeba nível 5: alta resiliência a mudanças térmicas." },
-  6: { name: "Ameba Cósmica", img: "assets/images/amoeba.jpg", date: "📅 Descoberta: 1950", habitat: "🌍 Habitat: Riachos e margens", desc: "Amoeba nível 6: comportamento de fusão muito eficiente." }
+  1: { 
+    name: "Amoeba proteus", 
+    img: "assets/images/amoeba1.jpg", 
+    date: "📅 Descoberta: 1755",
+    habitat: "🌍 Habitat: Água doce", 
+    desc: "Rainha das amebas - move-se com pseudópodes elegantes. Idade: 1.2 bilhão de anos" 
+  },
+  2: { 
+    name: "Entamoeba histolytica", 
+    img: "assets/images/amoeba2.jpg", 
+    date: "📅 Descoberta: 1875",
+    habitat: "🌍 Habitat: Intestino humano", 
+    desc: "Parasita especializado em invasão celular. Idade: 1 bilhão de anos" 
+  },
+  3: { 
+    name: "Naegleria fowleri", 
+    img: "assets/images/amoeba3.jpg", 
+    date: "📅 Descoberta: 1965",
+    habitat: "🌍 Habitat: Águas mornas", 
+    desc: "Ameba comedora de cérebro - rara e fatal. Idade: 900 milhões de anos" 
+  },
+  4: { 
+    name: "Acanthamoeba", 
+    img: "assets/images/amoeba4.jpg", 
+    date: "📅 Descoberta: 1930",
+    habitat: "🌍 Habitat: Solo e água", 
+    desc: "Causa infecções oculares - muito resistente. Idade: 850 milhões de anos" 
+  },
+  5: { 
+    name: "Difflugia", 
+    img: "assets/images/amoeba5.jpg", 
+    date: "📅 Descoberta: 1816",
+    habitat: "🌍 Habitat: Lagos", 
+    desc: "Arquiteta microscópica com casinha de areia. Idade: 800 milhões de anos" 
+  },
+  6: { 
+    name: "Arcella", 
+    img: "assets/images/amoeba6.jpg", 
+    date: "📅 Descoberta: 1832", 
+    habitat: "🌍 Habitat: Pântanos",
+    desc: "Vive em cúpula quitinosa - mini castelo. Idade: 750 milhões de anos" 
+  },
+  7: { 
+    name: "Euglypha", 
+    img: "assets/images/amoeba7.jpg", 
+    date: "📅 Descoberta: 1845",
+    habitat: "🌍 Habitat: Musgos úmidos", 
+    desc: "Constrói escudos de sílica elaborados. Idade: 700 milhões de anos" 
+  },
+  8: { 
+    name: "Vampyrella", 
+    img: "assets/images/amoeba8.jpg", 
+    date: "📅 Descoberta: 1865",
+    habitat: "🌍 Habitat: Lagos com algas", 
+    desc: "Ameba laranja - perfura paredes celulares. Idade: 650 milhões de anos" 
+  },
+  9: { 
+    name: "Gromia", 
+    img: "assets/images/amoeba9.jpg", 
+    date: "📅 Descoberta: 1902",
+    habitat: "🌍 Habitat: Fundo oceânico", 
+    desc: "Ameba gigante - deixa rastros no mar. Idade: 600 milhões de anos" 
+  },
+  10: { 
+    name: "Foraminífero", 
+    img: "assets/images/amoeba10.jpg", 
+    date: "📅 Descoberta: 1826",
+    habitat: "🌍 Habitat: Oceanos", 
+    desc: "Constrói esculturas calcárias complexas. Idade: 550 milhões de anos" 
+  },
+  11: { 
+    name: "Radiolária", 
+    img: "assets/images/amoeba11.jpg", 
+    date: "📅 Descoberta: 1834",
+    habitat: "🌍 Habitat: Oceanos tropicais", 
+    desc: "Esqueleto de sílica - joia do plâncton. Idade: 500 milhões de anos" 
+  },
+  12: { 
+    name: "Heliozoa", 
+    img: "assets/images/amoeba12.jpg", 
+    date: "📅 Descoberta: 1860",
+    habitat: "🌍 Habitat: Águas com vegetação", 
+    desc: "Ameba solar - pseudópodes radiais. Idade: 450 milhões de anos" 
+  },
+  13: { 
+    name: "Chlamydophrys", 
+    img: "assets/images/amoeba13.jpg", 
+    date: "📅 Descoberta: 1879",
+    habitat: "🌍 Habitat: Solos florestais", 
+    desc: "Forma colônias complexas - comportamento social. Idade: 400 milhões de anos" 
+  },
+  14: { 
+    name: "Paulinella", 
+    img: "assets/images/amoeba14.jpg", 
+    date: "📅 Descoberta: 1895",
+    habitat: "🌍 Habitat: Águas marinhas", 
+    desc: "Roubou cloroplastos independentemente. Idade: 350 milhões de anos" 
+  },
+  15: { 
+    name: "Filamoeba", 
+    img: "assets/images/amoeba15.jpg", 
+    date: "📅 Descoberta: 1912",
+    habitat: "🌍 Habitat: Solos orgânicos", 
+    desc: "Forma filamentos ramificados - elo com fungos. Idade: 300 milhões de anos" 
+  },
+  16: { 
+    name: "Vannella", 
+    img: "assets/images/amoeba16.jpg", 
+    date: "📅 Descoberta: 1926",
+    habitat: "🌍 Habitat: Águas marinhas", 
+    desc: "Formato de leque - adaptação marinha. Idade: 250 milhões de anos" 
+  },
+  17: { 
+    name: "Cochliopodium", 
+    img: "assets/images/amoeba17.jpg", 
+    date: "📅 Descoberta: 1849",
+    habitat: "🌍 Habitat: Águas doces", 
+    desc: "Coberta por escamas orgânicas - armadura flexível. Idade: 200 milhões de anos" 
+  },
+  18: { 
+    name: "Mayorella", 
+    img: "assets/images/amoeba18.jpg", 
+    date: "📅 Descoberta: 1934",
+    habitat: "🌍 Habitat: Lagos e riachos", 
+    desc: "Pseudópodes largos - movimento fluido. Idade: 150 milhões de anos" 
+  },
+  19: { 
+    name: "Thecamoeba", 
+    img: "assets/images/amoeba19.jpg", 
+    date: "📅 Descoberta: 1961",
+    habitat: "🌍 Habitat: Solos pobres", 
+    desc: "Ectoplasma rígido - dobras características. Idade: 100 milhões de anos" 
+  },
+  20: { 
+    name: "Saccamoeba", 
+    img: "assets/images/amoeba20.jpg", 
+    date: "📅 Descoberta: 1973",
+    habitat: "🌍 Habitat: Águas ricas", 
+    desc: "Forma bolsas alimentares - eficiência. Idade: 50 milhões de anos" 
+  }
 };
 
 // ======== SISTEMA DE SAVE/LOAD ========

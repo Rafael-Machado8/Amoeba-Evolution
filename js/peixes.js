@@ -427,22 +427,146 @@ bg.src = "assets/images/fundo-aquatico.jpg";
 // ======== INFORMAÇÕES DOS PEIXES ========
 // ======== INFORMAÇÕES DOS PEIXES ========
 const PEIXES_INFO = {
-  1: { name: "Peixe Palhaço", img: "assets/images/peixe1.jpg", date: "📅 Descoberta: 1830", habitat: "🌊 Habitat: Recifes de coral", desc: "Peixe nível 1: colorido e adaptado à vida em anêmonas." },
-  2: { name: "Peixe Cirurgião", img: "assets/images/peixe2.jpg", date: "📅 Descoberta: 1855", habitat: "🌊 Habitat: Oceanos tropicais", desc: "Peixe nível 2: conhecido pela lâmina caudal característica." },
-  3: { name: "Peixe Mandarim", img: "assets/images/peixe3.jpg", date: "📅 Descoberta: 1880", habitat: "🌊 Habitat: Águas rasas", desc: "Peixe nível 3: um dos mais coloridos do oceano." },
-  4: { name: "Peixe Leão", img: "assets/images/peixe4.jpg", date: "📅 Descoberta: 1905", habitat: "🌊 Habitat: Recifes rochosos", desc: "Peixe nível 4: venenoso e com espinhos impressionantes." },
-  5: { name: "Tubarão Baleia", img: "assets/images/peixe5.jpg", date: "📅 Descoberta: 1828", habitat: "🌊 Habitat: Oceanos abertos", desc: "Peixe nível 5: maior peixe do mundo, completamente inofensivo." },
-  6: { name: "Cavalo Marinho", img: "assets/images/peixe1.jpg", date: "📅 Descoberta: 1876", habitat: "🌊 Habitat: Águas costeiras", desc: "Peixe nível 6: único onde o macho carrega os ovos." },
-  7: { name: "Peixe Papagaio", img: "assets/images/peixe2.jpg", date: "📅 Descoberta: 1892", habitat: "🌊 Habitat: Recifes de coral", desc: "Peixe nível 7: ajuda a criar areia dos corais com seu bico." },
-  8: { name: "Moreia", img: "assets/images/peixe3.jpg", date: "📅 Descoberta: 1912", habitat: "🌊 Habitat: Fendas rochosas", desc: "Peixe nível 8: corpo alongado e mandíbula poderosa." },
-  9: { name: "Peixe Balão", img: "assets/images/peixe4.jpg", date: "📅 Descoberta: 1925", habitat: "🌊 Habitat: Oceanos tropicais", desc: "Peixe nível 9: infla quando ameaçado, venenoso." },
-  10: { name: "Peixe Anjo", img: "assets/images/peixe5.jpg", date: "📅 Descoberta: 1938", habitat: "🌊 Habitat: Recifes rasos", desc: "Peixe nível 10: cores vibrantes e formato achatado." },
-  11: { name: "Peixe Espada", img: "assets/images/peixe1.jpg", date: "📅 Descoberta: 1950", habitat: "🌊 Habitat: Oceanos abertos", desc: "Peixe nível 11: nadador rápido com focinho alongado." },
-  12: { name: "Peixe Voador", img: "assets/images/peixe2.jpg", date: "📅 Descoberta: 1965", habitat: "🌊 Habitat: Superfície oceânica", desc: "Peixe nível 12: plana acima da água para escapar predadores." },
-  13: { name: "Peixe Pedra", img: "assets/images/peixe3.jpg", date: "📅 Descoberta: 1978", habitat: "🌊 Habitat: Fundo do mar", desc: "Peixe nível 13: mestre do disfarce e muito venenoso." },
-  14: { name: "Peixe Lanterna", img: "assets/images/peixe4.jpg", date: "📅 Descoberta: 1985", habitat: "🌊 Habitat: Zona abissal", desc: "Peixe nível 14: emite luz própria nas profundezas." },
-  15: { name: "Peixe Lua", img: "assets/images/peixe5.jpg", date: "📅 Descoberta: 1992", habitat: "🌊 Habitat: Oceanos temperados", desc: "Peixe nível 15: maior peixe ósseo do mundo." },
-  16: { name: "Peixe Lendário", img: "assets/images/peixe1.jpg", date: "📅 Descoberta: 2024", habitat: "🌊 Habitat: Abissal", desc: "Peixe nível 16: espécie raríssima das profundezas." }
+  1: { 
+    name: "Celacanto", 
+    img: "assets/images/peixe1.jpg", 
+    date: "📅 Descoberta: 1938",
+    habitat: "🌊 Habitat: Oceanos profundos", 
+    desc: "Fóssil vivo - ancestral dos tetrápodes. Idade: 400 milhões de anos" 
+  },
+  2: { 
+    name: "Esturjão", 
+    img: "assets/images/peixe2.jpg", 
+    date: "📅 Descoberta: 1758", 
+    habitat: "🌊 Habitat: Rios e mares",
+    desc: "Fóssil vivo - produz o caviar. Idade: 200 milhões de anos" 
+  },
+  3: { 
+    name: "Tubarão-cobra", 
+    img: "assets/images/peixe3.jpg", 
+    date: "📅 Descoberta: 1884",
+    habitat: "🌊 Habitat: Águas profundas", 
+    desc: "Fóssil vivo - gestação de 3.5 anos. Idade: 150 milhões de anos" 
+  },
+  4: { 
+    name: "Peixe-pulmonado", 
+    img: "assets/images/peixe4.jpg", 
+    date: "📅 Descoberta: 1837",
+    habitat: "🌊 Habitat: Rios temporários", 
+    desc: "Respira ar - sobrevive a secas. Idade: 100 milhões de anos" 
+  },
+  5: { 
+    name: "Gar", 
+    img: "assets/images/peixe5.jpg", 
+    date: "📅 Descoberta: 1758",
+    habitat: "🌊 Habitat: Águas doces", 
+    desc: "Armadura de ganoína - primitivo. Idade: 80 milhões de anos" 
+  },
+  6: { 
+    name: "Arowana", 
+    img: "assets/images/peixe6.jpg", 
+    date: "📅 Descoberta: 1844",
+    habitat: "🌊 Habitat: Rios tropicais", 
+    desc: "Peixe-dragão - salta alto. Idade: 60 milhões de anos" 
+  },
+  7: { 
+    name: "Tubarão-elefante", 
+    img: "assets/images/peixe7.jpg", 
+    date: "📅 Descoberta: 1765",
+    habitat: "🌊 Habitat: Oceanos temperados", 
+    desc: "Segundo maior peixe - filtrador. Idade: 50 milhões de anos" 
+  },
+  8: { 
+    name: "Mero-gigante", 
+    img: "assets/images/peixe8.jpg", 
+    date: "📅 Descoberta: 1790",
+    habitat: "🌊 Habitat: Recifes de coral", 
+    desc: "Muda de sexo - gigante gentil. Idade: 40 milhões de anos" 
+  },
+  9: { 
+    name: "Peixe-lua", 
+    img: "assets/images/peixe9.jpg", 
+    date: "📅 Descoberta: 1758",
+    habitat: "🌊 Habitat: Oceanos tropicais", 
+    desc: "Maior peixe ósseo - desengonçado. Idade: 35 milhões de anos" 
+  },
+  10: { 
+    name: "Peixe-voador", 
+    img: "assets/images/peixe10.jpg", 
+    date: "📅 Descoberta: 1758",
+    habitat: "🌊 Habitat: Oceanos tropicais", 
+    desc: "Planador - escapa de predadores. Idade: 30 milhões de anos" 
+  },
+  11: { 
+    name: "Barracuda", 
+    img: "assets/images/peixe11.jpg", 
+    date: "📅 Descoberta: 1758",
+    habitat: "🌊 Habitat: Oceanos tropicais", 
+    desc: "Predador rápido - dentes afiados. Idade: 25 milhões de anos" 
+  },
+  12: { 
+    name: "Atum-azul", 
+    img: "assets/images/peixe12.jpg", 
+    date: "📅 Descoberta: 1758",
+    habitat: "🌊 Habitat: Atlântico", 
+    desc: "Nadador olímpico - sangue quente. Idade: 20 milhões de anos" 
+  },
+  13: { 
+    name: "Peixe-palhaço", 
+    img: "assets/images/peixe13.jpg", 
+    date: "📅 Descoberta: 1830",
+    habitat: "🌊 Habitat: Recifes de coral", 
+    desc: "Simbiose com anêmonas. Idade: 15 milhões de anos" 
+  },
+  14: { 
+    name: "Cirurgião-azul", 
+    img: "assets/images/peixe14.jpg", 
+    date: "📅 Descoberta: 1775",
+    habitat: "🌊 Habitat: Recifes", 
+    desc: "Espinhos venenosos - Dory. Idade: 12 milhões de anos" 
+  },
+  15: { 
+    name: "Peixe-mandarim", 
+    img: "assets/images/peixe15.jpg", 
+    date: "📅 Descoberta: 1927",
+    habitat: "🌊 Habitat: Lagunas rasas", 
+    desc: "Cores psicodélicas - raro. Idade: 10 milhões de anos" 
+  },
+  16: { 
+    name: "Peixe-papagaio", 
+    img: "assets/images/peixe16.jpg", 
+    date: "📅 Descoberta: 1758",
+    habitat: "🌊 Habitat: Recifes", 
+    desc: "Cria areia dos corais. Idade: 8 milhões de anos" 
+  },
+  17: { 
+    name: "Peixe-anjo", 
+    img: "assets/images/peixe17.jpg", 
+    date: "📅 Descoberta: 1758",
+    habitat: "🌊 Habitat: Recifes", 
+    desc: "Cores vibrantes - olhos falsos. Idade: 6 milhões de anos" 
+  },
+  18: { 
+    name: "Peixe-borboleta", 
+    img: "assets/images/peixe18.jpg", 
+    date: "📅 Descoberta: 1758",
+    habitat: "🌊 Habitat: Recifes", 
+    desc: "Nadador ágil - padrões complexos. Idade: 4 milhões de anos" 
+  },
+  19: { 
+    name: "Peixe-palhaço-tomate", 
+    img: "assets/images/peixe19.jpg", 
+    date: "📅 Descoberta: 1853",
+    habitat: "🌊 Habitat: Recifes", 
+    desc: "Nemo - simbiose perfeita. Idade: 2 milhões de anos" 
+  },
+  20: { 
+    name: "Cardeal-de-Bangai", 
+    img: "assets/images/peixe20.jpg", 
+    date: "📅 Descoberta: 1933",
+    habitat: "🌊 Habitat: Recifes rasos", 
+    desc: "Incubação bucal - ameaçado. Idade: 1 milhão de anos" 
+  }
 };
 
 // ======== VARIÁVEIS DO JOGO ========

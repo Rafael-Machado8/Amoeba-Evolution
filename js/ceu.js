@@ -49,21 +49,146 @@ bg.src = "assets/images/fundo-ceu.jpg";
 
 // ======== INFORMAÇÕES DAS AVES ========
 const CEU_INFO = {
-  1: { name: "Pardal", img: "assets/images/ave1.jpg", date: "📅 Descoberta: 1758", habitat: "☁️ Habitat: Cidades e campos", desc: "Ave nível 1: pequena e adaptável, vive próximo aos humanos." },
-  2: { name: "Andorinha", img: "assets/images/ave2.jpg", date: "📅 Descoberta: 1771", habitat: "☁️ Habitat: Campos abertos", desc: "Ave nível 2: migratória, excelente caçadora de insetos em voo." },
-  3: { name: "Pomba", img: "assets/images/ave3.jpg", date: "📅 Descoberta: 1789", habitat: "☁️ Habitat: Áreas urbanas", desc: "Ave nível 3: símbolo da paz, ótima capacidade de navegação." },
-  4: { name: "Corvo", img: "assets/images/ave4.jpg", date: "📅 Descoberta: 1805", habitat: "☁️ Habitat: Bosques e cidades", desc: "Ave nível 4: inteligente, usa ferramentas e resolve problemas." },
-  5: { name: "Falcão", img: "assets/images/ave5.jpg", date: "📅 Descoberta: 1822", habitat: "☁️ Habitat: Montanhas e penhascos", desc: "Ave nível 5: predador ágil, visão 8x melhor que humana." },
-  6: { name: "Águia", img: "assets/images/ave1.jpg", date: "📅 Descoberta: 1840", habitat: "☁️ Habitat: Montanhas altas", desc: "Ave nível 6: rainha dos céus, enxerga presas a 3km de distância." },
-  7: { name: "Arara", img: "assets/images/ave2.jpg", date: "📅 Descoberta: 1858", habitat: "☁️ Habitat: Florestas tropicais", desc: "Ave nível 7: cores vibrantes, inteligente e social." },
-  8: { name: "Coruja", img: "assets/images/ave3.jpg", date: "📅 Descoberta: 1875", habitat: "☁️ Habitat: Florestas e bosques", desc: "Ave nível 8: caçadora noturna, voo silencioso especializado." },
-  9: { name: "Beija-flor", img: "assets/images/ave4.jpg", date: "📅 Descoberta: 1892", habitat: "☁️ Habitat: Jardins e florestas", desc: "Ave nível 9: bate asas 80x por segundo, único que voa para trás." },
-  10: { name: "Pelicano", img: "assets/images/ave5.jpg", date: "📅 Descoberta: 1910", habitat: "☁️ Habitat: Costas e lagos", desc: "Ave nível 10: bolsa no bico armazena 11 litros de água e peixes." },
-  11: { name: "Albatroz", img: "assets/images/ave1.jpg", date: "📅 Descoberta: 1928", habitat: "☁️ Habitat: Oceanos abertos", desc: "Ave nível 11: maior envergadura, plana por horas sem bater asas." },
-  12: { name: "Pavo Real", img: "assets/images/ave2.jpg", date: "📅 Descoberta: 1945", habitat: "☁️ Habitat: Florestas abertas", desc: "Ave nível 12: cauda ornamental, ritual de acasalamento complexo." },
-  13: { name: "Cisne", img: "assets/images/ave3.jpg", date: "📅 Descoberta: 1962", habitat: "☁️ Habitat: Lagos e rios", desc: "Ave nível 13: elegante, casais permanecem juntos por toda vida." },
-  14: { name: "Condor", img: "assets/images/ave4.jpg", date: "📅 Descoberta: 1978", habitat: "☁️ Habitat: Montanhas dos Andes", desc: "Ave nível 14: maior ave voadora, envergadura de 3,3 metros." },
-  15: { name: "Fênix", img: "assets/images/ave5.jpg", date: "📅 Descoberta: 1995", habitat: "☁️ Habitat: Lendas e mitos", desc: "Ave nível 15: lendária, renasce das cinzas, símbolo da renovação." }
+  1: { 
+    name: "Beija-flor-abelha", 
+    img: "assets/images/ave1.jpg", 
+    date: "📅 Descoberta: 1844",
+    habitat: "🏝️ Habitat: Cuba", 
+    desc: "Menor ave do mundo - 2g. Idade: 1 milhão de anos" 
+  },
+  2: { 
+    name: "Andorinhão-preto", 
+    img: "assets/images/ave2.jpg", 
+    date: "📅 Descoberta: 1758",
+    habitat: "🌍 Habitat: Europa/Ásia", 
+    desc: "Mestre do voo - come/dorme voando. Idade: 50 milhões de anos" 
+  },
+  3: { 
+    name: "Beija-flor-cauda-de-andorinha", 
+    img: "assets/images/ave3.jpg", 
+    date: "📅 Descoberta: 1846",
+    habitat: "🏔️ Habitat: Andes", 
+    desc: "Cauda extravagante - voo acrobático. Idade: 5 milhões de anos" 
+  },
+  4: { 
+    name: "Pica-pau-anão", 
+    img: "assets/images/ave4.jpg", 
+    date: "📅 Descoberta: 1821",
+    habitat: "🌳 Habitat: América do Sul", 
+    desc: "Menor pica-pau - tamborilador. Idade: 10 milhões de anos" 
+  },
+  5: { 
+    name: "Corvo-da-nova-caledônia", 
+    img: "assets/images/ave5.jpg", 
+    date: "📅 Descoberta: 1788", 
+    habitat: "🏝️ Habitat: Nova Caledônia",
+    desc: "Ave mais inteligente - fabrica ferramentas. Idade: 2 milhões de anos" 
+  },
+  6: { 
+    name: "Arara-azul", 
+    img: "assets/images/ave6.jpg", 
+    date: "📅 Descoberta: 1790",
+    habitat: "🌳 Habitat: América do Sul", 
+    desc: "Maior papagaio - ameaçada. Idade: 5 milhões de anos" 
+  },
+  7: { 
+    name: "Falcão-peregrino", 
+    img: "assets/images/ave7.jpg", 
+    date: "📅 Descoberta: 1771",
+    habitat: "🌍 Habitat: Mundial", 
+    desc: "Animal mais rápido - 389 km/h. Idade: 8 milhões de anos" 
+  },
+  8: { 
+    name: "Coruja-das-neves", 
+    img: "assets/images/ave8.jpg", 
+    date: "📅 Descoberta: 1758",
+    habitat: "❄️ Habitat: Ártico", 
+    desc: "Caçadora do Ártico - branca. Idade: 3 milhões de anos" 
+  },
+  9: { 
+    name: "Águia-real", 
+    img: "assets/images/ave9.jpg", 
+    date: "📅 Descoberta: 1758",
+    habitat: "🌍 Habitat: Hemisfério Norte", 
+    desc: "Predador de topo - visão aguçada. Idade: 2 milhões de anos" 
+  },
+  10: { 
+    name: "Condor-californiano", 
+    img: "assets/images/ave10.jpg", 
+    date: "📅 Descoberta: 1797",
+    habitat: "🏜️ Habitat: Califórnia", 
+    desc: "Maior ave da América - ameaçado. Idade: 10 milhões de anos" 
+  },
+  11: { 
+    name: "Cegonha-branca", 
+    img: "assets/images/ave11.jpg", 
+    date: "📅 Descoberta: 1758",
+    habitat: "🌍 Habitat: Europa/Ásia/África", 
+    desc: "Migratória - símbolo de bebês. Idade: 15 milhões de anos" 
+  },
+  12: { 
+    name: "Pelicano", 
+    img: "assets/images/ave12.jpg", 
+    date: "📅 Descoberta: 1758",
+    habitat: "🌊 Habitat: Mundial", 
+    desc: "Bolsão no bico - pescador. Idade: 30 milhões de anos" 
+  },
+  13: { 
+    name: "Albatroz-errante", 
+    img: "assets/images/ave13.jpg", 
+    date: "📅 Descoberta: 1789",
+    habitat: "🌊 Habitat: Oceanos Austrais", 
+    desc: "Maior envergadura - 3.5m. Idade: 20 milhões de anos" 
+  },
+  14: { 
+    name: "Pinguim-imperador", 
+    img: "assets/images/ave14.jpg", 
+    date: "📅 Descoberta: 1844",
+    habitat: "❄️ Habitat: Antártida", 
+    desc: "Maior pinguim - superpai polar. Idade: 40 milhões de anos" 
+  },
+  15: { 
+    name: "Avestruz", 
+    img: "assets/images/ave15.jpg", 
+    date: "📅 Descoberta: 1758", 
+    habitat: "🌍 Habitat: África",
+    desc: "Maior ave - corre 70km/h. Idade: 25 milhões de anos" 
+  },
+  16: { 
+    name: "Ema", 
+    img: "assets/images/ave16.jpg", 
+    date: "📅 Descoberta: 1758",
+    habitat: "🌍 Habitat: América do Sul", 
+    desc: "Maior ave das Américas - corredora. Idade: 15 milhões de anos" 
+  },
+  17: { 
+    name: "Casuar", 
+    img: "assets/images/ave17.jpg", 
+    date: "📅 Descoberta: 1790",
+    habitat: "🌴 Habitat: Nova Guiné/Austrália", 
+    desc: "Ave mais perigosa - garras afiadas. Idade: 10 milhões de anos" 
+  },
+  18: { 
+    name: "Kiwi", 
+    img: "assets/images/ave18.jpg", 
+    date: "📅 Descoberta: 1813",
+    habitat: "🏝️ Habitat: Nova Zelândia", 
+    desc: "Ave noturna - nariz no bico. Idade: 8 milhões de anos" 
+  },
+  19: { 
+    name: "Kakapo", 
+    img: "assets/images/ave19.jpg", 
+    date: "📅 Descoberta: 1845",
+    habitat: "🏝️ Habitat: Nova Zelândia", 
+    desc: "Papagaio noturno - não voa. Idade: 5 milhões de anos" 
+  },
+  20: { 
+    name: "Dodô", 
+    img: "assets/images/ave20.jpg", 
+    date: "📅 Descoberta: 1598",
+    habitat: "🏝️ Habitat: Maurício (extinto)", 
+    desc: "Extinto - símbolo da extinção. Idade: 4 milhões de anos" 
+  }
 };
 
 // ======== SISTEMA COMPARTILHADO DE SKINS E LOOTBOXES ========

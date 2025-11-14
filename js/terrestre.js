@@ -49,21 +49,146 @@ bg.src = "assets/images/fundo-terrestre.jpg";
 
 // ======== INFORMAÇÕES DOS ANIMAIS TERRESTRES ========
 const TERRESTRE_INFO = {
-  1: { name: "Coelho", img: "assets/images/animal1.jpg", date: "📅 Descoberta: 1758", habitat: "🌳 Habitat: Campos e florestas", desc: "Animal nível 1: rápido e adaptável, excelente reprodutor." },
-  2: { name: "Raposa", img: "assets/images/animal2.jpg", date: "📅 Descoberta: 1772", habitat: "🌳 Habitat: Bosques e áreas abertas", desc: "Animal nível 2: astuto e ágil caçador noturno." },
-  3: { name: "Lobo", img: "assets/images/animal3.jpg", date: "📅 Descoberta: 1792", habitat: "🌳 Habitat: Florestas e montanhas", desc: "Animal nível 3: vive em alcateias, caçador social." },
-  4: { name: "Urso Pardo", img: "assets/images/animal4.jpg", date: "📅 Descoberta: 1815", habitat: "🌳 Habitat: Florestas densas", desc: "Animal nível 4: poderoso, onívoro e territorial." },
-  5: { name: "Tigre", img: "assets/images/animal5.jpg", date: "📅 Descoberta: 1858", habitat: "🌳 Habitat: Selvas e savanas", desc: "Animal nível 5: ápice dos predadores terrestres." },
-  6: { name: "Elefante", img: "assets/images/animal1.jpg", date: "📅 Descoberta: 1827", habitat: "🌳 Habitat: Savanas e florestas", desc: "Animal nível 6: maior mamífero terrestre, inteligente." },
-  7: { name: "Leão", img: "assets/images/animal2.jpg", date: "📅 Descoberta: 1806", habitat: "🌳 Habitat: Savanas africanas", desc: "Animal nível 7: rei da selva, vive em grupos." },
-  8: { name: "Gorila", img: "assets/images/animal3.jpg", date: "📅 Descoberta: 1847", habitat: "🌳 Habitat: Florestas tropicais", desc: "Animal nível 8: primata inteligente, vive em bandos." },
-  9: { name: "Rinoceronte", img: "assets/images/animal4.jpg", date: "📅 Descoberta: 1862", habitat: "🌳 Habitat: Savanas e pradarias", desc: "Animal nível 9: herbívoro poderoso com chifre característico." },
-  10: { name: "Águia Real", img: "assets/images/animal5.jpg", date: "📅 Descoberta: 1888", habitat: "🌳 Habitat: Montanhas e penhascos", desc: "Animal nível 10: predador aéreo de visão aguçada." },
-  11: { name: "Puma", img: "assets/images/animal1.jpg", date: "📅 Descoberta: 1901", habitat: "🌳 Habitat: Montanhas e florestas", desc: "Animal nível 11: felino solitário e territorial." },
-  12: { name: "Lobo Guará", img: "assets/images/animal2.jpg", date: "📅 Descoberta: 1915", habitat: "🌳 Habitat: Cerrado e campos", desc: "Animal nível 12: canídeo de pernas longas, onívoro." },
-  13: { name: "Jaguar", img: "assets/images/animal3.jpg", date: "📅 Descoberta: 1928", habitat: "🌳 Habitat: Florestas tropicais", desc: "Animal nível 13: maior felino das Américas, nadador." },
-  14: { name: "Ornitorrinco", img: "assets/images/animal4.jpg", date: "📅 Descoberta: 1940", habitat: "🌳 Habitat: Rios e lagos", desc: "Animal nível 14: mamífero que bota ovos, venenoso." },
-  15: { name: "Dragão de Komodo", img: "assets/images/animal5.jpg", date: "📅 Descoberta: 1956", habitat: "🌳 Habitat: Ilhas da Indonésia", desc: "Animal nível 15: maior lagarto do mundo, venenoso." }
+  1: { 
+    name: "Musaranho-pigmeu", 
+    img: "assets/images/animal1.jpg", 
+    date: "📅 Descoberta: 1831",
+    habitat: "🌿 Habitat: Florestas Eurásia", 
+    desc: "Menor mamífero do mundo - 2g. Idade: 45 milhões de anos" 
+  },
+  2: { 
+    name: "Tâmara", 
+    img: "assets/images/animal2.jpg", 
+    date: "📅 Descoberta: 1766",
+    habitat: "🌿 Habitat: Américas", 
+    desc: "Roedor saltador - ouvidos gigantes. Idade: 40 milhões de anos" 
+  },
+  3: { 
+    name: "Heterocefalo", 
+    img: "assets/images/animal3.jpg", 
+    date: "📅 Descoberta: 1842",
+    habitat: "🌿 Habitat: África Oriental", 
+    desc: "Rato-toupeira - eusocial. Idade: 35 milhões de anos" 
+  },
+  4: { 
+    name: "Lóris-lento", 
+    img: "assets/images/animal4.jpg", 
+    date: "📅 Descoberta: 1891", 
+    habitat: "🌿 Habitat: Sudeste Asiático",
+    desc: "Primata venenoso - olhos grandes. Idade: 30 milhões de anos" 
+  },
+  5: { 
+    name: "Pangolim", 
+    img: "assets/images/animal5.jpg", 
+    date: "📅 Descoberta: 1758",
+    habitat: "🌿 Habitat: África/Ásia", 
+    desc: "Mamífero escamado - rolador. Idade: 25 milhões de anos" 
+  },
+  6: { 
+    name: "Tamanduá-bandeira", 
+    img: "assets/images/animal6.jpg", 
+    date: "📅 Descoberta: 1758",
+    habitat: "🌿 Habitat: Américas", 
+    desc: "Língua de 60cm - formigueiro. Idade: 20 milhões de anos" 
+  },
+  7: { 
+    name: "Coala", 
+    img: "assets/images/animal7.jpg", 
+    date: "📅 Descoberta: 1798",
+    habitat: "🌿 Habitat: Austrália", 
+    desc: "Marsupial - folhas de eucalipto. Idade: 15 milhões de anos" 
+  },
+  8: { 
+    name: "Diabo-da-tasmânia", 
+    img: "assets/images/animal8.jpg", 
+    date: "📅 Descoberta: 1808",
+    habitat: "🌿 Habitat: Tasmânia", 
+    desc: "Marsupial carnívoro - mordida forte. Idade: 10 milhões de anos" 
+  },
+  9: { 
+    name: "Ornitorrinco", 
+    img: "assets/images/animal9.jpg", 
+    date: "📅 Descoberta: 1799",
+    habitat: "🌿 Habitat: Austrália", 
+    desc: "Mamífero que bota ovos - bico. Idade: 8 milhões de anos" 
+  },
+  10: { 
+    name: "Suricato", 
+    img: "assets/images/animal10.jpg", 
+    date: "📅 Descoberta: 1776",
+    habitat: "🌿 Habitat: Sul da África", 
+    desc: "Vigia do deserto - social. Idade: 6 milhões de anos" 
+  },
+  11: { 
+    name: "Lêmure", 
+    img: "assets/images/animal11.jpg", 
+    date: "📅 Descoberta: 1758",
+    habitat: "🌿 Habitat: Madagascar", 
+    desc: "Primata de Madagascar - noturno. Idade: 5 milhões de anos" 
+  },
+  12: { 
+    name: "Jaguatirica", 
+    img: "assets/images/animal12.jpg", 
+    date: "📅 Descoberta: 1758",
+    habitat: "🌿 Habitat: Américas", 
+    desc: "Gato selvagem - manchas. Idade: 4 milhões de anos" 
+  },
+  13: { 
+    name: "Lobo-vermelho", 
+    img: "assets/images/animal13.jpg", 
+    date: "📅 Descoberta: 1851",
+    habitat: "🌿 Habitat: EUA", 
+    desc: "Canídeo raro - americano. Idade: 3 milhões de anos" 
+  },
+  14: { 
+    name: "Urso-polar", 
+    img: "assets/images/animal14.jpg", 
+    date: "📅 Descoberta: 1774",
+    habitat: "❄️ Habitat: Ártico", 
+    desc: "Maior urso terrestre - nadador. Idade: 2 milhões de anos" 
+  },
+  15: { 
+    name: "Gorila", 
+    img: "assets/images/animal15.jpg", 
+    date: "📅 Descoberta: 1847",
+    habitat: "🌿 Habitat: África Central", 
+    desc: "Primata grande - inteligente. Idade: 1.5 milhão de anos" 
+  },
+  16: { 
+    name: "Tigre", 
+    img: "assets/images/animal16.jpg", 
+    date: "📅 Descoberta: 1758",
+    habitat: "🌿 Habitat: Ásia", 
+    desc: "Maior felino - listras únicas. Idade: 1 milhão de anos" 
+  },
+  17: { 
+    name: "Leão", 
+    img: "assets/images/animal17.jpg", 
+    date: "📅 Descoberta: 1758",
+    habitat: "🌿 Habitat: África/Índia", 
+    desc: "Rei da selva - social. Idade: 800 mil anos" 
+  },
+  18: { 
+    name: "Elefante-africano", 
+    img: "assets/images/animal18.jpg", 
+    date: "📅 Descoberta: 1758", 
+    habitat: "🌿 Habitat: Savanas africanas",
+    desc: "Maior terrestre - memória excepcional. Idade: 700 mil anos" 
+  },
+  19: { 
+    name: "Rinoceronte", 
+    img: "assets/images/animal19.jpg", 
+    date: "📅 Descoberta: 1758",
+    habitat: "🌿 Habitat: África/Ásia", 
+    desc: "Herbívoro pesado - chifre. Idade: 500 mil anos" 
+  },
+  20: { 
+    name: "Hipopótamo", 
+    img: "assets/images/animal20.jpg", 
+    date: "📅 Descoberta: 1758", 
+    habitat: "🌿 Habitat: África",
+    desc: "Semi-aquático - mais perigoso da África. Idade: 300 mil anos" 
+  }
 };
 
 // ======== SISTEMA COMPARTILHADO DE SKINS E LOOTBOXES ========
