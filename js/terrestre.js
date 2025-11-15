@@ -43,9 +43,94 @@ document.addEventListener('keydown', function(e) {
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
+// Tamanho original do canvas
+const CANVAS_WIDTH = 1280;
+const CANVAS_HEIGHT = 720;
+
+// Função para redimensionar o canvas responsivamente
+function resizeCanvas() {
+  const isMobile = window.innerWidth <= 768;
+
+  if (isMobile) {
+    // Em mobile, o canvas preenche a tela. O CSS já cuida do tamanho do elemento.
+    // Apenas ajustamos a resolução interna para corresponder.
+    canvas.width = canvas.clientWidth;
+    canvas.height = canvas.clientHeight;
+  } else {
+    // Em desktop, calculamos a escala para manter a proporção de 1280x720.
+    const container = document.getElementById("game-container");
+    const scale = Math.min(container.clientWidth / CANVAS_WIDTH, container.clientHeight / CANVAS_HEIGHT);
+    
+    // Define o tamanho de exibição (CSS) do canvas
+    canvas.style.width = (CANVAS_WIDTH * scale) + 'px';
+    canvas.style.height = (CANVAS_HEIGHT * scale) + 'px';
+
+    // Define a resolução interna para a qualidade original
+    canvas.width = CANVAS_WIDTH;
+    canvas.height = CANVAS_HEIGHT;
+  }
+}
+
+// Função auxiliar para converter coordenadas do mouse/touch para coordenadas do canvas
+function getCanvasCoordinates(e) {
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = canvas.width / rect.width;
+  const scaleY = canvas.height / rect.height;
+  
+  let clientX, clientY;
+  if (e.touches) {
+    // Touch event
+    clientX = e.touches[0].clientX;
+    clientY = e.touches[0].clientY;
+  } else {
+    // Mouse event
+    clientX = e.clientX;
+    clientY = e.clientY;
+  }
+  
+  return {
+    x: (clientX - rect.left) * scaleX,
+    y: (clientY - rect.top) * scaleY
+  };
+}
+
 // Fundo terrestre
 const bg = new Image();
-bg.src = "assets/images/fundo-terrestre.jpg";
+// Detectar se é mobile e carregar versão mobile do fundo
+let lastMobileState = window.innerWidth <= 768;
+bg.src = lastMobileState ? "assets/images/fundo-terrestre_mobile.png" : "assets/images/fundo-terrestre.jpg";
+
+// Função para atualizar fundo quando necessário
+function updateBackground() {
+  const currentMobileState = window.innerWidth <= 768;
+  if (currentMobileState !== lastMobileState) {
+    const newSrc = currentMobileState ? "assets/images/fundo-terrestre_mobile.png" : "assets/images/fundo-terrestre.jpg";
+    bg.onload = function() {
+      // Imagem carregada
+    };
+    bg.src = newSrc + "?t=" + Date.now(); // Adicionar timestamp para forçar recarregamento
+    lastMobileState = currentMobileState;
+  }
+}
+
+// Garantir que a imagem carregue antes de desenhar
+bg.onload = function() {
+  // Imagem carregada
+};
+
+// Redimensionar ao carregar e ao redimensionar a janela
+resizeCanvas();
+updateBackground();
+window.addEventListener('resize', () => {
+  resizeCanvas();
+  updateBackground();
+});
+window.addEventListener('orientationchange', () => {
+  setTimeout(() => {
+    resizeCanvas();
+    updateBackground();
+  }, 100);
+});
 
 // ======== INFORMAÇÕES DOS ANIMAIS TERRESTRES ========
 const TERRESTRE_INFO = {
@@ -796,8 +881,9 @@ setInterval(() => {
 
 // Clique e fusão
 canvas.addEventListener("mousedown", e => {
-    const mouseX = e.offsetX;
-    const mouseY = e.offsetY;
+    const coords = getCanvasCoordinates(e);
+    const mouseX = coords.x;
+    const mouseY = coords.y;
 
     for (let amoeba of amoebas) {
         if (
@@ -812,8 +898,9 @@ canvas.addEventListener("mousedown", e => {
 
 canvas.addEventListener("mousemove", e => {
     if (selectedAmoeba && selectedAmoeba.dragging) {
-        selectedAmoeba.x = e.offsetX - selectedAmoeba.size / 2;
-        selectedAmoeba.y = e.offsetY - selectedAmoeba.size / 2;
+        const coords = getCanvasCoordinates(e);
+        selectedAmoeba.x = coords.x - selectedAmoeba.size / 2;
+        selectedAmoeba.y = coords.y - selectedAmoeba.size / 2;
     }
 });
 
@@ -936,7 +1023,14 @@ function updateMoneyAnimations() {
 
 // ======== DESENHO ========
 function drawBackground() {
-    ctx.drawImage(bg, 0, 0, canvas.width, canvas.height);
+    // Verificar se a imagem está carregada antes de desenhar
+    if (bg.complete && bg.naturalWidth > 0) {
+        ctx.drawImage(bg, 0, 0, canvas.width, canvas.height);
+    } else {
+        // Se não carregou ainda, desenhar fundo preto temporário
+        ctx.fillStyle = "#000";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
 }
 
 function drawAmoebas() {
@@ -1138,3 +1232,74 @@ function loadGame() {
         checkNewLevelCeu();
     }, 1000);
 }
+
+// ======== SISTEMA DE TOUCH PARA MOBILE ========
+let touchStartX = 0;
+let touchStartY = 0;
+let isTouching = false;
+
+canvas.addEventListener('touchstart', handleTouchStart, { passive: false });
+canvas.addEventListener('touchmove', handleTouchMove, { passive: false });
+canvas.addEventListener('touchend', handleTouchEnd, { passive: false });
+
+function handleTouchStart(e) {
+  e.preventDefault();
+  if (e.touches.length === 1) {
+    const touch = e.touches[0];
+    touchStartX = touch.clientX;
+    touchStartY = touch.clientY;
+    
+    const coords = getCanvasCoordinates(e);
+    const mouseX = coords.x;
+    const mouseY = coords.y;
+    
+    for (let amoeba of amoebas) {
+      if (
+        mouseX > amoeba.x && mouseX < amoeba.x + amoeba.size &&
+        mouseY > amoeba.y && mouseY < amoeba.y + amoeba.size
+      ) {
+        selectedAmoeba = amoeba;
+        amoeba.dragging = true;
+        isTouching = true;
+        break;
+      }
+    }
+  }
+}
+
+function handleTouchMove(e) {
+  e.preventDefault();
+  if (isTouching && selectedAmoeba && selectedAmoeba.dragging && e.touches.length === 1) {
+    const coords = getCanvasCoordinates(e);
+    // Limitar movimento dentro dos bounds do canvas
+    const maxX = canvas.width - selectedAmoeba.size;
+    const maxY = canvas.height - selectedAmoeba.size;
+    
+    selectedAmoeba.x = Math.max(0, Math.min(maxX, coords.x - selectedAmoeba.size / 2));
+    selectedAmoeba.y = Math.max(0, Math.min(maxY, coords.y - selectedAmoeba.size / 2));
+  }
+}
+
+function handleTouchEnd(e) {
+  e.preventDefault();
+  if (selectedAmoeba) {
+    selectedAmoeba.dragging = false;
+    
+    for (let other of amoebas) {
+      if (other !== selectedAmoeba && isColliding(selectedAmoeba, other)) {
+        if (selectedAmoeba.level === other.level) {
+          mergeAmoebas(selectedAmoeba, other);
+          break; // Sair após fusão
+        }
+      }
+    }
+    
+    selectedAmoeba = null;
+  }
+  isTouching = false;
+}
+
+canvas.addEventListener('contextmenu', (e) => {
+  e.preventDefault();
+  return false;
+});

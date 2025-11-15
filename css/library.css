@@ -487,3 +487,130 @@ header h1 {
   border-color: #4CAF50;
   color: #4CAF50;
 }
+
+/* === ESTILOS RESPONSIVOS PARA BIBLIOTECA === */
+
+@media (max-width: 768px) {
+  .library-container {
+    padding: 10px;
+  }
+  
+  .library-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+    padding: 10px 0;
+  }
+  
+  .creature-card {
+    margin: 0 5px;
+  }
+  
+  .library-filters {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .search-box {
+    min-width: 100%;
+    order: 1;
+  }
+  
+  .filter-buttons {
+    order: 2;
+    justify-content: stretch;
+    width: 100%;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 10px;
+  }
+  
+  .filter-btn {
+    flex: 1;
+    min-width: 120px;
+    text-align: center;
+    padding: 10px 12px;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+  
+  .stats-container {
+    flex-direction: column;
+    gap: 15px;
+    padding: 15px;
+  }
+  
+  .progress-container {
+    width: 100%;
+  }
+  
+  header {
+    padding: 15px 10px;
+    margin-bottom: 20px;
+  }
+  
+  header h1 {
+    font-size: 1.8em;
+  }
+  
+  .header-subtitle {
+    font-size: 1em;
+  }
+  
+  .back-btn {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .card-info {
+    padding: 12px;
+  }
+  
+  .creature-name {
+    font-size: 1.2em;
+  }
+  
+  .creature-level {
+    font-size: 0.7em;
+    padding: 4px 12px;
+  }
+  
+  .card-image {
+    height: 150px;
+  }
+  
+  .info-item {
+    flex-direction: column;
+    gap: 5px;
+    align-items: flex-start;
+  }
+  
+  .info-icon {
+    font-size: 1.1em;
+  }
+  
+  .discovery-badge {
+    font-size: 0.7em;
+    padding: 4px 8px;
+  }
+}
+
+/* Melhorias de toque para mobile */
+@media (hover: none) and (pointer: coarse) {
+  .creature-card {
+    transition: transform 0.2s ease;
+  }
+  
+  .creature-card:active {
+    transform: scale(0.98);
+  }
+  
+  .filter-btn:active {
+    transform: scale(0.95);
+  }
+  
+  button, .filter-btn, .back-btn {
+    cursor: default;
+  }
+}
