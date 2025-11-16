@@ -1,4 +1,26 @@
 // ceu.js - Código específico para o nível do céu
+// ======== SISTEMA DE IMAGENS PARA AVES ========
+// Cache para imagens carregadas
+const aveImages = {};
+let imagesLoaded = 0;
+const totalImages = 20;
+
+// Função para carregar todas as imagens de aves
+function loadAveImages() {
+  for (let i = 1; i <= totalImages; i++) {
+    const img = new Image();
+    img.onload = () => {
+      imagesLoaded++;
+      console.log(`Imagem da ave ${i} carregada`);
+    };
+    img.onerror = () => {
+      console.error(`Erro ao carregar imagem da ave ${i}`);
+      imagesLoaded++;
+    };
+    img.src = `assets/images/ave${i}.jpg`;
+    aveImages[i] = img;
+  }
+}
 
 // ======== SISTEMA COMPARTILHADO DE SKINS E LOOTBOXES ========
 // REMOVIDO: Funções showPopup, hideAllPopups (agora no shared.js)
@@ -715,24 +737,105 @@ function drawBackground() {
 }
 
 function drawAmoebas() {
-    for (let amoeba of amoebas) {
-        const scale = amoeba.animScale;
-        const radius = (amoeba.size / 2) * scale;
+  for (let amoeba of amoebas) {
+    const scale = amoeba.animScale;
+    const size = amoeba.size * scale;
+    const x = amoeba.x;
+    const y = amoeba.y;
+    const borderRadius = 20; // Valor maior para bordas mais arredondadas (aves)
 
-        // ✅ Usar getBirdColor para as aves
-        ctx.fillStyle = getBirdColor(amoeba.level);
-        ctx.beginPath();
-        ctx.arc(amoeba.x + amoeba.size / 2, amoeba.y + amoeba.size / 2, radius, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.strokeStyle = "black";
-        ctx.stroke();
-
-        ctx.fillStyle = "white";
-        ctx.font = "16px Arial";
-        ctx.textAlign = "center";
-        ctx.fillText(`Lv ${amoeba.level}`, amoeba.x + amoeba.size / 2, amoeba.y + amoeba.size / 2 + 5);
+    // Verificar se a imagem para este nível está carregada
+    const aveImage = aveImages[amoeba.level];
+    
+    if (aveImage && aveImage.complete) {
+      // DESENHAR COM BORDAS ARREDONDADAS
+      ctx.save();
+      
+      // Criar um caminho retangular com bordas arredondadas
+      ctx.beginPath();
+      ctx.moveTo(x + borderRadius, y);
+      ctx.lineTo(x + size - borderRadius, y);
+      ctx.quadraticCurveTo(x + size, y, x + size, y + borderRadius);
+      ctx.lineTo(x + size, y + size - borderRadius);
+      ctx.quadraticCurveTo(x + size, y + size, x + size - borderRadius, y + size);
+      ctx.lineTo(x + borderRadius, y + size);
+      ctx.quadraticCurveTo(x, y + size, x, y + size - borderRadius);
+      ctx.lineTo(x, y + borderRadius);
+      ctx.quadraticCurveTo(x, y, x + borderRadius, y);
+      ctx.closePath();
+      ctx.clip(); // Aplica o clipping path
+      
+      // Desenhar a imagem
+      ctx.drawImage(aveImage, x, y, size, size);
+      
+      ctx.restore(); // Remove o clipping path
+      
+      // Adicionar borda decorativa com cor de céu
+      ctx.strokeStyle = 'rgba(135, 206, 235, 0.5)'; // Azul céu suave
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(x + borderRadius, y);
+      ctx.lineTo(x + size - borderRadius, y);
+      ctx.quadraticCurveTo(x + size, y, x + size, y + borderRadius);
+      ctx.lineTo(x + size, y + size - borderRadius);
+      ctx.quadraticCurveTo(x + size, y + size, x + size - borderRadius, y + size);
+      ctx.lineTo(x + borderRadius, y + size);
+      ctx.quadraticCurveTo(x, y + size, x, y + size - borderRadius);
+      ctx.lineTo(x, y + borderRadius);
+      ctx.quadraticCurveTo(x, y, x + borderRadius, y);
+      ctx.closePath();
+      ctx.stroke();
+      
+    } else {
+      // Fallback: desenhar com bordas arredondadas mesmo no fallback
+      ctx.save();
+      
+      // Criar clipping path para o fallback também
+      ctx.beginPath();
+      ctx.moveTo(x + borderRadius, y);
+      ctx.lineTo(x + size - borderRadius, y);
+      ctx.quadraticCurveTo(x + size, y, x + size, y + borderRadius);
+      ctx.lineTo(x + size, y + size - borderRadius);
+      ctx.quadraticCurveTo(x + size, y + size, x + size - borderRadius, y + size);
+      ctx.lineTo(x + borderRadius, y + size);
+      ctx.quadraticCurveTo(x, y + size, x, y + size - borderRadius);
+      ctx.lineTo(x, y + borderRadius);
+      ctx.quadraticCurveTo(x, y, x + borderRadius, y);
+      ctx.closePath();
+      ctx.clip();
+      
+      // Desenhar a ave colorida
+      ctx.fillStyle = getBirdColor(amoeba.level);
+      ctx.fillRect(x, y, size, size);
+      
+      ctx.restore();
+      
+      // Borda do fallback
+      ctx.strokeStyle = "#1E90FF"; // Azul dodger
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(x + borderRadius, y);
+      ctx.lineTo(x + size - borderRadius, y);
+      ctx.quadraticCurveTo(x + size, y, x + size, y + borderRadius);
+      ctx.lineTo(x + size, y + size - borderRadius);
+      ctx.quadraticCurveTo(x + size, y + size, x + size - borderRadius, y + size);
+      ctx.lineTo(x + borderRadius, y + size);
+      ctx.quadraticCurveTo(x, y + size, x, y + size - borderRadius);
+      ctx.lineTo(x, y + borderRadius);
+      ctx.quadraticCurveTo(x, y, x + borderRadius, y);
+      ctx.closePath();
+      ctx.stroke();
     }
+
+    // Texto do nível (sobreposto à imagem)
+    ctx.fillStyle = "white";
+    ctx.font = "bold 14px Arial";
+    ctx.textAlign = "center";
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = 2;
+    ctx.strokeText(`Lv ${amoeba.level}`, amoeba.x + amoeba.size / 2, amoeba.y + amoeba.size / 2 + 5);
+    ctx.fillText(`Lv ${amoeba.level}`, amoeba.x + amoeba.size / 2, amoeba.y + amoeba.size / 2 + 5);
+  }
 }
 
 function drawMoneyAnimations() {
@@ -782,6 +885,7 @@ function gameLoop(timestamp) {
 // ======== INICIALIZAÇÃO ========
 bg.onload = () => {
     loadGame();
+     loadAveImages(); // Adicione esta linha
     requestAnimationFrame(gameLoop);
 };
 
