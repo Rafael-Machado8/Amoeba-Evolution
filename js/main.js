@@ -11,13 +11,19 @@ function loadAmoebaImages() {
     img.onload = () => {
       imagesLoaded++;
       console.log(`Imagem da ameba ${i} carregada`);
+      // Forçar redesenho quando uma imagem carregar
+      if (imagesLoaded === 1) {
+        drawBackground();
+        drawAmoebas();
+      }
     };
     img.onerror = () => {
       console.error(`Erro ao carregar imagem da ameba ${i}`);
-      // Usar imagem de fallback se necessário
+      // Criar fallback mais robusto
       imagesLoaded++;
     };
-    img.src = `assets/images/amoeba${i}.jpg`;
+    // Adicionar cache busting para mobile
+    img.src = `assets/images/amoeba${i}.jpg?t=${Date.now()}`;
     amoebaImages[i] = img;
   }
 }
@@ -716,40 +722,51 @@ function drawAmoebas() {
   for (let amoeba of amoebas) {
     const scale = amoeba.animScale;
     const size = amoeba.size * scale;
+    const x = amoeba.x;
+    const y = amoeba.y;
+    const borderRadius = 30; // Ajuste este valor para controlar o arredondamento
     
     // Verificar se a imagem para este nível está carregada
     const amoebaImage = amoebaImages[amoeba.level];
     
     if (amoebaImage && amoebaImage.complete) {
-      // Desenhar a imagem da ameba
+      // DESENHAR COM BORDAS ARREDONDADAS
       ctx.save();
       
-      // Aplicar escala de animação
-      ctx.translate(amoeba.x + amoeba.size / 2, amoeba.y + amoeba.size / 2);
-      ctx.scale(scale, scale);
+      // Criar um caminho retangular com bordas arredondadas
+      ctx.beginPath();
+      ctx.moveTo(x + borderRadius, y);
+      ctx.lineTo(x + size - borderRadius, y);
+      ctx.quadraticCurveTo(x + size, y, x + size, y + borderRadius);
+      ctx.lineTo(x + size, y + size - borderRadius);
+      ctx.quadraticCurveTo(x + size, y + size, x + size - borderRadius, y + size);
+      ctx.lineTo(x + borderRadius, y + size);
+      ctx.quadraticCurveTo(x, y + size, x, y + size - borderRadius);
+      ctx.lineTo(x, y + borderRadius);
+      ctx.quadraticCurveTo(x, y, x + borderRadius, y);
+      ctx.closePath();
+      ctx.clip(); // Aplica o clipping path
       
-      // Desenhar a imagem centralizada
-      ctx.drawImage(
-        amoebaImage, 
-        -size / 2, 
-        -size / 2, 
-        size, 
-        size
-      );
+      // Desenhar a imagem
+      ctx.drawImage(amoebaImage, x, y, size, size);
       
-      ctx.restore();
+      ctx.restore(); // Remove o clipping path
+      
     } else {
-      // Fallback: desenhar círculo colorido se a imagem não carregou
+      // Fallback: desenhar círculo colorido
+      const centerX = amoeba.x + amoeba.size / 2;
+      const centerY = amoeba.y + amoeba.size / 2;
       const radius = (amoeba.size / 2) * scale;
+      
       ctx.fillStyle = getColor(amoeba.level);
       ctx.beginPath();
-      ctx.arc(amoeba.x + amoeba.size / 2, amoeba.y + amoeba.size / 2, radius, 0, Math.PI * 2);
+      ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
       ctx.fill();
       ctx.strokeStyle = "black";
       ctx.stroke();
     }
 
-    // Texto do nível (sobreposto à imagem)
+    // Texto do nível
     ctx.fillStyle = "white";
     ctx.font = "16px Arial";
     ctx.textAlign = "center";
@@ -975,3 +992,53 @@ if (isMobileDevice()) {
   };
 }
 
+// ✅ SISTEMA DE PERSISTÊNCIA DE IMAGENS ENTRE PÁGINAS
+let imageReloadAttempts = 0;
+const MAX_RELOAD_ATTEMPTS = 3;
+
+// ✅ VERIFICAR AO INICIAR A PÁGINA
+function initializeAmoebaPage() {
+  console.log("🔄 Inicializando página de amebas...");
+  
+  // Verificar se já temos algumas imagens carregadas
+  const currentlyLoaded = countLoadedImages();
+  console.log(`📊 Imagens já carregadas: ${currentlyLoaded}/${totalImages}`);
+  
+  if (currentlyLoaded < totalImages && imageReloadAttempts < MAX_RELOAD_ATTEMPTS) {
+    console.log("🔄 Carregando imagens faltantes...");
+    loadAmoebaImages();
+    imageReloadAttempts++;
+  }
+}
+
+// ✅ CONTAR IMAGENS CARREGADAS
+function countLoadedImages() {
+  let count = 0;
+  for (let i = 1; i <= totalImages; i++) {
+    if (amoebaImages[i] && amoebaImages[i].complete && amoebaImages[i].naturalWidth > 0) {
+      count++;
+    }
+  }
+  return count;
+}
+
+// ✅ MODIFICAR A INICIALIZAÇÃO
+bg.onload = () => {
+  loadAmoebaImages();
+  loadGame();
+  
+  // ✅ INICIALIZAR VERIFICAÇÕES
+  initializeAmoebaPage();
+  
+  // ✅ VERIFICAÇÃO PERIÓDICA (apenas para debug)
+  setTimeout(() => {
+    const loaded = countLoadedImages();
+    console.log(`✅ Status final: ${loaded}/${totalImages} imagens carregadas`);
+    
+    if (loaded < totalImages) {
+      console.log("⚠️ Algumas imagens não carregaram, usando fallbacks");
+    }
+  }, 3000);
+  
+  requestAnimationFrame(gameLoop);
+};

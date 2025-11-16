@@ -729,43 +729,100 @@ function drawAmoebas() {
   for (let amoeba of amoebas) {
     const scale = amoeba.animScale;
     const size = amoeba.size * scale;
+    const x = amoeba.x;
+    const y = amoeba.y;
+    const borderRadius = 30; // Ajuste este valor para controlar o arredondamento
     
     // Verificar se a imagem para este nível está carregada
     const animalImage = animalImages[amoeba.level];
     
     if (animalImage && animalImage.complete) {
-      // Desenhar a imagem do animal
+      // DESENHAR COM BORDAS ARREDONDADAS
       ctx.save();
       
-      // Aplicar escala de animação
-      ctx.translate(amoeba.x + amoeba.size / 2, amoeba.y + amoeba.size / 2);
-      ctx.scale(scale, scale);
+      // Criar um caminho retangular com bordas arredondadas
+      ctx.beginPath();
+      ctx.moveTo(x + borderRadius, y);
+      ctx.lineTo(x + size - borderRadius, y);
+      ctx.quadraticCurveTo(x + size, y, x + size, y + borderRadius);
+      ctx.lineTo(x + size, y + size - borderRadius);
+      ctx.quadraticCurveTo(x + size, y + size, x + size - borderRadius, y + size);
+      ctx.lineTo(x + borderRadius, y + size);
+      ctx.quadraticCurveTo(x, y + size, x, y + size - borderRadius);
+      ctx.lineTo(x, y + borderRadius);
+      ctx.quadraticCurveTo(x, y, x + borderRadius, y);
+      ctx.closePath();
+      ctx.clip(); // Aplica o clipping path
       
-      // Desenhar a imagem centralizada
-      ctx.drawImage(
-        animalImage, 
-        -size / 2, 
-        -size / 2, 
-        size, 
-        size
-      );
+      // Desenhar a imagem
+      ctx.drawImage(animalImage, x, y, size, size);
+      
+      ctx.restore(); // Remove o clipping path
+      
+      // Adicionar borda decorativa sutil
+      ctx.strokeStyle = 'rgba(139, 69, 19, 0.4)'; // Cor marrom suave
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(x + borderRadius, y);
+      ctx.lineTo(x + size - borderRadius, y);
+      ctx.quadraticCurveTo(x + size, y, x + size, y + borderRadius);
+      ctx.lineTo(x + size, y + size - borderRadius);
+      ctx.quadraticCurveTo(x + size, y + size, x + size - borderRadius, y + size);
+      ctx.lineTo(x + borderRadius, y + size);
+      ctx.quadraticCurveTo(x, y + size, x, y + size - borderRadius);
+      ctx.lineTo(x, y + borderRadius);
+      ctx.quadraticCurveTo(x, y, x + borderRadius, y);
+      ctx.closePath();
+      ctx.stroke();
+      
+    } else {
+      // Fallback: desenhar com bordas arredondadas mesmo no fallback
+      ctx.save();
+      
+      // Criar clipping path para o fallback também
+      ctx.beginPath();
+      ctx.moveTo(x + borderRadius, y);
+      ctx.lineTo(x + size - borderRadius, y);
+      ctx.quadraticCurveTo(x + size, y, x + size, y + borderRadius);
+      ctx.lineTo(x + size, y + size - borderRadius);
+      ctx.quadraticCurveTo(x + size, y + size, x + size - borderRadius, y + size);
+      ctx.lineTo(x + borderRadius, y + size);
+      ctx.quadraticCurveTo(x, y + size, x, y + size - borderRadius);
+      ctx.lineTo(x, y + borderRadius);
+      ctx.quadraticCurveTo(x, y, x + borderRadius, y);
+      ctx.closePath();
+      ctx.clip();
+      
+      // Desenhar o animal colorido
+      ctx.fillStyle = getColor(amoeba.level);
+      ctx.fillRect(x, y, size, size);
       
       ctx.restore();
-    } else {
-      // Fallback: desenhar círculo colorido se a imagem não carregou
-      const radius = (amoeba.size / 2) * scale;
-      ctx.fillStyle = getColor(amoeba.level);
+      
+      // Borda do fallback
+      ctx.strokeStyle = "#8B4513"; // Marrom mais escuro
+      ctx.lineWidth = 2;
       ctx.beginPath();
-      ctx.arc(amoeba.x + amoeba.size / 2, amoeba.y + amoeba.size / 2, radius, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.strokeStyle = "black";
+      ctx.moveTo(x + borderRadius, y);
+      ctx.lineTo(x + size - borderRadius, y);
+      ctx.quadraticCurveTo(x + size, y, x + size, y + borderRadius);
+      ctx.lineTo(x + size, y + size - borderRadius);
+      ctx.quadraticCurveTo(x + size, y + size, x + size - borderRadius, y + size);
+      ctx.lineTo(x + borderRadius, y + size);
+      ctx.quadraticCurveTo(x, y + size, x, y + size - borderRadius);
+      ctx.lineTo(x, y + borderRadius);
+      ctx.quadraticCurveTo(x, y, x + borderRadius, y);
+      ctx.closePath();
       ctx.stroke();
     }
 
     // Texto do nível (sobreposto à imagem)
     ctx.fillStyle = "white";
-    ctx.font = "16px Arial";
+    ctx.font = "bold 14px Arial";
     ctx.textAlign = "center";
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = 2;
+    ctx.strokeText(`Lv ${amoeba.level}`, amoeba.x + amoeba.size / 2, amoeba.y + amoeba.size / 2 + 5);
     ctx.fillText(`Lv ${amoeba.level}`, amoeba.x + amoeba.size / 2, amoeba.y + amoeba.size / 2 + 5);
   }
 }

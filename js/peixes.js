@@ -714,29 +714,94 @@ function drawAmoebas() {
   for (let amoeba of amoebas) {
     const scale = amoeba.animScale;
     const size = amoeba.size * scale;
+    const x = amoeba.x;
+    const y = amoeba.y;
+    const borderRadius = 30; // Ajuste este valor para controlar o arredondamento (0-30)
     
     // Verificar se a imagem para este nível está carregada
     const peixeImage = peixeImages[amoeba.level];
     
     if (peixeImage && peixeImage.complete) {
-      // Desenhar a imagem do peixe
+      // DESENHAR COM BORDAS ARREDONDADAS
       ctx.save();
-      ctx.translate(amoeba.x + amoeba.size / 2, amoeba.y + amoeba.size / 2);
-      ctx.scale(scale, scale);
-      ctx.drawImage(peixeImage, -size / 2, -size / 2, size, size);
-      ctx.restore();
-    } else {
-      // Fallback
-      const radius = (amoeba.size / 2) * scale;
-      ctx.fillStyle = getFishColor(amoeba.level);
+      
+      // Criar um caminho retangular com bordas arredondadas
       ctx.beginPath();
-      ctx.arc(amoeba.x + amoeba.size / 2, amoeba.y + amoeba.size / 2, radius, 0, Math.PI * 2);
-      ctx.fill();
+      ctx.moveTo(x + borderRadius, y);
+      ctx.lineTo(x + size - borderRadius, y);
+      ctx.quadraticCurveTo(x + size, y, x + size, y + borderRadius);
+      ctx.lineTo(x + size, y + size - borderRadius);
+      ctx.quadraticCurveTo(x + size, y + size, x + size - borderRadius, y + size);
+      ctx.lineTo(x + borderRadius, y + size);
+      ctx.quadraticCurveTo(x, y + size, x, y + size - borderRadius);
+      ctx.lineTo(x, y + borderRadius);
+      ctx.quadraticCurveTo(x, y, x + borderRadius, y);
+      ctx.closePath();
+      ctx.clip(); // Aplica o clipping path
+      
+      // Desenhar a imagem
+      ctx.drawImage(peixeImage, x, y, size, size);
+      
+      ctx.restore(); // Remove o clipping path
+      
+      // Opcional: Adicionar borda decorativa
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(x + borderRadius, y);
+      ctx.lineTo(x + size - borderRadius, y);
+      ctx.quadraticCurveTo(x + size, y, x + size, y + borderRadius);
+      ctx.lineTo(x + size, y + size - borderRadius);
+      ctx.quadraticCurveTo(x + size, y + size, x + size - borderRadius, y + size);
+      ctx.lineTo(x + borderRadius, y + size);
+      ctx.quadraticCurveTo(x, y + size, x, y + size - borderRadius);
+      ctx.lineTo(x, y + borderRadius);
+      ctx.quadraticCurveTo(x, y, x + borderRadius, y);
+      ctx.closePath();
+      ctx.stroke();
+      
+    } else {
+      // Fallback: desenhar com bordas arredondadas mesmo no fallback
+      ctx.save();
+      
+      // Criar clipping path para o fallback também
+      ctx.beginPath();
+      ctx.moveTo(x + borderRadius, y);
+      ctx.lineTo(x + size - borderRadius, y);
+      ctx.quadraticCurveTo(x + size, y, x + size, y + borderRadius);
+      ctx.lineTo(x + size, y + size - borderRadius);
+      ctx.quadraticCurveTo(x + size, y + size, x + size - borderRadius, y + size);
+      ctx.lineTo(x + borderRadius, y + size);
+      ctx.quadraticCurveTo(x, y + size, x, y + size - borderRadius);
+      ctx.lineTo(x, y + borderRadius);
+      ctx.quadraticCurveTo(x, y, x + borderRadius, y);
+      ctx.closePath();
+      ctx.clip();
+      
+      // Desenhar o peixe colorido
+      ctx.fillStyle = getFishColor(amoeba.level);
+      ctx.fillRect(x, y, size, size);
+      
+      ctx.restore();
+      
+      // Borda do fallback
       ctx.strokeStyle = "black";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(x + borderRadius, y);
+      ctx.lineTo(x + size - borderRadius, y);
+      ctx.quadraticCurveTo(x + size, y, x + size, y + borderRadius);
+      ctx.lineTo(x + size, y + size - borderRadius);
+      ctx.quadraticCurveTo(x + size, y + size, x + size - borderRadius, y + size);
+      ctx.lineTo(x + borderRadius, y + size);
+      ctx.quadraticCurveTo(x, y + size, x, y + size - borderRadius);
+      ctx.lineTo(x, y + borderRadius);
+      ctx.quadraticCurveTo(x, y, x + borderRadius, y);
+      ctx.closePath();
       ctx.stroke();
     }
 
-    // Texto do nível
+    // Texto do nível (sobreposto à imagem)
     ctx.fillStyle = "white";
     ctx.font = "16px Arial";
     ctx.textAlign = "center";
