@@ -1,5 +1,37 @@
 // terrestre.js - Código específico para o nível terrestre
 
+// ======== SISTEMA DE IMAGENS PARA ANIMAIS TERRESTRES ========
+// Cache para imagens carregadas
+const animalImages = {};
+let imagesLoaded = 0;
+const totalImages = 20;
+
+// Função para carregar todas as imagens de animais terrestres
+function loadAnimalImages() {
+  for (let i = 1; i <= totalImages; i++) {
+    const img = new Image();
+    img.onload = () => {
+      imagesLoaded++;
+      console.log(`Imagem do animal terrestre ${i} carregada`);
+    };
+    img.onerror = () => {
+      console.error(`Erro ao carregar imagem do animal terrestre ${i}`);
+      // Usar imagem de fallback se necessário
+      imagesLoaded++;
+    };
+    img.src = `assets/images/animal${i}.jpg`;
+    animalImages[i] = img;
+  }
+}
+
+// Verificar se todas as imagens foram carregadas
+function allImagesLoaded() {
+  return imagesLoaded === totalImages;
+}
+
+// ======== INFORMAÇÕES DOS ANIMAIS TERRESTRES ========
+
+
 // ======== SISTEMA COMPARTILHADO DE SKINS E LOOTBOXES ========
 // REMOVIDO: Funções showPopup, hideAllPopups (agora no shared.js)
 // REMOVIDO: Variáveis inventory e equippedSkin (agora no shared.js)
@@ -694,23 +726,48 @@ function drawBackground() {
 }
 
 function drawAmoebas() {
-    for (let amoeba of amoebas) {
-        const scale = amoeba.animScale;
-        const radius = (amoeba.size / 2) * scale;
-
-        ctx.fillStyle = getColor(amoeba.level);
-        ctx.beginPath();
-        ctx.arc(amoeba.x + amoeba.size / 2, amoeba.y + amoeba.size / 2, radius, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.strokeStyle = "black";
-        ctx.stroke();
-
-        ctx.fillStyle = "white";
-        ctx.font = "16px Arial";
-        ctx.textAlign = "center";
-        ctx.fillText(`Lv ${amoeba.level}`, amoeba.x + amoeba.size / 2, amoeba.y + amoeba.size / 2 + 5);
+  for (let amoeba of amoebas) {
+    const scale = amoeba.animScale;
+    const size = amoeba.size * scale;
+    
+    // Verificar se a imagem para este nível está carregada
+    const animalImage = animalImages[amoeba.level];
+    
+    if (animalImage && animalImage.complete) {
+      // Desenhar a imagem do animal
+      ctx.save();
+      
+      // Aplicar escala de animação
+      ctx.translate(amoeba.x + amoeba.size / 2, amoeba.y + amoeba.size / 2);
+      ctx.scale(scale, scale);
+      
+      // Desenhar a imagem centralizada
+      ctx.drawImage(
+        animalImage, 
+        -size / 2, 
+        -size / 2, 
+        size, 
+        size
+      );
+      
+      ctx.restore();
+    } else {
+      // Fallback: desenhar círculo colorido se a imagem não carregou
+      const radius = (amoeba.size / 2) * scale;
+      ctx.fillStyle = getColor(amoeba.level);
+      ctx.beginPath();
+      ctx.arc(amoeba.x + amoeba.size / 2, amoeba.y + amoeba.size / 2, radius, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = "black";
+      ctx.stroke();
     }
+
+    // Texto do nível (sobreposto à imagem)
+    ctx.fillStyle = "white";
+    ctx.font = "16px Arial";
+    ctx.textAlign = "center";
+    ctx.fillText(`Lv ${amoeba.level}`, amoeba.x + amoeba.size / 2, amoeba.y + amoeba.size / 2 + 5);
+  }
 }
 
 function drawMoneyAnimations() {
@@ -760,6 +817,7 @@ function gameLoop(timestamp) {
 // ======== INICIALIZAÇÃO ========
 bg.onload = () => {
     loadGame();
+     loadAnimalImages(); // Adicione esta linha
     requestAnimationFrame(gameLoop);
 };
 

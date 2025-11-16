@@ -1,4 +1,26 @@
 // ceu.js - Código específico para o nível do céu
+// ======== SISTEMA DE IMAGENS PARA AVES ========
+// Cache para imagens carregadas
+const aveImages = {};
+let imagesLoaded = 0;
+const totalImages = 20;
+
+// Função para carregar todas as imagens de aves
+function loadAveImages() {
+  for (let i = 1; i <= totalImages; i++) {
+    const img = new Image();
+    img.onload = () => {
+      imagesLoaded++;
+      console.log(`Imagem da ave ${i} carregada`);
+    };
+    img.onerror = () => {
+      console.error(`Erro ao carregar imagem da ave ${i}`);
+      imagesLoaded++;
+    };
+    img.src = `assets/images/ave${i}.jpg`;
+    aveImages[i] = img;
+  }
+}
 
 // ======== SISTEMA COMPARTILHADO DE SKINS E LOOTBOXES ========
 // REMOVIDO: Funções showPopup, hideAllPopups (agora no shared.js)
@@ -715,24 +737,37 @@ function drawBackground() {
 }
 
 function drawAmoebas() {
-    for (let amoeba of amoebas) {
-        const scale = amoeba.animScale;
-        const radius = (amoeba.size / 2) * scale;
-
-        // ✅ Usar getBirdColor para as aves
-        ctx.fillStyle = getBirdColor(amoeba.level);
-        ctx.beginPath();
-        ctx.arc(amoeba.x + amoeba.size / 2, amoeba.y + amoeba.size / 2, radius, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.strokeStyle = "black";
-        ctx.stroke();
-
-        ctx.fillStyle = "white";
-        ctx.font = "16px Arial";
-        ctx.textAlign = "center";
-        ctx.fillText(`Lv ${amoeba.level}`, amoeba.x + amoeba.size / 2, amoeba.y + amoeba.size / 2 + 5);
+  for (let amoeba of amoebas) {
+    const scale = amoeba.animScale;
+    const size = amoeba.size * scale;
+    
+    // Verificar se a imagem para este nível está carregada
+    const aveImage = aveImages[amoeba.level];
+    
+    if (aveImage && aveImage.complete) {
+      // Desenhar a imagem da ave
+      ctx.save();
+      ctx.translate(amoeba.x + amoeba.size / 2, amoeba.y + amoeba.size / 2);
+      ctx.scale(scale, scale);
+      ctx.drawImage(aveImage, -size / 2, -size / 2, size, size);
+      ctx.restore();
+    } else {
+      // Fallback
+      const radius = (amoeba.size / 2) * scale;
+      ctx.fillStyle = getBirdColor(amoeba.level);
+      ctx.beginPath();
+      ctx.arc(amoeba.x + amoeba.size / 2, amoeba.y + amoeba.size / 2, radius, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = "black";
+      ctx.stroke();
     }
+
+    // Texto do nível
+    ctx.fillStyle = "white";
+    ctx.font = "16px Arial";
+    ctx.textAlign = "center";
+    ctx.fillText(`Lv ${amoeba.level}`, amoeba.x + amoeba.size / 2, amoeba.y + amoeba.size / 2 + 5);
+  }
 }
 
 function drawMoneyAnimations() {
@@ -782,6 +817,7 @@ function gameLoop(timestamp) {
 // ======== INICIALIZAÇÃO ========
 bg.onload = () => {
     loadGame();
+     loadAveImages(); // Adicione esta linha
     requestAnimationFrame(gameLoop);
 };
 
