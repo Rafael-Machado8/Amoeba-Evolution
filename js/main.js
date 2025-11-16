@@ -8,47 +8,27 @@ const ctx = canvas.getContext("2d");
 const CANVAS_WIDTH = 1280;
 const CANVAS_HEIGHT = 720;
 
-// Função para redimensionar o canvas responsivamente
+// ======== SISTEMA DE REDIMENSIONAMENTO IGUAL AOS OUTROS NÍVEIS ========
 function resizeCanvas() {
-  const container = document.getElementById("game-container");
-  const containerWidth = container.clientWidth;
-  const containerHeight = window.innerHeight;
-  
-  // Em telas menores (tablet/celular), aumentar altura do canvas para mais espaço
   const isMobile = window.innerWidth <= 768;
-  
-  let actualCanvasWidth = CANVAS_WIDTH;
-  let actualCanvasHeight = CANVAS_HEIGHT;
-  
+
   if (isMobile) {
-    // Em mobile: aumentar altura do canvas para dar mais espaço vertical
-    // Calcular altura extra baseada na altura da tela
-    const extraHeight = Math.max(0, containerHeight - (CANVAS_HEIGHT * (containerWidth / CANVAS_WIDTH)));
-    actualCanvasHeight = CANVAS_HEIGHT + Math.floor(extraHeight / (containerWidth / CANVAS_WIDTH));
-    // Garantir altura mínima e máxima
-    actualCanvasHeight = Math.max(CANVAS_HEIGHT, Math.min(actualCanvasHeight, containerHeight * 1.5));
-  }
-  
-  let scale;
-  if (isMobile) {
-    // Em mobile: usar toda a altura disponível
-    const scaleY = containerHeight / actualCanvasHeight;
-    const scaleX = containerWidth / actualCanvasWidth;
-    scale = Math.min(scaleY, scaleX);
+    // Em mobile, o canvas preenche a tela mantendo proporção
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
   } else {
-    // Em desktop: permitir que o canvas cresça além do tamanho original
-    const scaleX = containerWidth / actualCanvasWidth;
-    const scaleY = containerHeight / actualCanvasHeight;
-    scale = Math.min(scaleX, scaleY);
+    // Em desktop, calculamos a escala para manter a proporção de 1280x720
+    const container = document.getElementById("game-container");
+    const scale = Math.min(container.clientWidth / CANVAS_WIDTH, container.clientHeight / CANVAS_HEIGHT);
+    
+    // Define o tamanho de exibição (CSS) do canvas
+    canvas.style.width = (CANVAS_WIDTH * scale) + 'px';
+    canvas.style.height = (CANVAS_HEIGHT * scale) + 'px';
+
+    // Define a resolução interna para a qualidade original
+    canvas.width = CANVAS_WIDTH;
+    canvas.height = CANVAS_HEIGHT;
   }
-  
-  // Aplicar escala
-  canvas.style.width = (actualCanvasWidth * scale) + 'px';
-  canvas.style.height = (actualCanvasHeight * scale) + 'px';
-  
-  // Atualizar tamanho interno do canvas para renderização
-  canvas.width = actualCanvasWidth;
-  canvas.height = actualCanvasHeight;
 }
 
 // Função auxiliar para converter coordenadas do mouse/touch para coordenadas do canvas
@@ -257,38 +237,6 @@ const AMOEBA_INFO = {
   }
 };
 
-// ======== SISTEMA DE SAVE/LOAD ========
-function saveGame() {
-  const state = {
-    amoebas,
-    coins,
-    upgrades,
-    amoebaPrices,
-    discoveredLevels: [...discoveredLevels],
-    spawnTimer,
-    spawnInterval
-  };
-  localStorage.setItem("gameState", JSON.stringify(state));
-}
-
-function loadGame() {
-  const saved = localStorage.getItem("gameState");
-  if (!saved) return;
-
-  const state = JSON.parse(saved);
-  amoebas = state.amoebas || amoebas;
-  coins = state.coins || 0;
-  upgrades = state.upgrades || upgrades;
-  amoebaPrices = state.amoebaPrices || {};
-  discoveredLevels = new Set(state.discoveredLevels || [1]);
-  spawnTimer = state.spawnTimer || 0;
-  spawnInterval = state.spawnInterval || 15000;
-
-  document.getElementById("coins").innerText = `💰 ${coins}`;
-}
-
-window.addEventListener("beforeunload", saveGame);
-
 // ======== VARIÁVEIS DO JOGO ========
 let discoveredLevels = new Set(JSON.parse(localStorage.getItem("discoveredAmoebas")) || [1]);
 
@@ -309,6 +257,67 @@ let upgrades = {
   higherStart: { name: "Amoebas começam mais fortes", level: 0, max: 5, baseCost: 200, effect: 0 },
   ima: { name: "Ímã mágico", level: 0, max: 3, baseCost: 1000, effect: 5 }
 };
+
+// ======== SISTEMA DE SAVE/LOAD PARA AMOEBAS ========
+function saveGame() {
+    const state = {
+        amoebas,
+        coins,
+        upgrades,
+        amoebaPrices,
+        discoveredLevels: [...discoveredLevels],
+        spawnTimer,
+        spawnInterval
+    };
+    localStorage.setItem("gameState_amoebas", JSON.stringify(state));
+}
+
+function loadGame() {
+    const saved = localStorage.getItem("gameState_amoebas");
+    if (!saved) {
+        // Se não há save para amoebas, inicia do zero
+        resetGameForAmoebas();
+        return;
+    }
+
+    const state = JSON.parse(saved);
+    amoebas = state.amoebas || amoebas;
+    coins = state.coins || 0;
+    upgrades = state.upgrades || upgrades;
+    amoebaPrices = state.amoebaPrices || {};
+    discoveredLevels = new Set(state.discoveredLevels || [1]);
+    spawnTimer = state.spawnTimer || 0;
+    spawnInterval = state.spawnInterval || 15000;
+
+    document.getElementById("coins").innerText = `💰 ${coins}`;
+    
+    // Verificar se já tem nível 20 ao carregar
+    setTimeout(() => {
+        checkNewLevelUnlock();
+    }, 1000);
+}
+
+function resetGameForAmoebas() {
+    amoebas = [
+        { x: 300, y: 300, size: 60, level: 1, dragging: false, dx: 2, dy: 1, animScale: 1 }
+    ];
+    coins = 0;
+    amoebaPrices = {};
+    discoveredLevels = new Set([1]);
+    spawnTimer = 0;
+    spawnInterval = 15000;
+    
+    upgrades = {
+        moreCoins: { name: "Mais moedas por amoeba", level: 0, max: 10, baseCost: 50, effect: 1 },
+        fasterSpawn: { name: "Spawn mais rápido", level: 0, max: 5, baseCost: 100, effect: 0.9 },
+        higherStart: { name: "Amoebas começam mais fortes", level: 0, max: 5, baseCost: 200, effect: 0 },
+        ima: { name: "Ímã mágico", level: 0, max: 3, baseCost: 1000, effect: 5 }
+    };
+    
+    document.getElementById("coins").innerText = `💰 ${coins}`;
+}
+
+window.addEventListener("beforeunload", saveGame);
 
 // ======== POPUPS ========
 function saveDiscovered() {
@@ -439,7 +448,7 @@ function renderUpgradeList() {
   }
 }
 
-// ======== RENDER COMPRAR PEIXES ========
+// ======== RENDER COMPRAR AMOEBAS ========
 function renderBuyList() {
   const container = document.getElementById("buy-list");
   container.innerHTML = "";
@@ -451,7 +460,7 @@ function renderBuyList() {
       const item = document.createElement("div");
       item.className = `buy-item ${!isUnlocked ? 'locked' : ''}`;
       item.innerHTML = `
-          <strong>Peixe Nível ${level}</strong> <br>
+          <strong>Amoeba Nível ${level}</strong> <br>
           ${!isUnlocked ? '<span style="color: red;">🔒 Não desbloqueado</span><br>' : ''}
           Custo: 💰 ${cost} <br>
           <button ${!isUnlocked ? 'disabled' : ''}>${!isUnlocked ? 'Bloqueado' : 'Comprar'}</button>
@@ -469,25 +478,26 @@ function renderBuyList() {
 }
 
 // ======== JOGO ========
-function spawnAmoeba(level = 1) {
-  const lvl = level + upgrades.higherStart.effect;
+function spawnAmoeba(level = 1, applyHigherStart = true) {
+  const lvl = applyHigherStart ? (level + upgrades.higherStart.effect) : level;
+  
   const newAmoeba = {
-    x: Math.random() * (canvas.width - 60),
-    y: Math.random() * (canvas.height - 60),
-    size: 60,
-    level: lvl,
-    dragging: false,
-    dx: (Math.random() * 2 - 1) * 2,
-    dy: (Math.random() * 2 - 1) * 2,
-    animScale: 1
+      x: Math.random() * (canvas.width - 60),
+      y: Math.random() * (canvas.height - 60),
+      size: 60,
+      level: lvl,
+      dragging: false,
+      dx: (Math.random() * 2 - 1) * 2,
+      dy: (Math.random() * 2 - 1) * 2,
+      animScale: 1
   };
 
   amoebas.push(newAmoeba);
 
   if (!discoveredLevels.has(lvl)) {
-    discoveredLevels.add(lvl);
-    showInfoPopup(lvl);
-    saveDiscovered();
+      discoveredLevels.add(lvl);
+      showInfoPopup(lvl);
+      saveDiscovered();
   }
 }
 
@@ -728,280 +738,6 @@ function forceUpdateColors() {
   // O game loop vai atualizar automaticamente na próxima frame
 }
 
-// ======== LOOP DO JOGO ========
-let lastTime = 0;
-function gameLoop(timestamp) {
-    const deltaTime = timestamp - lastTime;
-    lastTime = timestamp;
-
-    updateAmoebas(deltaTime);
-    updateMoneyAnimations();
-    
-    // ✅ ADICIONAR VERIFICAÇÃO DO NOVO NÍVEL A CADA FRAME
-    checkNewLevelUnlock();
-    
-    drawBackground();
-    drawAmoebas();
-    drawMoneyAnimations();
-    drawSpawnBar();
-
-    requestAnimationFrame(gameLoop);
-}
-
-bg.onload = () => {
-  loadGame();
-  requestAnimationFrame(gameLoop);
-};
-
-// ======== SISTEMA DE SAVE/LOAD POR NÍVEL ========
-function getCurrentLevelKey() {
-    // Verifica em qual página estamos
-    if (window.location.href.includes('peixes.html')) {
-        return 'peixes';
-    } else {
-        return 'amoebas';
-    }
-}
-
-function saveGame() {
-    const levelKey = getCurrentLevelKey();
-    const state = {
-        amoebas,
-        coins,
-        upgrades,
-        amoebaPrices,
-        discoveredLevels: [...discoveredLevels],
-        spawnTimer,
-        spawnInterval
-    };
-    localStorage.setItem(`gameState_${levelKey}`, JSON.stringify(state));
-}
-
-function loadGame() {
-    const levelKey = getCurrentLevelKey();
-    const saved = localStorage.getItem(`gameState_${levelKey}`);
-    
-    // Se não há save para este nível, inicia do zero
-    if (!saved) {
-        resetGameForCurrentLevel();
-        return;
-    }
-
-    const state = JSON.parse(saved);
-    amoebas = state.amoebas || amoebas;
-    coins = state.coins || 0;
-    upgrades = state.upgrades || upgrades;
-    amoebaPrices = state.amoebaPrices || {};
-    discoveredLevels = new Set(state.discoveredLevels || [1]);
-    spawnTimer = state.spawnTimer || 0;
-    spawnInterval = state.spawnInterval || 15000;
-
-    document.getElementById("coins").innerText = `💰 ${coins}`;
-}
-
-// ======== RESET PARA CADA NÍVEL ========
-function resetGameForCurrentLevel() {
-    const levelKey = getCurrentLevelKey();
-    
-    // Resetar todas as variáveis do jogo
-    amoebas = [
-        { x: 300, y: 300, size: 60, level: 1, dragging: false, dx: 2, dy: 1, animScale: 1 }
-    ];
-    
-    coins = 0;
-    selectedAmoeba = null;
-    moneyAnimations = [];
-    spawnTimer = 0;
-    spawnInterval = 15000;
-    amoebaPrices = {};
-    discoveredLevels = new Set([1]);
-    
-    // Upgrades específicos para cada nível
-    if (levelKey === 'peixes') {
-        upgrades = {
-            moreCoins: { name: "Mais moedas por peixe", level: 0, max: 10, baseCost: 50, effect: 1 },
-            fasterSpawn: { name: "Spawn mais rápido", level: 0, max: 5, baseCost: 100, effect: 0.9 },
-            higherStart: { name: "Peixes começam mais fortes", level: 0, max: 5, baseCost: 200, effect: 0 },
-            ima: { name: "Ímã mágico", level: 0, max: 3, baseCost: 1000, effect: 5 }
-        };
-        // Mudar texto do botão para peixes
-        document.getElementById("buyAmoebaBtn").textContent = "➕ Peixe";
-    } else {
-        upgrades = {
-            moreCoins: { name: "Mais moedas por amoeba", level: 0, max: 10, baseCost: 50, effect: 1 },
-            fasterSpawn: { name: "Spawn mais rápido", level: 0, max: 5, baseCost: 100, effect: 0.9 },
-            higherStart: { name: "Amoebas começam mais fortes", level: 0, max: 5, baseCost: 200, effect: 0 },
-            ima: { name: "Ímã mágico", level: 0, max: 3, baseCost: 1000, effect: 5 }
-        };
-        document.getElementById("buyAmoebaBtn").textContent = "➕ Amoeba";
-    }
-    
-    document.getElementById("coins").innerText = `💰 ${coins}`;
-    
-    console.log(`Jogo resetado para nível: ${levelKey}`);
-}
-
-// ======== VERIFICAÇÃO DE DESBLOQUEIO DO NOVO NÍVEL ========
-function checkNewLevelUnlock() {
-    // Só verifica no nível das amoebas
-    if (getCurrentLevelKey() === 'amoebas') {
-        const hasLevel5 = amoebas.some(a => a.level >= 5);
-        const newLevelBtn = document.getElementById("newlevelbtn");
-        
-        if (hasLevel5) {
-            newLevelBtn.classList.remove("hidden");
-            newLevelBtn.style.display = "block";
-        }
-    }
-}
-// ======== VERIFICAÇÃO DO NOVO NÍVEL ========
-function checkNewLevelUnlock() {
-    const hasLevel5 = amoebas.some(a => a.level >= 5);
-    const newLevelBtn = document.getElementById("newlevelbtn");
-    
-    console.log("Verificando novo nível:", { 
-        hasLevel5, 
-        amoebas: amoebas.map(a => a.level) 
-    });
-    
-    if (hasLevel5) {
-        newLevelBtn.classList.remove("hidden");
-        newLevelBtn.style.display = "block";
-        console.log("✅ Botão do novo nível liberado!");
-    }
-}
-
-// ======== MODIFICAR A FUNÇÃO MERGEAMOEBAS ========
-function mergeAmoebas(a, b) {
-    const newLevel = a.level + 1;
-    const newAmoeba = {
-        x: (a.x + b.x) / 2,
-        y: (a.y + b.y) / 2,
-        size: 60,
-        level: newLevel,
-        dragging: false,
-        dx: (Math.random() * 2 - 1) * 2,
-        dy: (Math.random() * 2 - 1) * 2,
-        animScale: 1.5
-    };
-
-    amoebas = amoebas.filter(x => x !== a && x !== b);
-    amoebas.push(newAmoeba);
-
-    if (!discoveredLevels.has(newLevel)) {
-        discoveredLevels.add(newLevel);
-        showInfoPopup(newLevel);
-        saveDiscovered();
-    }
-    
-    // ✅ VERIFICAR SE DESBLOQUEOU NOVO NÍVEL APÓS FUSÃO
-    checkNewLevelUnlock();
-    saveGame();
-}
-
-function spawnAmoeba(level = 1, applyHigherStart = true) {
-  const lvl = applyHigherStart ? (level + upgrades.higherStart.effect) : level;
-  
-  const newAmoeba = {
-      x: Math.random() * (canvas.width - 60),
-      y: Math.random() * (canvas.height - 60),
-      size: 60,
-      level: lvl,
-      dragging: false,
-      dx: (Math.random() * 2 - 1) * 2,
-      dy: (Math.random() * 2 - 1) * 2,
-      animScale: 1
-  };
-
-  amoebas.push(newAmoeba);
-
-  if (!discoveredLevels.has(lvl)) {
-      discoveredLevels.add(lvl);
-      showInfoPopup(lvl);
-      saveDiscovered();
-  }
-}
-
-// ======== MODIFICAR O LOADGAME ========
-function loadGame() {
-    const saved = localStorage.getItem("gameState");
-    if (!saved) return;
-
-    const state = JSON.parse(saved);
-    amoebas = state.amoebas || amoebas;
-    coins = state.coins || 0;
-    upgrades = state.upgrades || upgrades;
-    amoebaPrices = state.amoebaPrices || {};
-    discoveredLevels = new Set(state.discoveredLevels || [1]);
-    spawnTimer = state.spawnTimer || 0;
-    spawnInterval = state.spawnInterval || 15000;
-
-    document.getElementById("coins").innerText = `💰 ${coins}`;
-    
-    // ✅ VERIFICAR SE JÁ TEM NÍVEL 5 AO CARREGAR O JOGO
-    setTimeout(() => {
-        checkNewLevelUnlock();
-    }, 1000);
-}
-// ======== SISTEMA DE SAVE/LOAD PARA AMOEBAS ========
-function saveGame() {
-    const state = {
-        amoebas,
-        coins,
-        upgrades,
-        amoebaPrices,
-        discoveredLevels: [...discoveredLevels],
-        spawnTimer,
-        spawnInterval
-    };
-    localStorage.setItem("gameState_amoebas", JSON.stringify(state));
-}
-
-function loadGame() {
-    const saved = localStorage.getItem("gameState_amoebas");
-    if (!saved) {
-        // Se não há save para amoebas, inicia do zero
-        resetGameForAmoebas();
-        return;
-    }
-
-    const state = JSON.parse(saved);
-    amoebas = state.amoebas || amoebas;
-    coins = state.coins || 0;
-    upgrades = state.upgrades || upgrades;
-    amoebaPrices = state.amoebaPrices || {};
-    discoveredLevels = new Set(state.discoveredLevels || [1]);
-    spawnTimer = state.spawnTimer || 0;
-    spawnInterval = state.spawnInterval || 15000;
-
-    document.getElementById("coins").innerText = `💰 ${coins}`;
-    
-    // Verificar se já tem nível 5 ao carregar
-    setTimeout(() => {
-        checkNewLevelUnlock();
-    }, 1000);
-}
-
-function resetGameForAmoebas() {
-    amoebas = [
-        { x: 300, y: 300, size: 60, level: 1, dragging: false, dx: 2, dy: 1, animScale: 1 }
-    ];
-    coins = 0;
-    amoebaPrices = {};
-    discoveredLevels = new Set([1]);
-    spawnTimer = 0;
-    spawnInterval = 15000;
-    
-    upgrades = {
-        moreCoins: { name: "Mais moedas por amoeba", level: 0, max: 10, baseCost: 50, effect: 1 },
-        fasterSpawn: { name: "Spawn mais rápido", level: 0, max: 5, baseCost: 100, effect: 0.9 },
-        higherStart: { name: "Amoebas começam mais fortes", level: 0, max: 5, baseCost: 200, effect: 0 },
-        ima: { name: "Ímã mágico", level: 0, max: 3, baseCost: 1000, effect: 5 }
-    };
-    
-    document.getElementById("coins").innerText = `💰 ${coins}`;
-}
-
 // ======== VERIFICAÇÃO DO NOVO NÍVEL ========
 function checkNewLevelUnlock() {
   const hasLevel20 = amoebas.some(a => a.level >= 20);
@@ -1022,6 +758,26 @@ function checkNewLevelUnlock() {
       newLevelBtn.classList.add("hidden");
       newLevelBtn.style.display = "none";
   }
+}
+
+// ======== LOOP DO JOGO ========
+let lastTime = 0;
+function gameLoop(timestamp) {
+    const deltaTime = timestamp - lastTime;
+    lastTime = timestamp;
+
+    updateAmoebas(deltaTime);
+    updateMoneyAnimations();
+    
+    // ✅ ADICIONAR VERIFICAÇÃO DO NOVO NÍVEL A CADA FRAME
+    checkNewLevelUnlock();
+    
+    drawBackground();
+    drawAmoebas();
+    drawMoneyAnimations();
+    drawSpawnBar();
+
+    requestAnimationFrame(gameLoop);
 }
 
 // ======== SISTEMA DE TOUCH PARA MOBILE ========
@@ -1067,8 +823,8 @@ function handleTouchMove(e) {
   if (isTouching && selectedAmoeba && selectedAmoeba.dragging && e.touches.length === 1) {
     const coords = getCanvasCoordinates(e);
     // Limitar movimento dentro dos bounds do canvas
-    const maxX = CANVAS_WIDTH - selectedAmoeba.size;
-    const maxY = CANVAS_HEIGHT - selectedAmoeba.size;
+    const maxX = canvas.width - selectedAmoeba.size;
+    const maxY = canvas.height - selectedAmoeba.size;
     
     selectedAmoeba.x = Math.max(0, Math.min(maxX, coords.x - selectedAmoeba.size / 2));
     selectedAmoeba.y = Math.max(0, Math.min(maxY, coords.y - selectedAmoeba.size / 2));
@@ -1101,6 +857,12 @@ canvas.addEventListener('contextmenu', (e) => {
   return false;
 });
 
+// ======== INICIALIZAÇÃO ========
+bg.onload = () => {
+  loadGame();
+  requestAnimationFrame(gameLoop);
+};
+
 // ======== AJUSTES DE PERFORMANCE PARA MOBILE ========
 
 // Otimizar game loop para mobile
@@ -1127,13 +889,6 @@ function optimizedGameLoop(timestamp) {
   requestAnimationFrame(optimizedGameLoop);
 }
 
-// Substituir a chamada do game loop no bg.onload:
-bg.onload = () => {
-  loadGame();
-  // Usar o game loop otimizado
-  requestAnimationFrame(optimizedGameLoop);
-};
-
 // ======== DETECÇÃO DE DISPOSITIVO MÓVEL ========
 function isMobileDevice() {
   return (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1);
@@ -1154,4 +909,10 @@ if (isMobileDevice()) {
   
   // Ajustar framerate para economizar bateria
   mobileFrameRate = 45;
+  
+  // Usar o game loop otimizado
+  bg.onload = () => {
+    loadGame();
+    requestAnimationFrame(optimizedGameLoop);
+  };
 }
