@@ -24,14 +24,6 @@ body {
   align-items: center;
 }
 
-@media (max-width: 768px) {
-  #game-container {
-    height: 100vh;
-    min-height: 100vh;
-    padding: 0;
-  }
-}
-
 canvas {
   border: 3px solid #fff;
   display: block;
@@ -44,34 +36,19 @@ canvas {
 /* ===== HUD ===== */
 #hud {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 20px;
+  right: 20px;
   background: rgba(255, 255, 255, 0.85);
   color: #333;
-  padding: 8px 14px;
-  border-radius: 12px;
-  font-size: 18px;
+  padding: 8px 15px;
+  border-radius: 20px;
+  font-size: 16px;
   font-weight: bold;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
   z-index: 10;
-}
-
-@media (max-width: 768px) {
-  #hud {
-    top: 5px;
-    right: 5px;
-    padding: 6px 12px;
-    font-size: 16px;
-  }
-}
-
-@media (max-width: 480px) {
-  #hud {
-    top: 5px;
-    right: 5px;
-    padding: 5px 10px;
-    font-size: 14px;
-  }
+  border: 2px solid #4CAF50;
+  min-width: 100px;
+  text-align: center;
 }
 
 /* ===== Botões principais (lado esquerdo) ===== */
@@ -83,59 +60,37 @@ canvas {
   flex-direction: column;
   gap: 8px;
   z-index: 10;
+  background: rgba(255, 255, 255, 0.7);
+  padding: 10px;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  max-width: 200px;
+  backdrop-filter: blur(5px);
 }
 
 #ui-buttons button {
-  background: rgba(255, 255, 255, 0.85);
-  border: none;
+  background: rgba(255, 255, 255, 0.8);
+  border: 2px solid #4CAF50;
   color: #333;
-  padding: 10px 15px;
+  padding: 12px 15px;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 14px;
   border-radius: 10px;
-  transition: transform 0.2s, background 0.3s;
+  transition: all 0.3s ease;
   font-weight: bold;
-  box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+  box-shadow: 0 3px 8px rgba(0,0,0,0.2);
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
   min-height: 44px;
+  width: 100%;
+  backdrop-filter: blur(3px);
 }
 
 #ui-buttons button:hover {
-  background: #ffe68c;
-  transform: scale(1.05);
-}
-
-#ui-buttons button:active {
-  transform: scale(0.95);
-}
-
-@media (max-width: 768px) {
-  #ui-buttons {
-    top: 5px;
-    left: 5px;
-    gap: 6px;
-  }
-  
-  #ui-buttons button {
-    padding: 8px 12px;
-    font-size: 14px;
-    min-height: 40px;
-  }
-}
-
-@media (max-width: 480px) {
-  #ui-buttons {
-    top: 5px;
-    left: 5px;
-    gap: 5px;
-  }
-  
-  #ui-buttons button {
-    padding: 6px 10px;
-    font-size: 12px;
-    min-height: 36px;
-  }
+  background: #4CAF50;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
 }
 
 /* ===== Botão Upgrade ===== */
@@ -143,133 +98,186 @@ canvas {
   position: absolute;
   top: 80px;
   right: 20px;
-  background: #ffce54;
-  border: none;
+  background: rgba(255, 206, 84, 0.7);
+  border: 2px solid #ffb300;
   border-radius: 50%;
   width: 60px;
   height: 60px;
   font-size: 28px;
   cursor: pointer;
-  box-shadow: 0 5px 10px rgba(0,0,0,0.3);
-  transition: transform 0.2s, background 0.2s;
+  box-shadow: 0 5px 15px rgba(255, 206, 84, 0.4);
+  transition: all 0.3s ease;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
   z-index: 10;
+  backdrop-filter: blur(3px);
 }
+
 #upgradeBtn:hover {
   transform: scale(1.15);
   background: #ffd966;
-}
-#upgradeBtn:active {
-  transform: scale(0.95);
+  box-shadow: 0 8px 20px rgba(255, 206, 84, 0.7);
 }
 
-@media (max-width: 768px) {
-  #upgradeBtn {
-    top: 60px;
-    right: 10px;
-    width: 50px;
-    height: 50px;
-    font-size: 24px;
-  }
-}
-
-@media (max-width: 480px) {
-  #upgradeBtn {
-    top: 50px;
-    right: 5px;
-    width: 45px;
-    height: 45px;
-    font-size: 20px;
-  }
-}
-
-/* ===== Botão Comprar Amoeba ===== */
+/* ===== Botão Comprar ===== */
 #buyAmoebaBtn {
   position: absolute;
   top: 160px;
   right: 20px;
-  background: #6ec1e4;
-  border: none;
+  background: rgba(110, 193, 228, 0.7);
+  border: 2px solid #4fa8d4;
   border-radius: 12px;
   width: 120px;
   height: 40px;
   font-size: 16px;
+  font-weight: bold;
+  color: white;
   cursor: pointer;
-  box-shadow: 0 5px 10px rgba(0,0,0,0.3);
-  transition: transform 0.2s, background 0.2s;
+  box-shadow: 0 5px 15px rgba(110, 193, 228, 0.4);
+  transition: all 0.3s ease;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
   z-index: 10;
   min-height: 44px;
+  backdrop-filter: blur(3px);
 }
+
 #buyAmoebaBtn:hover {
   transform: scale(1.05);
   background: #5ab0d8;
-}
-#buyAmoebaBtn:active {
-  transform: scale(0.95);
+  box-shadow: 0 8px 20px rgba(110, 193, 228, 0.7);
 }
 
-@media (max-width: 768px) {
-  #buyAmoebaBtn {
-    top: 120px;
-    right: 10px;
-    width: 100px;
-    height: 36px;
-    font-size: 14px;
-  }
+/* ===== Botões de Navegação ===== */
+#newlevelbtn, .back-button {
+  position: absolute;
+  border: 2px solid;
+  border-radius: 15px;
+  width: 180px;
+  height: 50px;
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 10;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  min-height: 44px;
+  backdrop-filter: blur(3px);
 }
 
-@media (max-width: 480px) {
-  #buyAmoebaBtn {
-    top: 100px;
-    right: 5px;
-    width: 90px;
-    height: 32px;
-    font-size: 12px;
-  }
-}
-
-/* ===== Popup base ===== */
-#upgrade-popup, #buy-popup {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) scale(0.9);
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 20px;
-  padding: 20px;
-  color: #333;
-  width: 420px;
-  max-width: 90vw;
-  max-height: 80vh;
-  overflow-y: auto;
-  z-index: 1001;
-  display: none;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.5);
-  animation: popupIn 0.3s ease-out forwards;
-}
-#upgrade-popup.hidden, #buy-popup.hidden {
+#newlevelbtn {
+  bottom: 20px;
+  right: 20px;
+  background: linear-gradient(45deg, rgba(30, 144, 255, 0.7), rgba(0, 206, 209, 0.7));
+  border-color: #1e90ff;
+  box-shadow: 0 5px 15px rgba(30, 144, 255, 0.4);
   display: none;
 }
 
-@media (max-width: 768px) {
-  #upgrade-popup, #buy-popup {
-    width: 90vw;
-    max-width: 400px;
-    padding: 15px;
-    border-radius: 15px;
-  }
+#newlevelbtn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 8px 25px rgba(30, 144, 255, 0.7);
+  background: linear-gradient(45deg, #00ced1, #1e90ff);
 }
 
-@media (max-width: 480px) {
-  #upgrade-popup, #buy-popup {
-    width: 95vw;
-    padding: 12px;
-    border-radius: 12px;
-    max-height: 85vh;
-  }
+.back-button {
+  bottom: 20px;
+  left: 20px;
+}
+
+#backToAmoebasBtn {
+  background: linear-gradient(45deg, #ff6b6b, #ffa500);
+  border-color: #ff6b6b;
+  box-shadow: 0 5px 15px rgba(255, 107, 107, 0.5);
+}
+
+#backToPeixesBtn {
+  background: linear-gradient(45deg, #c4f17b, #a4f844);
+  border-color: #a4f844;
+  box-shadow: 0 5px 15px rgba(164, 248, 68, 0.5);
+}
+
+#backToTerrestreBtn {
+  background: linear-gradient(45deg, #FF8C00, #FFA500);
+  border-color: #FF8C00;
+  box-shadow: 0 5px 15px rgba(255, 140, 0, 0.5);
+}
+
+.back-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+}
+
+/* ===== SISTEMA DE POPUPS CORRIGIDO ===== */
+.popup-background {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  background: rgba(0, 0, 0, 0.7) !important;
+  z-index: 9998 !important;
+  display: none !important;
+}
+
+.popup-background.active {
+  display: block !important;
+}
+
+/* ESTILO BASE PARA TODOS OS POPUPS */
+#upgrade-popup, 
+#buy-popup, 
+#shop-popup, 
+#inventory-popup, 
+#reward-popup, 
+#info-popup {
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  background: white !important;
+  border-radius: 20px !important;
+  padding: 25px !important;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5) !important;
+  z-index: 9999 !important;
+  max-width: 90vw !important;
+  max-height: 90vh !important;
+  overflow-y: auto !important;
+  display: none !important;
+  border: 3px solid #333 !important;
+}
+
+/* QUANDO O POPUP ESTÁ ATIVO (NÃO HIDDEN) */
+#upgrade-popup:not(.hidden), 
+#buy-popup:not(.hidden), 
+#shop-popup:not(.hidden), 
+#inventory-popup:not(.hidden), 
+#reward-popup:not(.hidden), 
+#info-popup:not(.hidden) {
+  display: block !important;
+}
+
+/* QUANDO O POPUP ESTÁ HIDDEN */
+#upgrade-popup.hidden, 
+#buy-popup.hidden, 
+#shop-popup.hidden, 
+#inventory-popup.hidden, 
+#reward-popup.hidden, 
+#info-popup.hidden {
+  display: none !important;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* ===== CONTEÚDO DOS POPUPS ===== */
+.popup-content {
+  position: relative;
+  width: 100%;
+  height: 100%;
 }
 
 .popup-content h2 {
@@ -277,328 +285,55 @@ canvas {
   text-align: center;
   font-size: 24px;
   color: #444;
+  margin-bottom: 20px;
 }
 
-/* Item de upgrade/compra */
-.upgrade-item {
-  margin: 12px 0;
-  padding: 12px;
-  background: #f5f5f5;
-  border-radius: 12px;
-  transition: background 0.2s, transform 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-}
-.upgrade-item:hover {
-  background: #ffefc1;
-  transform: scale(1.02);
-}
-
-.upgrade-preview {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  border: 2px solid #333;
-}
-
-.upgrade-item button {
-  padding: 8px;
-  cursor: pointer;
-  border: none;
-  border-radius: 8px;
-  background: #4caf50;
-  color: white;
-  font-weight: bold;
-  transition: background 0.2s;
-}
-.upgrade-item button:hover {
-  background: #45a049;
-}
-
-/* Botão fechar */
-#closeUpgrade, #closeBuy {
-  display: block;
-  margin: 15px auto 0;
-  padding: 10px 18px;
-  background: #ff6961;
-  color: white;
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background 0.2s;
-}
-#closeUpgrade:hover, #closeBuy:hover {
-  background: #ff5c53;
-}
-
-/* Animação popup */
-@keyframes popupIn {
-  from { opacity: 0; transform: translate(-50%, -50%) scale(0.7); }
-  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-}
-
-/* ===== Pop-up Educativo ===== */
-#info-popup {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) scale(0.8);
-  background: rgba(255, 255, 255, 0.97);
-  border-radius: 20px;
-  padding: 20px;
-  color: #333;
-  width: 500px;
-  max-width: 90vw;
-  max-height: 80vh;
-  text-align: center;
-  z-index: 1001;
-  display: none;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.6);
-  animation: popupIn 0.4s ease-out forwards;
-  overflow-y: auto;
-}
-
-#info-popup img {
-  width: 250px;
-  max-width: 100%;
-  height: auto;
-  border-radius: 16px;
-  margin: 15px 0;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-}
-
-@media (max-width: 768px) {
-  #info-popup {
-    width: 90vw;
-    padding: 15px;
-    border-radius: 15px;
-  }
-  
-  #info-popup img {
-    width: 200px;
-  }
-}
-
-@media (max-width: 480px) {
-  #info-popup {
-    width: 95vw;
-    padding: 12px;
-    border-radius: 12px;
-    max-height: 85vh;
-  }
-  
-  #info-popup img {
-    width: 150px;
-  }
-  
-  #info-popup p {
-    font-size: 14px;
-  }
-}
-
-#info-popup p {
-  margin: 10px 0;
-  font-size: 16px;
-  line-height: 1.4em;
-}
-
+/* ===== BOTÕES FECHAR ===== */
+#closeUpgrade, 
+#closeBuy, 
+#closeShop, 
+#closeInventory, 
+#closeReward, 
 #closeInfo {
   display: block;
-  margin: 15px auto 0;
-  padding: 10px 18px;
-  background: #ff6961;
+  margin: 20px auto 0 auto;
+  padding: 10px 25px;
+  background: #ff6b6b;
   color: white;
   border: none;
-  border-radius: 12px;
+  border-radius: 10px;
   cursor: pointer;
   font-weight: bold;
-  transition: background 0.2s, transform 0.2s;
+  transition: all 0.3s;
+  min-height: 44px;
 }
+
+#closeUpgrade:hover, 
+#closeBuy:hover, 
+#closeShop:hover, 
+#closeInventory:hover, 
+#closeReward:hover, 
 #closeInfo:hover {
-  background: #ff5c53;
+  background: #ff5252;
   transform: scale(1.05);
 }
-/* ===== Botão Novo Nível ===== */
-#newlevelbtn {
-    position: absolute;
-    bottom: 20px;
-    right: 20px;
-    background: linear-gradient(45deg, #1e90ff, #00ced1);
-    border: none;
-    border-radius: 15px;
-    width: 180px;
-    height: 50px;
-    font-size: 16px;
-    font-weight: bold;
-    color: white;
-    cursor: pointer;
-    box-shadow: 0 5px 15px rgba(30, 144, 255, 0.5);
-    transition: transform 0.3s, box-shadow 0.3s;
-    z-index: 10;
-    display: none;
-    touch-action: manipulation;
-    -webkit-tap-highlight-color: transparent;
-    min-height: 44px;
-}
 
-@media (max-width: 768px) {
-  #newlevelbtn {
-    bottom: 10px;
-    right: 10px;
-    width: 150px;
-    height: 45px;
-    font-size: 14px;
-  }
-}
-
-@media (max-width: 480px) {
-  #newlevelbtn {
-    bottom: 5px;
-    right: 5px;
-    width: 130px;
-    height: 40px;
-    font-size: 12px;
-  }
-}
-
-/* ===== Botão Voltar ===== */
-.back-button {
-    position: absolute;
-    bottom: 20px;
-    left: 20px;
-    border: none;
-    border-radius: 15px;
-    width: 180px;
-    height: 50px;
-    font-size: 16px;
-    font-weight: bold;
-    color: white;
-    cursor: pointer;
-    transition: transform 0.3s, box-shadow 0.3s;
-    z-index: 10;
-    touch-action: manipulation;
-    -webkit-tap-highlight-color: transparent;
-    min-height: 44px;
-}
-
-#backToAmoebasBtn {
-    background: linear-gradient(45deg, #ff6b6b, #ffa500);
-    box-shadow: 0 5px 15px rgba(255, 107, 107, 0.5);
-}
-
-#backToPeixesBtn {
-    background: linear-gradient(45deg, #c4f17b, #a4f844);
-    box-shadow: 0 5px 15px rgba(164, 248, 68, 0.5);
-    z-index: 10; /* Added */
-    min-height: 44px; /* Added */
-}
-
-#backToTerrestreBtn {
-    background: linear-gradient(45deg, #FF8C00, #FFA500);
-    box-shadow: 0 5px 15px rgba(255, 140, 0, 0.5);
-}
-
-@media (max-width: 768px) {
-  .back-button {
-    bottom: 10px;
-    left: 10px;
-    width: 150px;
-    height: 45px;
-    font-size: 14px;
-  }
-}
-
-@media (max-width: 480px) {
-  .back-button {
-    bottom: 5px;
-    left: 5px;
-    width: 130px;
-    height: 40px;
-    font-size: 12px;
-  }
-}
-
-#newlevelbtn:not(.hidden),
-.back-button {
-    display: block !important;
-}
-
-#newlevelbtn.hidden {
-    display: none !important;
-}
-
-#newlevelbtn:hover,
-.back-button:hover {
-    transform: scale(1.1);
-}
-
-/* Estilos específicos para peixes */
-.library-peixes header {
-  background: linear-gradient(45deg, #1976d2, #42a5f5) !important;
-}
-
-.library-peixes .amoeba-card {
-  background: linear-gradient(135deg, #e3f2fd, #bbdefb) !important;
-  border: 2px solid #64b5f6;
-}
-
-.library-peixes .amoeba-card:hover {
-  box-shadow: 0 6px 15px rgba(33, 150, 243, 0.4);
-}
-
-.library-peixes .locked {
-  font-size: 50px;
-  color: #78909c;
-  margin: 20px 0;
-}
-
-/* Melhorias gerais para ambas as bibliotecas */
-.amoeba-card p {
-  margin: 8px 0;
-  line-height: 1.4;
-}
-
-.amoeba-card b {
-  color: #333;
-}
-
-.amoeba-img {
-  width: 120px;
-  height: 120px;
-  object-fit: cover;
-  border-radius: 10px;
-  border: 3px solid #ddd;
-  background: #f5f5f5;
-}
-
-/* Botão Terrestre */
-#newlevelbtn {
-    background: linear-gradient(45deg, #388e3c, #4caf50) !important;
-}
-
-/* ===== SISTEMA DE LOOTBOXES ===== */
+/* ===== LAYOUT DO SHOP ===== */
 .lootbox-container {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  display: flex;
   gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
   margin: 20px 0;
 }
 
 .lootbox-item {
-  background: #f5f5f5;
-  border-radius: 15px;
-  padding: 20px;
+  border: 2px solid #ccc;
+  border-radius: 10px;
+  padding: 15px;
   text-align: center;
-  transition: transform 0.3s, box-shadow 0.3s;
-  border: 3px solid #ddd;
-}
-
-.lootbox-item:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+  min-width: 200px;
+  background: #f5f5f5;
 }
 
 .lootbox-icon {
@@ -628,17 +363,6 @@ canvas {
   border-color: #7B1FA2;
 }
 
-.lootbox-item h4 {
-  margin: 10px 0;
-  color: #333;
-}
-
-.lootbox-item p {
-  margin: 8px 0;
-  color: #666;
-  font-size: 14px;
-}
-
 .price {
   font-size: 18px !important;
   font-weight: bold;
@@ -655,10 +379,152 @@ canvas {
   font-weight: bold;
   transition: background 0.3s;
   margin-top: 10px;
+  min-height: 44px;
 }
 
 .buy-lootbox:hover {
   background: #45a049;
+}
+
+/* ===== LAYOUT DO INVENTÁRIO ===== */
+.inventory-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.tab-button {
+  padding: 10px 15px;
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  background: #f0f0f0;
+  cursor: pointer;
+  min-height: 44px;
+}
+
+.tab-button.active {
+  background: #4CAF50;
+  color: white;
+  border-color: #4CAF50;
+}
+
+.inventory-content {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.skins-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.skin-item {
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  padding: 10px;
+  text-align: center;
+  background: #f9f9f9;
+}
+
+.skin-item.common { border-color: #b0b0b0; }
+.skin-item.rare { border-color: #4CAF50; }
+.skin-item.epic { border-color: #9C27B0; }
+.skin-item.legendary { border-color: #FFC107; }
+
+.skin-item.equipped {
+  background: #E3F2FD;
+  border-color: #2196F3;
+}
+
+.skin-preview {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  margin: 0 auto 10px;
+  border: 2px solid #333;
+}
+
+.equip-btn, .unequip-btn {
+  background: #4CAF50;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 15px;
+  cursor: pointer;
+  font-size: 12px;
+  margin-top: 8px;
+  transition: all 0.3s;
+  min-height: 44px;
+}
+
+.unequip-btn {
+  background: #2196F3 !important;
+}
+
+.equip-btn:hover {
+  background: #45a049;
+  transform: scale(1.05);
+}
+
+.unequip-btn:hover {
+  background: #1976D2 !important;
+  transform: scale(1.05);
+}
+
+/* ===== LAYOUT UPGRADE/COMPRA ===== */
+#upgrade-list, 
+#buy-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin: 20px 0;
+  max-height: 300px;
+  overflow-y: auto;
+  padding: 10px;
+}
+
+.upgrade-item, 
+.buy-item {
+  background: #f8f9fa;
+  border: 2px solid #e9ecef;
+  border-radius: 12px;
+  padding: 15px;
+  transition: all 0.3s ease;
+}
+
+.upgrade-item:hover, 
+.buy-item:hover {
+  background: #e3f2fd;
+  border-color: #2196f3;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.2);
+}
+
+.upgrade-item button, 
+.buy-item button {
+  background: #4caf50;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s;
+  min-height: 44px;
+}
+
+.upgrade-item button:hover:not(:disabled), 
+.buy-item button:hover:not(:disabled) {
+  background: #45a049;
+}
+
+.upgrade-item button:disabled, 
+.buy-item button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
 }
 
 /* ===== POPUP DE RECOMPENSA ===== */
@@ -693,198 +559,69 @@ canvas {
   border-color: #FFC107;
 }
 
-.skin-preview {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  margin: 0 auto 15px;
-  border: 3px solid #333;
+/* ===== POPUP EDUCATIVO ===== */
+#info-popup img {
+  width: 250px;
+  max-width: 100%;
+  height: auto;
+  border-radius: 16px;
+  margin: 15px 0;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
 }
 
-.rarity {
-  font-weight: bold;
-  padding: 5px 10px;
-  border-radius: 15px;
-  display: inline-block;
-  margin: 5px;
-}
-
-.rarity.common {
-  background: #b0b0b0;
-  color: white;
-}
-
-.rarity.rare {
-  background: #4CAF50;
-  color: white;
-}
-
-.rarity.epic {
-  background: #9C27B0;
-  color: white;
-}
-
-.rarity.legendary {
-  background: #FFC107;
-  color: #333;
-}
-
-.new-skin {
-  color: #4CAF50;
-  font-weight: bold;
-}
-
-.duplicate {
-  color: #FF9800;
-  font-weight: bold;
-}
-
-/* ===== INVENTÁRIO ===== */
-.inventory-tabs {
-  display: flex;
-  margin-bottom: 20px;
-  border-bottom: 2px solid #ddd;
-}
-
-.tab-button {
-  background: none;
-  border: none;
-  padding: 10px 20px;
-  cursor: pointer;
-  border-bottom: 3px solid transparent;
-  transition: all 0.3s;
-}
-
-.tab-button.active {
-  border-bottom-color: #4CAF50;
-  background: #E8F5E8;
-}
-
-.inventory-content {
-  max-height: 400px;
-  overflow-y: auto;
-}
-
-.level-section {
-  margin-bottom: 30px;
-}
-
-.level-section h4 {
-  color: #333;
-  border-bottom: 2px solid #eee;
-  padding-bottom: 5px;
-  margin-bottom: 15px;
-}
-
-.skins-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 15px;
-}
-
-.skin-item {
-  background: #f9f9f9;
-  border-radius: 10px;
-  padding: 15px;
-  text-align: center;
-  border: 2px solid;
-  transition: transform 0.3s;
-}
-
-.skin-item:hover {
-  transform: scale(1.05);
-}
-
-.skin-item.common {
-  border-color: #b0b0b0;
-}
-
-.skin-item.rare {
-  border-color: #4CAF50;
-}
-
-.skin-item.epic {
-  border-color: #9C27B0;
-}
-
-.skin-item.legendary {
-  border-color: #FFC107;
-}
-
-.skin-item.equipped {
-  background: #E3F2FD;
-  border-color: #2196F3;
-}
-
-.skin-item h5 {
-  margin: 10px 0 5px;
-  font-size: 14px;
-}
-
-.skin-item .skin-preview {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  margin: 0 auto;
-  border: 2px solid #333;
-}
-
-.equip-btn, .unequip-btn {
-  background: #4CAF50;
-  color: white;
-  border: none;
-  padding: 5px 10px;
-  border-radius: 15px;
-  cursor: pointer;
-  font-size: 12px;
-  margin-top: 8px;
-}
-
-.unequip-btn {
-  background: #F44336;
-}
-
-.equip-btn:hover {
-  background: #45a049;
-}
-
-.unequip-btn:hover {
-  background: #d32f2f;
-}
-
-.no-skins {
-  text-align: center;
-  color: #666;
-  font-style: italic;
-  padding: 40px;
-}
-
-.hidden {
-  display: none !important;
-}
-
-/* ===== CORREÇÃO DOS POPUPS ===== */
-.popup-content {
-  max-width: 90vw;
-  max-height: 90vh;
-  overflow-y: auto;
-  background: rgba(255, 255, 255, 0.98);
-  border-radius: 20px;
-  padding: 25px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-}
-
-/* Garantir que os popups cabem na tela */
-#shop-popup .popup-content,
-#inventory-popup .popup-content,
-#reward-popup .popup-content {
-  width: auto;
-  min-width: 300px;
-  max-width: 800px;
-}
-
-/* Lootboxes em coluna única em telas pequenas */
+/* ===== RESPONSIVIDADE ===== */
 @media (max-width: 768px) {
+  #game-container {
+    height: 100vh;
+    min-height: 100vh;
+    padding: 0;
+  }
+  
+  #hud {
+    top: 10px;
+    right: 10px;
+    padding: 6px 12px;
+    font-size: 14px;
+    min-width: 80px;
+  }
+  
+  #ui-buttons {
+    top: 5px;
+    left: 5px;
+    gap: 6px;
+    padding: 8px;
+    max-width: 150px;
+  }
+  
+  #ui-buttons button {
+    padding: 10px 12px;
+    font-size: 12px;
+    min-height: 40px;
+  }
+  
+  #upgradeBtn {
+    top: 60px;
+    right: 10px;
+    width: 50px;
+    height: 50px;
+    font-size: 24px;
+  }
+  
+  #buyAmoebaBtn {
+    top: 120px;
+    right: 10px;
+    width: 100px;
+    height: 40px;
+    font-size: 14px;
+  }
+  
+  #newlevelbtn, .back-button {
+    bottom: 10px;
+    width: 150px;
+    height: 45px;
+    font-size: 14px;
+  }
+  
   .lootbox-container {
     grid-template-columns: 1fr;
     gap: 15px;
@@ -894,14 +631,59 @@ canvas {
     grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
   }
   
-  .buy-lootbox {
-    padding: 12px 20px;
-    font-size: 14px;
-    min-height: 44px;
+  canvas {
+    width: 100vw;
+    height: 100vh;
+    border: none;
   }
 }
 
 @media (max-width: 480px) {
+  #hud {
+    top: 8px;
+    right: 8px;
+    padding: 5px 10px;
+    font-size: 13px;
+    min-width: 70px;
+  }
+  
+  #ui-buttons {
+    top: 4px;
+    left: 4px;
+    gap: 5px;
+    padding: 6px;
+    max-width: 130px;
+  }
+  
+  #ui-buttons button {
+    padding: 8px 10px;
+    font-size: 11px;
+    min-height: 38px;
+  }
+  
+  #upgradeBtn {
+    top: 50px;
+    right: 8px;
+    width: 45px;
+    height: 45px;
+    font-size: 20px;
+  }
+  
+  #buyAmoebaBtn {
+    top: 105px;
+    right: 8px;
+    width: 90px;
+    height: 38px;
+    font-size: 12px;
+  }
+  
+  #newlevelbtn, .back-button {
+    bottom: 8px;
+    width: 130px;
+    height: 42px;
+    font-size: 13px;
+  }
+  
   .lootbox-item {
     padding: 15px;
   }
@@ -911,358 +693,9 @@ canvas {
     height: 60px;
     font-size: 36px;
   }
-  
-  .buy-lootbox {
-    padding: 10px 18px;
-    font-size: 12px;
-    width: 100%;
-  }
 }
 
-/* Fundo escuro para popups */
-.popup-background {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.7);
-  z-index: 999;
-  display: none;
-}
-
-.popup-background.active {
-  display: block;
-}
-
-/* Botão fechar melhorado */
-.popup-content button {
-  margin-top: 15px;
-  padding: 10px 20px;
-  background: #ff6b6b;
-  color: white;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background 0.3s;
-}
-
-.popup-content button:hover {
-  background: #ff5252;
-}
-
-/* Estilo para mostrar ID da skin */
-.skin-id {
-    font-size: 10px;
-    color: #666;
-    margin: 2px 0;
-}
-
-/* Botão de equipado */
-.equip-btn, .unequip-btn {
-    background: #4CAF50;
-    color: white;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 15px;
-    cursor: pointer;
-    font-size: 12px;
-    margin-top: 8px;
-    transition: all 0.3s;
-}
-
-.unequip-btn {
-    background: #2196F3 !important;
-}
-
-.equip-btn:hover {
-    background: #45a049;
-    transform: scale(1.05);
-}
-
-.unequip-btn:hover {
-    background: #1976D2 !important;
-    transform: scale(1.05);
-}
-
-#upgrade-popup, 
-#buy-popup, 
-#shop-popup, 
-#inventory-popup, 
-#reward-popup, 
-#info-popup {
-  position: fixed !important;
-  top: 50% !important;
-  left: 50% !important;
-  transform: translate(-50%, -50%) !important;
-  background: rgba(255, 255, 255, 0.98) !important;
-  border-radius: 20px !important;
-  padding: 25px !important;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.5) !important;
-  z-index: 1001 !important;
-  width: auto !important;
-  min-width: 300px !important;
-  max-width: 90vw !important;
-  max-height: 90vh !important;
-  overflow-y: auto !important;
-  display: none !important;
-}
-
-/* Quando não estiver hidden, mostrar como block */
-#upgrade-popup:not(.hidden), 
-#buy-popup:not(.hidden), 
-#shop-popup:not(.hidden), 
-#inventory-popup:not(.hidden), 
-#reward-popup:not(.hidden), 
-#info-popup:not(.hidden) {
-  display: block !important;
-}
-
-/* Remove regras conflitantes anteriores */
-#upgrade-popup.hidden, 
-#buy-popup.hidden {
-  display: none !important;
-}
-
-/* Fundo escuro para todos os popups */
-.popup-background {
-  position: fixed !important;
-  top: 0 !important;
-  left: 0 !important;
-  width: 100% !important;
-  height: 100% !important;
-  background: rgba(0, 0, 0, 0.7) !important;
-  z-index: 1000 !important;
-  display: none !important;
-}
-
-.popup-background.active {
-  display: block !important;
-}
-
-
-
-/* Layout específico para upgrade e compra */
-#upgrade-list, 
-#buy-list {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  margin: 20px 0;
-  max-height: 300px;
-  overflow-y: auto;
-  padding: 10px;
-}
-
-.upgrade-item, 
-.buy-item {
-  background: #f8f9fa;
-  border: 2px solid #e9ecef;
-  border-radius: 12px;
-  padding: 15px;
-  transition: all 0.3s ease;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.upgrade-item:hover, 
-.buy-item:hover {
-  background: #e3f2fd;
-  border-color: #2196f3;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.2);
-}
-
-.upgrade-item strong, 
-.buy-item strong {
-  font-size: 16px;
-  color: #333;
-}
-
-.upgrade-item button, 
-.buy-item button {
-  background: #4caf50;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background 0.3s;
-  align-self: flex-start;
-}
-
-.upgrade-item button:hover:not(:disabled), 
-.buy-item button:hover:not(:disabled) {
-  background: #45a049;
-}
-
-.upgrade-item button:disabled, 
-.buy-item button:disabled {
-  background: #ccc;
-  cursor: not-allowed;
-}
-
-/* Botão fechar centralizado */
-#closeUpgrade, 
-#closeBuy, 
-#closeShop, 
-#closeInventory, 
-#closeReward, 
-#closeInfo {
-  display: block;
-  margin: 20px auto 0 auto;
-  padding: 10px 25px;
-  background: #ff6b6b;
-  color: white;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: all 0.3s;
-}
-
-#closeUpgrade:hover, 
-#closeBuy:hover, 
-#closeShop:hover, 
-#closeInventory:hover, 
-#closeReward:hover, 
-#closeInfo:hover {
-  background: #ff5252;
-  transform: scale(1.05);
-}
-
-/* ===== BOTÃO DO NOVO NÍVEL CÉU (no terrestre) ===== */
-#newlevelbtn {
-    position: absolute;
-    bottom: 20px;
-    right: 20px;
-    background: linear-gradient(45deg, #87CEEB, #E0F7FA, #B3E5FC);
-    border: none;
-    border-radius: 15px;
-    width: 180px;
-    height: 50px;
-    font-size: 16px;
-    font-weight: bold;
-    color: #0277BD;
-    cursor: pointer;
-    box-shadow: 0 5px 15px rgba(135, 206, 235, 0.5);
-    transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
-    z-index: 10;
-    display: none;
-    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
-    touch-action: manipulation;
-    -webkit-tap-highlight-color: transparent;
-    min-height: 44px;
-}
-
-@media (max-width: 768px) {
-  #newlevelbtn {
-    bottom: 10px;
-    right: 10px;
-    width: 150px;
-    height: 45px;
-    font-size: 14px;
-  }
-}
-
-@media (max-width: 480px) {
-  #newlevelbtn {
-    bottom: 5px;
-    right: 5px;
-    width: 130px;
-    height: 40px;
-    font-size: 12px;
-  }
-}
-
-#newlevelbtn:not(.hidden) {
-    display: block !important;
-}
-
-#newlevelbtn.hidden {
-    display: none !important;
-}
-
-#newlevelbtn:hover {
-    transform: scale(1.1);
-    box-shadow: 0 8px 25px rgba(135, 206, 235, 0.7);
-    background: linear-gradient(45deg, #00BFFF, #87CEEB, #E0F7FA);
-    color: #01579B;
-}
-
-/* ===== BOTÃO VOLTAR DOS PEIXES (no terrestre) ===== */
-
-
-/* ===== BOTÃO VOLTAR DO TERRESTRE (no céu) ===== */
-#backToTerrestreBtn {
-    position: absolute;
-    bottom: 20px;
-    left: 20px;
-    background: linear-gradient(45deg, #FF8C00, #FFA500);
-    border: none;
-    border-radius: 15px;
-    width: 180px;
-    height: 50px;
-    font-size: 16px;
-    font-weight: bold;
-    color: white;
-    cursor: pointer;
-    box-shadow: 0 5px 15px rgba(255, 140, 0, 0.5);
-    transition: transform 0.3s, box-shadow 0.3s;
-    z-index: 10;
-    touch-action: manipulation;
-    -webkit-tap-highlight-color: transparent;
-    min-height: 44px;
-}
-
-@media (max-width: 768px) {
-  #backToTerrestreBtn {
-    bottom: 10px;
-    left: 10px;
-    width: 150px;
-    height: 45px;
-    font-size: 14px;
-  }
-}
-
-@media (max-width: 480px) {
-  #backToTerrestreBtn {
-    bottom: 5px;
-    left: 5px;
-    width: 130px;
-    height: 40px;
-    font-size: 12px;
-  }
-}
-
-#backToTerrestreBtn:hover {
-    transform: scale(1.1);
-    box-shadow: 0 8px 25px rgba(255, 140, 0, 0.7);
-    background: linear-gradient(45deg, #FF4500, #FF8C00);
-}
-
-/* ===== Fullscreen Mobile ===== */
-@media (max-width: 768px) {
-  html, body {
-    overflow: hidden;
-    width: 100%;
-    height: 100%;
-  }
-  #game-container {
-    width: 100%;
-    height: 100%;
-    max-width: none;
-  }
-  canvas {
-    width: 100vw;
-    height: 100vh;
-    border: none;
-  }
-}
-
+/* ===== UTILITÁRIOS ===== */
 .alerta-dev {
   background: #ff0000;
   color: #000;
@@ -1272,4 +705,61 @@ canvas {
   border-radius: 8px;
   font-size: 20px;
   margin-top: 10px;
+}
+
+.no-skins {
+  text-align: center;
+  color: #666;
+  font-style: italic;
+  padding: 40px;
+}
+
+.buy-item.locked {
+  opacity: 0.6;
+  background: #f0f0f0 !important;
+  border-color: #ccc !important;
+}
+
+.buy-item.locked button:disabled {
+  background: #ccc !important;
+  color: #666 !important;
+  cursor: not-allowed;
+}
+
+/* ===== RESET RADICAL PARA POPUPS ===== */
+body > div:not(#game-container):not(canvas) {
+  z-index: 10000 !important;
+}
+
+/* Garantir que nada interfira com os popups */
+* {
+  box-sizing: border-box;
+}
+
+/* Remover qualquer transform ou filter que possa afetar os popups */
+#game-container, canvas {
+  transform: none !important;
+  filter: none !important;
+  perspective: none !important;
+}
+
+/* Forçar o body a ser normal */
+body {
+  overflow: auto !important;
+  position: relative !important;
+  transform: none !important;
+}
+
+/* Estilo de emergência caso o JavaScript falhe */
+.popup-emergencia {
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  z-index: 10000 !important;
+  background: white !important;
+  border: 5px solid red !important;
+  padding: 30px !important;
+  font-size: 24px !important;
+  color: red !important;
 }

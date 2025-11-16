@@ -1,44 +1,9 @@
 // terrestre.js - Código específico para o nível terrestre
-// ======== SISTEMA MELHORADO DE POPUPS ========
-function showPopup(popupId) {
-  // Esconder todos os popups primeiro
-  hideAllPopups();
-  
-  const popup = document.getElementById(popupId);
-  if (popup) {
-    popup.style.display = "block";
-    popup.classList.remove("hidden");
-    
-    // Adicionar fundo escuro
-    const background = document.createElement('div');
-    background.className = 'popup-background active';
-    background.id = 'popup-background';
-    background.onclick = hideAllPopups;
-    document.body.appendChild(background);
-  }
-}
 
-function hideAllPopups() {
-  // Esconder todos os popups
-  const popups = document.querySelectorAll('[id$="-popup"]');
-  popups.forEach(popup => {
-    popup.style.display = "none";
-    popup.classList.add("hidden");
-  });
-  
-  // Remover fundo escuro
-  const background = document.getElementById('popup-background');
-  if (background) {
-    background.remove();
-  }
-}
-
-// Fechar popup com ESC
-document.addEventListener('keydown', function(e) {
-  if (e.key === 'Escape') {
-    hideAllPopups();
-  }
-});
+// ======== SISTEMA COMPARTILHADO DE SKINS E LOOTBOXES ========
+// REMOVIDO: Funções showPopup, hideAllPopups (agora no shared.js)
+// REMOVIDO: Variáveis inventory e equippedSkin (agora no shared.js)
+// REMOVIDO: Funções de lootbox e inventory duplicadas (agora no shared.js)
 
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
@@ -276,86 +241,6 @@ const TERRESTRE_INFO = {
   }
 };
 
-// ======== SISTEMA COMPARTILHADO DE SKINS E LOOTBOXES ========
-
-// Usar o mesmo sistema compartilhado
-let inventory = JSON.parse(localStorage.getItem("skinInventory")) || {
-  amoebas: {},
-  peixes: {},
-  terrestre: {}
-};
-
-let equippedSkin = JSON.parse(localStorage.getItem("equippedSkin")) || {
-  amoebas: null,
-  peixes: null,
-  terrestre: null
-};
-
-// Skins específicas para terrestre
-const TERRESTRE_SKINS = {
-  1: [
-    { id: 'terrestre_1_1', name: 'Animal Marrom Básico', rarity: 'common', color: '#8B4513' },
-    { id: 'terrestre_1_2', name: 'Animal Cinza Básico', rarity: 'common', color: '#808080' },
-    { id: 'terrestre_1_3', name: 'Animal Dourado', rarity: 'rare', color: '#FFD700' },
-    { id: 'terrestre_1_4', name: 'Animal Prateado', rarity: 'epic', color: '#C0C0C0' },
-    { id: 'terrestre_1_5', name: 'Animal Místico', rarity: 'legendary', color: 'linear-gradient(45deg, #654ea3, #eaafc8)' }
-  ],
-  2: [
-    { id: 'terrestre_2_1', name: 'Animal Verde Floresta', rarity: 'common', color: '#228B22' },
-    { id: 'terrestre_2_2', name: 'Animal Laranja Terra', rarity: 'common', color: '#D2691E' },
-    { id: 'terrestre_2_3', name: 'Animal Bronze', rarity: 'rare', color: '#CD7F32' },
-    { id: 'terrestre_2_4', name: 'Animal Esmeralda', rarity: 'epic', color: '#50C878' },
-    { id: 'terrestre_2_5', name: 'Animal Celestial', rarity: 'legendary', color: 'linear-gradient(45deg, #ff7e5f, #feb47b)' }
-  ],
-  3: [
-    { id: 'terrestre_3_1', name: 'Animal Vermelho Rubi', rarity: 'common', color: '#DC143C' },
-    { id: 'terrestre_3_2', name: 'Animal Azul Profundo', rarity: 'common', color: '#000080' },
-    { id: 'terrestre_3_3', name: 'Animal Ametista', rarity: 'rare', color: '#9966CC' },
-    { id: 'terrestre_3_4', name: 'Animal Topázio', rarity: 'epic', color: '#FFC87C' },
-    { id: 'terrestre_3_5', name: 'Animal Vulcânico', rarity: 'legendary', color: 'linear-gradient(45deg, #c33764, #1d2671)' }
-  ],
-  4: [
-    { id: 'terrestre_4_1', name: 'Animal Preto Ébano', rarity: 'common', color: '#2F4F4F' },
-    { id: 'terrestre_4_2', name: 'Animal Branco Neve', rarity: 'common', color: '#FFFAFA' },
-    { id: 'terrestre_4_3', name: 'Animal Platina', rarity: 'rare', color: '#E5E4E2' },
-    { id: 'terrestre_4_4', name: 'Animal Safira', rarity: 'epic', color: '#0F52BA' },
-    { id: 'terrestre_4_5', name: 'Animal Arco-íris', rarity: 'legendary', color: 'linear-gradient(45deg, #FF0000, #FFA500, #FFFF00, #008000, #0000FF, #4B0082, #EE82EE)' }
-  ],
-  5: [
-    { id: 'terrestre_5_1', name: 'Animal Camuflagem', rarity: 'common', color: '#556B2F' },
-    { id: 'terrestre_5_2', name: 'Animal Deserto', rarity: 'common', color: '#F4A460' },
-    { id: 'terrestre_5_3', name: 'Animal Ouro Rosa', rarity: 'rare', color: '#E6BE8A' },
-    { id: 'terrestre_5_4', name: 'Animal Diamante Negro', rarity: 'epic', color: '#0A0A0A' },
-    { id: 'terrestre_5_5', name: 'Animal Lendário', rarity: 'legendary', color: 'linear-gradient(45deg, #00c6ff, #0072ff)' }
-  ]
-};
-
-// Preços das lootboxes
-const LOOTBOX_PRICES = {
-  common: 500,
-  rare: 5000,
-  epic: 50000
-};
-
-// Probabilidades para cada tipo de caixa
-const LOOTBOX_PROBABILITIES = {
-  common: {
-    common: 0.60,  // 60% chance de skin comum
-    rare: 0.30,    // 30% chance de skin rara
-    epic: 0.10     // 10% chance de skin épica
-  },
-  rare: {
-    common: 0.30,  // 30% chance de skin comum
-    rare: 0.50,    // 50% chance de skin rara
-    epic: 0.20     // 20% chance de skin épica
-  },
-  epic: {
-    common: 0.10,  // 10% chance de skin comum
-    rare: 0.30,    // 30% chance de skin rara
-    epic: 0.60     // 60% chance de skin épica
-  }
-};
-
 // ======== VARIÁVEIS DO JOGO ========
 let discoveredLevels = new Set([1]);
 let amoebas = [
@@ -448,199 +333,6 @@ function saveDiscovered() {
     localStorage.setItem("terrestreDiscoveries", JSON.stringify(discoveries));
 }
 
-// ======== FUNÇÕES DO SISTEMA DE LOOTBOX PARA TERRESTRE ========
-
-function buyLootbox(lootboxType) {
-  const price = LOOTBOX_PRICES[lootboxType];
-  
-  if (coins >= price) {
-    coins -= price;
-    document.getElementById("coins").innerText = `💰 ${coins}`;
-    
-    const skin = openLootbox(lootboxType);
-    addToInventory(skin);
-    showRewardPopup(skin);
-    
-    saveGame();
-  } else {
-    alert("Moedas insuficientes!");
-  }
-}
-
-function openLootbox(lootboxType) {
-  const probabilities = LOOTBOX_PROBABILITIES[lootboxType];
-  const random = Math.random();
-  
-  let selectedRarity;
-  
-  if (random < probabilities.common) {
-    selectedRarity = 'common';
-  } else if (random < probabilities.common + probabilities.rare) {
-    selectedRarity = 'rare';
-  } else {
-    selectedRarity = 'epic';
-  }
-  
-  const categories = ['amoebas', 'peixes', 'terrestre'];
-  const randomCategory = categories[Math.floor(Math.random() * categories.length)];
-  
-  const availableSkins = [];
-  
-  if (randomCategory === 'terrestre') {
-    for (let level in TERRESTRE_SKINS) {
-      TERRESTRE_SKINS[level].forEach(skin => {
-        if (skin.rarity === selectedRarity) {
-          availableSkins.push({
-            ...skin,
-            category: randomCategory,
-            level: parseInt(level)
-          });
-        }
-      });
-    }
-  } else {
-    const allSkins = JSON.parse(localStorage.getItem("allSkins")) || {};
-    if (allSkins[randomCategory]) {
-      for (let level in allSkins[randomCategory]) {
-        allSkins[randomCategory][level].forEach(skin => {
-          if (skin.rarity === selectedRarity) {
-            availableSkins.push({
-              ...skin,
-              category: randomCategory,
-              level: parseInt(level)
-            });
-          }
-        });
-      }
-    }
-  }
-  
-  if (availableSkins.length > 0) {
-    return availableSkins[Math.floor(Math.random() * availableSkins.length)];
-  } else {
-    const fallbackSkins = [];
-    for (let level in TERRESTRE_SKINS) {
-      fallbackSkins.push({
-        ...TERRESTRE_SKINS[level][0],
-        category: 'terrestre',
-        level: parseInt(level)
-      });
-    }
-    return fallbackSkins[Math.floor(Math.random() * fallbackSkins.length)];
-  }
-}
-
-function addToInventory(skin) {
-  if (!inventory[skin.category][skin.level]) {
-    inventory[skin.category][skin.level] = [];
-  }
-  
-  const skinExists = inventory[skin.category][skin.level].some(s => s.id === skin.id);
-  
-  if (!skinExists) {
-    inventory[skin.category][skin.level].push(skin);
-    localStorage.setItem("skinInventory", JSON.stringify(inventory));
-    return true;
-  } else {
-    return false;
-  }
-}
-
-function showRewardPopup(skin) {
-  const isNewSkin = addToInventory(skin);
-  
-  const rewardItem = document.getElementById("reward-item");
-  rewardItem.innerHTML = `
-    <div class="skin-reward ${skin.rarity}">
-      <div class="skin-preview" style="background: ${skin.color}"></div>
-      <h3>${skin.name}</h3>
-      <p class="rarity ${skin.rarity}">${getRarityName(skin.rarity)}</p>
-      <p><strong>Categoria:</strong> ${getCategoryName(skin.category)}</p>
-      <p><strong>Nível:</strong> ${skin.level}</p>
-      ${isNewSkin ? '<p class="new-skin">✨ Nova Skin Desbloqueada!</p>' : '<p class="duplicate">🔄 Skin Duplicada + 💰 100</p>'}
-    </div>
-  `;
-  
-  // Se for skin duplicada, dar recompensa em moedas
-  if (!isNewSkin) {
-    coins += 100;
-    document.getElementById("coins").innerText = `💰 ${coins}`;
-    saveGame();
-  }
-  
-  showPopup("reward-popup");
-}
-
-function equipSkin(skinId, category) {
-  equippedSkin[category] = skinId;
-  localStorage.setItem("equippedSkin", JSON.stringify(equippedSkin));
-  renderInventory();
-}
-
-function unequipSkin(category) {
-  equippedSkin[category] = null;
-  localStorage.setItem("equippedSkin", JSON.stringify(equippedSkin));
-  renderInventory();
-}
-
-function renderInventory(tab = 'terrestre') {
-  const container = document.getElementById("inventory-content");
-  container.innerHTML = '';
-  
-  if (!inventory[tab] || Object.keys(inventory[tab]).length === 0) {
-    container.innerHTML = '<p class="no-skins">Nenhuma skin desbloqueada ainda!</p>';
-    return;
-  }
-  
-  for (let level in inventory[tab]) {
-    const levelSkins = inventory[tab][level];
-    const levelSection = document.createElement('div');
-    levelSection.className = 'level-section';
-    levelSection.innerHTML = `<h4>Nível ${level}</h4>`;
-    
-    const skinsGrid = document.createElement('div');
-    skinsGrid.className = 'skins-grid';
-    
-    levelSkins.forEach(skin => {
-      const isEquipped = equippedSkin[tab] === skin.id;
-      const skinElement = document.createElement('div');
-      skinElement.className = `skin-item ${skin.rarity} ${isEquipped ? 'equipped' : ''}`;
-      skinElement.innerHTML = `
-        <div class="skin-preview" style="background: ${skin.color}"></div>
-        <h5>${skin.name}</h5>
-        <p class="rarity">${getRarityName(skin.rarity)}</p>
-        ${isEquipped ? 
-          `<button class="unequip-btn" onclick="unequipSkin('${tab}')">Desequipar</button>` :
-          `<button class="equip-btn" onclick="equipSkin('${skin.id}', '${tab}')">Equipar</button>`
-        }
-      `;
-      skinsGrid.appendChild(skinElement);
-    });
-    
-    levelSection.appendChild(skinsGrid);
-    container.appendChild(levelSection);
-  }
-}
-
-function getRarityName(rarity) {
-  const names = {
-    common: 'Comum',
-    rare: 'Rara',
-    epic: 'Épica',
-    legendary: 'Lendária'
-  };
-  return names[rarity] || rarity;
-}
-
-function getCategoryName(category) {
-  const names = {
-    amoebas: 'Amoebas',
-    peixes: 'Peixes',
-    terrestre: 'Terrestre'
-  };
-  return names[category] || category;
-}
-
 // ======== POPUPS ========
 function showInfoPopup(level) {
     const info = TERRESTRE_INFO[level] || {
@@ -703,66 +395,23 @@ document.getElementById("closeBuy").addEventListener("click", () => {
     saveGame();
 });
 
-// ======== EVENT LISTENERS PARA LOOTBOXES ========
-
-// ======== EVENT LISTENERS CORRIGIDOS ========
-
-// Botão da Loja
-document.getElementById("shopBtn").addEventListener("click", () => {
-  showPopup("shop-popup");
-});
-
-// Botão do Inventário
-document.getElementById("inventoryBtn").addEventListener("click", () => {
-  showPopup("inventory-popup");
-  renderInventory();
-});
-
-// Botões de fechar
-document.getElementById("closeShop").addEventListener("click", hideAllPopups);
-document.getElementById("closeInventory").addEventListener("click", hideAllPopups);
-document.getElementById("closeReward").addEventListener("click", hideAllPopups);
-document.getElementById("closeUpgrade").addEventListener("click", hideAllPopups);
-document.getElementById("closeBuy").addEventListener("click", hideAllPopups);
-document.getElementById("closeInfo").addEventListener("click", hideAllPopups);
-
-// Botões de lootbox
-document.querySelectorAll(".buy-lootbox").forEach(button => {
-  button.addEventListener("click", (e) => {
-    const lootboxType = e.target.dataset.type;
-    buyLootbox(lootboxType);
-  });
-});
-
-// Tabs do Inventário
-document.querySelectorAll(".tab-button").forEach(button => {
-  button.addEventListener("click", (e) => {
-    document.querySelectorAll(".tab-button").forEach(btn => {
-      btn.classList.remove("active");
-    });
-    e.target.classList.add("active");
-    const tab = e.target.dataset.tab;
-    renderInventory(tab);
-  });
-});
-
-document.getElementById("closeReward").addEventListener("click", () => {
-  document.getElementById("reward-popup").style.display = "none";
-  document.getElementById("reward-popup").classList.add("hidden");
-});
-
 // ======== SISTEMA DE COMPRA ========
 function buyAmoeba(level = 1) {
-    const cost = amoebaPrices[level] || (100 * level);
-    if (coins >= cost) {
-        coins -= cost;
-        spawnAmoeba(level);
-        amoebaPrices[level] = Math.floor(cost * 1.2);
-        document.getElementById("coins").innerText = `💰 ${coins}`;
-        saveGame();
-    } else {
-        alert("Moedas insuficientes!");
-    }
+  if (!discoveredLevels.has(level)) {
+      alert(`Você precisa desbloquear o nível ${level} primeiro!`);
+      return;
+  }
+  
+  const cost = amoebaPrices[level] || (50 * level);
+  if (coins >= cost) {
+      coins -= cost;
+      spawnAmoeba(level, false);
+      amoebaPrices[level] = Math.floor(cost * 1.2);
+      document.getElementById("coins").innerText = `💰 ${coins}`;
+      saveGame();
+  } else {
+      alert("Moedas insuficientes!");
+  }
 }
 
 function buyUpgrade(type) {
@@ -816,32 +465,36 @@ function renderUpgradeList() {
 
 // ======== RENDER COMPRAR ANIMAIS ========
 function renderBuyList() {
-    const container = document.getElementById("buy-list");
-    container.innerHTML = "";
+  const container = document.getElementById("buy-list");
+  container.innerHTML = "";
 
-    for (let level = 1; level <= 5; level++) {
-        const cost = amoebaPrices[level] || (100 * level);
+  for (let level = 1; level <= 20; level++) {
+      const cost = amoebaPrices[level] || (50 * level);
+      const isUnlocked = discoveredLevels.has(level);
 
-        const item = document.createElement("div");
-        item.className = "buy-item";
-        item.innerHTML = `
-            <strong>Animal Nível ${level}</strong> <br>
-            Custo: 💰 ${cost} <br>
-            <button>Comprar</button>
-        `;
+      const item = document.createElement("div");
+      item.className = `buy-item ${!isUnlocked ? 'locked' : ''}`;
+      item.innerHTML = `
+          <strong>Peixe Nível ${level}</strong> <br>
+          ${!isUnlocked ? '<span style="color: red;">🔒 Não desbloqueado</span><br>' : ''}
+          Custo: 💰 ${cost} <br>
+          <button ${!isUnlocked ? 'disabled' : ''}>${!isUnlocked ? 'Bloqueado' : 'Comprar'}</button>
+      `;
 
-        item.querySelector("button").addEventListener("click", () => {
-            buyAmoeba(level);
-            renderBuyList();
-        });
+      if (isUnlocked) {
+          item.querySelector("button").addEventListener("click", () => {
+              buyAmoeba(level);
+              renderBuyList();
+          });
+      }
 
-        container.appendChild(item);
-    }
+      container.appendChild(item);
+  }
 }
 
 // ======== JOGO ========
 function spawnAmoeba(level = 1) {
-    const lvl = level + upgrades.higherStart.effect;
+  const lvl = level + upgrades.higherStart.effect;
     const newAmoeba = {
         x: Math.random() * (canvas.width - 60),
         y: Math.random() * (canvas.height - 60),
@@ -922,26 +575,33 @@ canvas.addEventListener("mouseup", () => {
 
 // Fusão
 function mergeAmoebas(a, b) {
-    const newLevel = a.level + 1;
-    const newAmoeba = {
-        x: (a.x + b.x) / 2,
-        y: (a.y + b.y) / 2,
-        size: 60,
-        level: newLevel,
-        dragging: false,
-        dx: (Math.random() * 2 - 1) * 1.5,
-        dy: (Math.random() * 2 - 1) * 1.5,
-        animScale: 1.5
-    };
+  const newLevel = a.level + 1;
+  
+  // ✅ PERMITIR FUSÃO ATÉ O NÍVEL 20
+  if (newLevel > 20) {
+      console.log("🎯 Nível máximo dos animais terrestres alcançado!");
+      return;
+  }
+  
+  const newAmoeba = {
+      x: (a.x + b.x) / 2,
+      y: (a.y + b.y) / 2,
+      size: 60,
+      level: newLevel,
+      dragging: false,
+      dx: (Math.random() * 2 - 1) * 1.5,
+      dy: (Math.random() * 2 - 1) * 1.5,
+      animScale: 1.5
+  };
 
-    amoebas = amoebas.filter(x => x !== a && x !== b);
-    amoebas.push(newAmoeba);
+  amoebas = amoebas.filter(x => x !== a && x !== b);
+  amoebas.push(newAmoeba);
 
-    if (!discoveredLevels.has(newLevel)) {
-        discoveredLevels.add(newLevel);
-        showInfoPopup(newLevel);
-        saveDiscovered();
-    }
+  if (!discoveredLevels.has(newLevel)) {
+      discoveredLevels.add(newLevel);
+      showInfoPopup(newLevel);
+      saveDiscovered();
+  }
 }
 
 // ======== UTILITÁRIOS ========
@@ -1008,7 +668,7 @@ function updateAmoebas(deltaTime) {
 
     spawnTimer += deltaTime;
     if (spawnTimer >= spawnInterval) {
-        spawnAmoeba();
+      spawnAmoeba(1, true);
         spawnTimer = 0;
     }
 }
@@ -1110,29 +770,29 @@ discoveredLevels = new Set(JSON.parse(localStorage.getItem("discoveredTerrestre"
 
 // ======== VERIFICAÇÃO DO NOVO NÍVEL CÉU ========
 function checkNewLevelCeu() {
-    const hasLevel15 = amoebas.some(a => a.level >= 15);
-    const ceuBtn = document.getElementById("newlevelbtn");
-    
-    console.log("Verificando nível céu:", { 
-        hasLevel15, 
-        amoebas: amoebas.map(a => a.level) 
-    });
-    
-    if (hasLevel15) {
-        ceuBtn.classList.remove("hidden");
-        ceuBtn.style.display = "block";
-        ceuBtn.onclick = function() { window.location.href = 'ceu.html'; };
-        localStorage.setItem("nivel_ceu_desbloqueado", "true");
-        console.log("✅ Botão do céu liberado!");
-    }
+  const hasLevel20 = amoebas.some(a => a.level >= 20); // ✅ MUDAR PARA 20
+  const ceuBtn = document.getElementById("newlevelbtn");
+  
+  console.log("Verificando nível céu:", { 
+      hasLevel20, 
+      amoebas: amoebas.map(a => a.level) 
+  });
+  
+  if (hasLevel20) {
+      ceuBtn.classList.remove("hidden");
+      ceuBtn.style.display = "block";
+      ceuBtn.onclick = function() { window.location.href = 'ceu.html'; };
+      localStorage.setItem("nivel_ceu_desbloqueado", "true");
+      console.log("✅ Botão do céu liberado!");
+  }
 }
 
 // Modifique a função mergeAmoebas no terrestre.js:
 function mergeAmoebas(a, b) {
     const newLevel = a.level + 1;
     
-    // Limitar o nível máximo a 15
-    if (newLevel > 15) {
+    // Limitar o nível máximo a 20
+    if (newLevel > 20) {
         console.log("🎯 Nível máximo do terrestre alcançado!");
         return;
     }
@@ -1163,30 +823,27 @@ function mergeAmoebas(a, b) {
 }
 
 // Modifique a função spawnAmoeba no terrestre.js:
-function spawnAmoeba(level = 1) {
-    const lvl = level + upgrades.higherStart.effect;
-    const newAmoeba = {
-        x: Math.random() * (canvas.width - 60),
-        y: Math.random() * (canvas.height - 60),
-        size: 60,
-        level: lvl,
-        dragging: false,
-        dx: (Math.random() * 2 - 1) * 1.5,
-        dy: (Math.random() * 2 - 1) * 1.5,
-        animScale: 1
-    };
+function spawnAmoeba(level = 1, applyHigherStart = true) {
+  const lvl = applyHigherStart ? (level + upgrades.higherStart.effect) : level;
+  
+  const newAmoeba = {
+      x: Math.random() * (canvas.width - 60),
+      y: Math.random() * (canvas.height - 60),
+      size: 60,
+      level: lvl,
+      dragging: false,
+      dx: (Math.random() * 2 - 1) * 2,
+      dy: (Math.random() * 2 - 1) * 2,
+      animScale: 1
+  };
 
-    amoebas.push(newAmoeba);
+  amoebas.push(newAmoeba);
 
-    if (!discoveredLevels.has(lvl)) {
-        discoveredLevels.add(lvl);
-        showInfoPopup(lvl);
-        saveDiscovered();
-    }
-    
-    // ✅ VERIFICAR SE DESBLOQUEOU CÉU APÓS SPAWN
-    checkNewLevelCeu();
-    saveGame();
+  if (!discoveredLevels.has(lvl)) {
+      discoveredLevels.add(lvl);
+      showInfoPopup(lvl);
+      saveDiscovered();
+  }
 }
 
 // Modifique o game loop no terrestre.js:
@@ -1227,7 +884,7 @@ function loadGame() {
 
     document.getElementById("coins").innerText = `💰 ${coins}`;
     
-    // ✅ VERIFICAR SE JÁ TEM NÍVEL 15 AO CARREGAR O JOGO
+    // ✅ VERIFICAR SE JÁ TEM NÍVEL 20 AO CARREGAR O JOGO
     setTimeout(() => {
         checkNewLevelCeu();
     }, 1000);
@@ -1303,3 +960,11 @@ canvas.addEventListener('contextmenu', (e) => {
   e.preventDefault();
   return false;
 });
+
+// ======== FUNÇÃO AUXILIAR PARA ATUALIZAÇÃO DE CORES ========
+// Função para forçar atualização de cores (usada pelo sistema de skins)
+function forceUpdateColors() {
+  console.log("🎨 Forçando atualização de cores dos animais terrestres...");
+  // Esta função será chamada quando uma skin for equipada
+  // O game loop vai atualizar automaticamente na próxima frame
+}

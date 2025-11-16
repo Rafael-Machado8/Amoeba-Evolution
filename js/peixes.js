@@ -1,421 +1,9 @@
-// ======== SISTEMA MELHORADO DE POPUPS ========
-function showPopup(popupId) {
-  // Esconder todos os popups primeiro
-  hideAllPopups();
-  
-  const popup = document.getElementById(popupId);
-  if (popup) {
-    popup.style.display = "block";
-    popup.classList.remove("hidden");
-    
-    // Adicionar fundo escuro
-    const background = document.createElement('div');
-    background.className = 'popup-background active';
-    background.id = 'popup-background';
-    background.onclick = hideAllPopups;
-    document.body.appendChild(background);
-  }
-}
-
-function hideAllPopups() {
-  // Esconder todos os popups
-  const popups = document.querySelectorAll('[id$="-popup"]');
-  popups.forEach(popup => {
-    popup.style.display = "none";
-    popup.classList.add("hidden");
-  });
-  
-  // Remover fundo escuro
-  const background = document.getElementById('popup-background');
-  if (background) {
-    background.remove();
-  }
-}
-
-// Fechar popup com ESC
-document.addEventListener('keydown', function(e) {
-  if (e.key === 'Escape') {
-    hideAllPopups();
-  }
-});
-
-// Usar o mesmo sistema do main.js - os dados são compartilhados via localStorage
-let inventory = JSON.parse(localStorage.getItem("skinInventory")) || {
-  amoebas: {},
-  peixes: {},
-  terrestre: {}
-};
-
-let equippedSkin = JSON.parse(localStorage.getItem("equippedSkin")) || {
-  amoebas: null,
-  peixes: null,
-  terrestre: null
-};
-
-// Skins específicas para peixes (adicione ao objeto SKINS existente no main.js)
-const PEIXES_SKINS = {
-  1: [
-    { id: 'peixe_1_1', name: 'Peixe Laranja Básico', rarity: 'common', color: '#FFA500' },
-    { id: 'peixe_1_2', name: 'Peixe Azul Básico', rarity: 'common', color: '#1E90FF' },
-    { id: 'peixe_1_3', name: 'Peixe Dourado', rarity: 'rare', color: '#FFD700' },
-    { id: 'peixe_1_4', name: 'Peixe Translúcido', rarity: 'epic', color: '#F0F8FF' },
-    { id: 'peixe_1_5', name: 'Peixe Aurora', rarity: 'legendary', color: 'linear-gradient(45deg, #00b4db, #0083b0)' }
-  ],
-  2: [
-    { id: 'peixe_2_1', name: 'Peixe Verde Água', rarity: 'common', color: '#20B2AA' },
-    { id: 'peixe_2_2', name: 'Peixe Roxo Profundo', rarity: 'common', color: '#9370DB' },
-    { id: 'peixe_2_3', name: 'Peixe Prateado', rarity: 'rare', color: '#C0C0C0' },
-    { id: 'peixe_2_4', name: 'Peixe Coral', rarity: 'epic', color: '#FF7F50' },
-    { id: 'peixe_2_5', name: 'Peixe Abissal', rarity: 'legendary', color: 'linear-gradient(45deg, #000080, #191970)' }
-  ],
-  3: [
-    { id: 'peixe_3_1', name: 'Peixe Amarelo Sol', rarity: 'common', color: '#FFD700' },
-    { id: 'peixe_3_2', name: 'Peixe Verde Limão', rarity: 'common', color: '#32CD32' },
-    { id: 'peixe_3_3', name: 'Peixe Bronze', rarity: 'rare', color: '#CD7F32' },
-    { id: 'peixe_3_4', name: 'Peixe Esmeralda', rarity: 'epic', color: '#50C878' },
-    { id: 'peixe_3_5', name: 'Peixe Oceânico', rarity: 'legendary', color: 'linear-gradient(45deg, #1e3c72, #2a5298)' }
-  ],
-  4: [
-    { id: 'peixe_4_1', name: 'Peixe Vermelho Fogo', rarity: 'common', color: '#DC143C' },
-    { id: 'peixe_4_2', name: 'Peixe Azul Celeste', rarity: 'common', color: '#87CEEB' },
-    { id: 'peixe_4_3', name: 'Peixe Cristal', rarity: 'rare', color: '#B9F2FF' },
-    { id: 'peixe_4_4', name: 'Peixe Rubi', rarity: 'epic', color: '#E0115F' },
-    { id: 'peixe_4_5', name: 'Peixe Místico', rarity: 'legendary', color: 'linear-gradient(45deg, #667eea, #764ba2)' }
-  ],
-  5: [
-    { id: 'peixe_5_1', name: 'Peixe Negro Profundo', rarity: 'common', color: '#2F4F4F' },
-    { id: 'peixe_5_2', name: 'Peixe Branco Puro', rarity: 'common', color: '#F5F5F5' },
-    { id: 'peixe_5_3', name: 'Peixe Platina', rarity: 'rare', color: '#E5E4E2' },
-    { id: 'peixe_5_4', name: 'Peixe Diamante', rarity: 'epic', color: '#B9F2FF' },
-    { id: 'peixe_5_5', name: 'Peixe Lendário', rarity: 'legendary', color: 'linear-gradient(45deg, #ff0080, #ff8c00, #40e0d0)' }
-  ]
-};
-
-// Preços das lootboxes (mesmo do main.js)
-const LOOTBOX_PRICES = {
-  common: 500,
-  rare: 5000,
-  epic: 50000
-};
-
-// Probabilidades (mesmo do main.js)
-const LOOTBOX_PROBABILITIES = {
-  common: { common: 0.60, rare: 0.30, epic: 0.10 },
-  rare: { common: 0.30, rare: 0.50, epic: 0.20 },
-  epic: { common: 0.10, rare: 0.30, epic: 0.60 }
-};
-
-// ======== FUNÇÕES DO SISTEMA DE LOOTBOX PARA PEIXES ========
-
-function buyLootbox(lootboxType) {
-  const price = LOOTBOX_PRICES[lootboxType];
-  
-  if (coins >= price) {
-    coins -= price;
-    document.getElementById("coins").innerText = `💰 ${coins}`;
-    
-    const skin = openLootbox(lootboxType);
-    addToInventory(skin);
-    showRewardPopup(skin);
-    
-    saveGame();
-  } else {
-    alert("Moedas insuficientes!");
-  }
-}
-
-function openLootbox(lootboxType) {
-  const probabilities = LOOTBOX_PROBABILITIES[lootboxType];
-  const random = Math.random();
-  
-  let selectedRarity;
-  
-  if (random < probabilities.common) {
-    selectedRarity = 'common';
-  } else if (random < probabilities.common + probabilities.rare) {
-    selectedRarity = 'rare';
-  } else {
-    selectedRarity = 'epic';
-  }
-  
-  const categories = ['amoebas', 'peixes', 'terrestre'];
-  const randomCategory = categories[Math.floor(Math.random() * categories.length)];
-  
-  // Usar skins específicas para peixes quando a categoria for peixes
-  const availableSkins = [];
-  
-  if (randomCategory === 'peixes') {
-    for (let level in PEIXES_SKINS) {
-      PEIXES_SKINS[level].forEach(skin => {
-        if (skin.rarity === selectedRarity) {
-          availableSkins.push({
-            ...skin,
-            category: randomCategory,
-            level: parseInt(level)
-          });
-        }
-      });
-    }
-  } else {
-    // Para outras categorias, usar as skins padrão (que estarão no localStorage)
-    const allSkins = JSON.parse(localStorage.getItem("allSkins")) || {};
-    if (allSkins[randomCategory]) {
-      for (let level in allSkins[randomCategory]) {
-        allSkins[randomCategory][level].forEach(skin => {
-          if (skin.rarity === selectedRarity) {
-            availableSkins.push({
-              ...skin,
-              category: randomCategory,
-              level: parseInt(level)
-            });
-          }
-        });
-      }
-    }
-  }
-  
-  if (availableSkins.length > 0) {
-    return availableSkins[Math.floor(Math.random() * availableSkins.length)];
-  } else {
-    // Fallback
-    const fallbackSkins = [];
-    for (let level in PEIXES_SKINS) {
-      fallbackSkins.push({
-        ...PEIXES_SKINS[level][0],
-        category: 'peixes',
-        level: parseInt(level)
-      });
-    }
-    return fallbackSkins[Math.floor(Math.random() * fallbackSkins.length)];
-  }
-}
-
-function addToInventory(skin) {
-  if (!inventory[skin.category][skin.level]) {
-    inventory[skin.category][skin.level] = [];
-  }
-  
-  const skinExists = inventory[skin.category][skin.level].some(s => s.id === skin.id);
-  
-  if (!skinExists) {
-    inventory[skin.category][skin.level].push(skin);
-    localStorage.setItem("skinInventory", JSON.stringify(inventory));
-    return true;
-  } else {
-    return false;
-  }
-}
-
-function showRewardPopup(skin) {
-  const isNewSkin = addToInventory(skin);
-  
-  const rewardItem = document.getElementById("reward-item");
-  rewardItem.innerHTML = `
-    <div class="skin-reward ${skin.rarity}">
-      <div class="skin-preview" style="background: ${skin.color}"></div>
-      <h3>${skin.name}</h3>
-      <p class="rarity ${skin.rarity}">${getRarityName(skin.rarity)}</p>
-      <p><strong>Categoria:</strong> ${getCategoryName(skin.category)}</p>
-      <p><strong>Nível:</strong> ${skin.level}</p>
-      ${isNewSkin ? '<p class="new-skin">✨ Nova Skin Desbloqueada!</p>' : '<p class="duplicate">🔄 Skin Duplicada + 💰 100</p>'}
-    </div>
-  `;
-  
-  // Se for skin duplicada, dar recompensa em moedas
-  if (!isNewSkin) {
-    coins += 100;
-    document.getElementById("coins").innerText = `💰 ${coins}`;
-    saveGame();
-  }
-  
-  showPopup("reward-popup");
-}
-function equipSkin(skinId, category) {
-    console.log(`🎮 Tentando equipar skin: ${skinId} para ${category}`);
-    
-    // Verificar se a skin existe no inventário
-    let skinExiste = false;
-    let skinEncontrada = null;
-    
-    // Procurar a skin em todos os níveis do inventário
-    for (let level in inventory[category]) {
-        skinEncontrada = inventory[category][level].find(skin => skin.id === skinId);
-        if (skinEncontrada) {
-            skinExiste = true;
-           
-            break;
-        }
-    }
-    
-    if (!skinExiste) {
-        
-        alert("Erro: Skin não encontrada no inventário!");
-        return;
-    }
-    
-    // Equipar a skin
-    equippedSkin[category] = skinId;
-    localStorage.setItem("equippedSkin", JSON.stringify(equippedSkin));
-    
-       console.log("Nova configuração equipada:", equippedSkin);
-    
-    // Forçar atualização visual
-    renderInventory();
-    
-    // Atualizar as cores dos peixes no canvas
-    updateFishColors();
-    
-    
-}
-
-// Função para atualizar as cores dos peixes quando uma skin é equipada
-function updateFishColors() {
-    // Esta função força o redesenho dos peixes com as novas cores
-    // O game loop vai automaticamente chamar getFishColor() novamente
-    console.log("🔄 Atualizando cores dos peixes...");
-}
-function unequipSkin(category) {
-  equippedSkin[category] = null;
-  localStorage.setItem("equippedSkin", JSON.stringify(equippedSkin));
-  renderInventory();
-}
-
-function renderInventory(tab = 'peixes') {
-  const container = document.getElementById("inventory-content");
-  container.innerHTML = '';
-  
-  if (!inventory[tab] || Object.keys(inventory[tab]).length === 0) {
-    container.innerHTML = '<p class="no-skins">Nenhuma skin desbloqueada ainda!</p>';
-    return;
-  }
-  
-  for (let level in inventory[tab]) {
-    const levelSkins = inventory[tab][level];
-    const levelSection = document.createElement('div');
-    levelSection.className = 'level-section';
-    levelSection.innerHTML = `<h4>Nível ${level}</h4>`;
-    
-    const skinsGrid = document.createElement('div');
-    skinsGrid.className = 'skins-grid';
-    
-    levelSkins.forEach(skin => {
-      const isEquipped = equippedSkin[tab] === skin.id;
-      const skinElement = document.createElement('div');
-      skinElement.className = `skin-item ${skin.rarity} ${isEquipped ? 'equipped' : ''}`;
-      skinElement.innerHTML = `
-          <div class="skin-preview" style="background: ${skin.color}"></div>
-          <h5>${skin.name}</h5>
-          <p class="rarity">${getRarityName(skin.rarity)}</p>
-          <p class="skin-id"><small>ID: ${skin.id}</small></p>
-          ${isEquipped ? 
-              `<button class="unequip-btn" onclick="unequipSkin('${tab}')">✅ Equipada</button>` :
-              `<button class="equip-btn" onclick="equipSkin('${skin.id}', '${tab}')">Equipar</button>`
-          }
-      `;
-      skinsGrid.appendChild(skinElement);
-    });
-    
-    levelSection.appendChild(skinsGrid);
-    container.appendChild(levelSection);
-  }
-}
-
-function getRarityName(rarity) {
-  const names = { common: 'Comum', rare: 'Rara', epic: 'Épica', legendary: 'Lendária' };
-  return names[rarity] || rarity;
-}
-
-function getCategoryName(category) {
-  const names = { amoebas: 'Amoebas', peixes: 'Peixes', terrestre: 'Terrestre' };
-  return names[category] || category;
-}
-
-// ======== EVENT LISTENERS PARA PEIXES ========
-
-// ======== EVENT LISTENERS CORRIGIDOS ========
-
-// Botão da Loja
-document.getElementById("shopBtn").addEventListener("click", () => {
-  showPopup("shop-popup");
-});
-
-// Botão do Inventário
-document.getElementById("inventoryBtn").addEventListener("click", () => {
-  showPopup("inventory-popup");
-  renderInventory();
-});
-
-// Botões de fechar
-document.getElementById("closeShop").addEventListener("click", hideAllPopups);
-document.getElementById("closeInventory").addEventListener("click", hideAllPopups);
-document.getElementById("closeReward").addEventListener("click", hideAllPopups);
-document.getElementById("closeUpgrade").addEventListener("click", hideAllPopups);
-document.getElementById("closeBuy").addEventListener("click", hideAllPopups);
-document.getElementById("closeInfo").addEventListener("click", hideAllPopups);
-
-// Botões de lootbox
-document.querySelectorAll(".buy-lootbox").forEach(button => {
-  button.addEventListener("click", (e) => {
-    const lootboxType = e.target.dataset.type;
-    buyLootbox(lootboxType);
-  });
-});
-
-// Tabs do Inventário
-document.querySelectorAll(".tab-button").forEach(button => {
-  button.addEventListener("click", (e) => {
-    document.querySelectorAll(".tab-button").forEach(btn => {
-      btn.classList.remove("active");
-    });
-    e.target.classList.add("active");
-    const tab = e.target.dataset.tab;
-    renderInventory(tab);
-  });
-});
-
-document.getElementById("closeReward").addEventListener("click", () => {
-  document.getElementById("reward-popup").style.display = "none";
-  document.getElementById("reward-popup").classList.add("hidden");
-});
-
-// ======== ATUALIZAR FUNÇÃO GETCOLOR PARA PEIXES ========
-
-// Modifique a função getFishColor no peixes.js para usar skins:
-function getFishColor(level) {
-    console.log("🔍 Procurando skin para peixes nível", level);
-    console.log("Skins equipadas:", equippedSkin);
-    
-    // Verificar se há skin equipada para peixes
-    if (equippedSkin.peixes) {
-        console.log("✅ Skin equipada encontrada:", equippedSkin.peixes);
-        
-        // Procurar a skin equipada em todos os níveis do inventário de peixes
-        for (let lvl in inventory.peixes) {
-            const skinsNoNivel = inventory.peixes[lvl];
-            console.log(`📦 Nível ${lvl} tem ${skinsNoNivel.length} skins`);
-            
-            const skinEncontrada = skinsNoNivel.find(skin => skin.id === equippedSkin.peixes);
-            if (skinEncontrada) {
-                console.log("🎨 Aplicando skin:", skinEncontrada.name, "cor:", skinEncontrada.color);
-                return skinEncontrada.color;
-            }
-        }
-        console.log("❌ Skin equipada não encontrada no inventário");
-    } else {
-        console.log("❌ Nenhuma skin equipada para peixes");
-    }
-    
-    // Cores padrão se não houver skin equipada
-    const colors = ["#FF6B6B", "#4ECDC4", "#45B7D1", "#96CEB4", "#FFEAA7"];
-    const corPadrao = colors[(level - 1) % colors.length];
-    console.log("🎯 Usando cor padrão:", corPadrao);
-    return corPadrao;
-}
-
-
-
-
 // peixes.js - Código específico para o nível dos peixes
+
+// ======== SISTEMA COMPARTILHADO DE SKINS E LOOTBOXES ========
+// REMOVIDO: Funções showPopup, hideAllPopups (agora no shared.js)
+// REMOVIDO: Variáveis inventory e equippedSkin (agora no shared.js)
+// REMOVIDO: Funções de lootbox e inventory duplicadas (agora no shared.js)
 
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
@@ -509,7 +97,6 @@ window.addEventListener('orientationchange', () => {
   }, 100);
 });
 
-// ======== INFORMAÇÕES DOS PEIXES ========
 // ======== INFORMAÇÕES DOS PEIXES ========
 const PEIXES_INFO = {
   1: { 
@@ -792,16 +379,21 @@ document.getElementById("closeBuy").addEventListener("click", () => {
 
 // ======== SISTEMA DE COMPRA ========
 function buyAmoeba(level = 1) {
-    const cost = amoebaPrices[level] || (50 * level);
-    if (coins >= cost) {
-        coins -= cost;
-        spawnAmoeba(level);
-        amoebaPrices[level] = Math.floor(cost * 1.2);
-        document.getElementById("coins").innerText = `💰 ${coins}`;
-        saveGame();
-    } else {
-        alert("Moedas insuficientes!");
-    }
+  if (!discoveredLevels.has(level)) {
+      alert(`Você precisa desbloquear o nível ${level} primeiro!`);
+      return;
+  }
+  
+  const cost = amoebaPrices[level] || (50 * level);
+  if (coins >= cost) {
+      coins -= cost;
+      spawnAmoeba(level, false);
+      amoebaPrices[level] = Math.floor(cost * 1.2);
+      document.getElementById("coins").innerText = `💰 ${coins}`;
+      saveGame();
+  } else {
+      alert("Moedas insuficientes!");
+  }
 }
 
 function buyUpgrade(type) {
@@ -855,50 +447,55 @@ function renderUpgradeList() {
 
 // ======== RENDER COMPRAR PEIXES ========
 function renderBuyList() {
-    const container = document.getElementById("buy-list");
-    container.innerHTML = "";
+  const container = document.getElementById("buy-list");
+  container.innerHTML = "";
 
-    for (let level = 1; level <= 5; level++) {
-        const cost = amoebaPrices[level] || (50 * level);
+  for (let level = 1; level <= 20; level++) {
+      const cost = amoebaPrices[level] || (50 * level);
+      const isUnlocked = discoveredLevels.has(level);
 
-        const item = document.createElement("div");
-        item.className = "buy-item";
-        item.innerHTML = `
-            <strong>Peixe Nível ${level}</strong> <br>
-            Custo: 💰 ${cost} <br>
-            <button>Comprar</button>
-        `;
+      const item = document.createElement("div");
+      item.className = `buy-item ${!isUnlocked ? 'locked' : ''}`;
+      item.innerHTML = `
+          <strong>Peixe Nível ${level}</strong> <br>
+          ${!isUnlocked ? '<span style="color: red;">🔒 Não desbloqueado</span><br>' : ''}
+          Custo: 💰 ${cost} <br>
+          <button ${!isUnlocked ? 'disabled' : ''}>${!isUnlocked ? 'Bloqueado' : 'Comprar'}</button>
+      `;
 
-        item.querySelector("button").addEventListener("click", () => {
-            buyAmoeba(level);
-            renderBuyList();
-        });
+      if (isUnlocked) {
+          item.querySelector("button").addEventListener("click", () => {
+              buyAmoeba(level);
+              renderBuyList();
+          });
+      }
 
-        container.appendChild(item);
-    }
+      container.appendChild(item);
+  }
 }
 
 // ======== JOGO ========
-function spawnAmoeba(level = 1) {
-    const lvl = level + upgrades.higherStart.effect;
-    const newAmoeba = {
-        x: Math.random() * (canvas.width - 60),
-        y: Math.random() * (canvas.height - 60),
-        size: 60,
-        level: lvl,
-        dragging: false,
-        dx: (Math.random() * 2 - 1) * 2,
-        dy: (Math.random() * 2 - 1) * 2,
-        animScale: 1
-    };
+function spawnAmoeba(level = 1, applyHigherStart = true) {
+  const lvl = applyHigherStart ? (level + upgrades.higherStart.effect) : level;
+  
+  const newAmoeba = {
+      x: Math.random() * (canvas.width - 60),
+      y: Math.random() * (canvas.height - 60),
+      size: 60,
+      level: lvl,
+      dragging: false,
+      dx: (Math.random() * 2 - 1) * 2,
+      dy: (Math.random() * 2 - 1) * 2,
+      animScale: 1
+  };
 
-    amoebas.push(newAmoeba);
+  amoebas.push(newAmoeba);
 
-    if (!discoveredLevels.has(lvl)) {
-        discoveredLevels.add(lvl);
-        showInfoPopup(lvl);
-        saveDiscovered();
-    }
+  if (!discoveredLevels.has(lvl)) {
+      discoveredLevels.add(lvl);
+      showInfoPopup(lvl);
+      saveDiscovered();
+  }
 }
 
 // Gerar moedas
@@ -961,33 +558,33 @@ canvas.addEventListener("mouseup", () => {
 
 // Fusão
 function mergeAmoebas(a, b) {
-    const newLevel = a.level + 1;
-    
-    // Limitar o nível máximo a 16
-    if (newLevel > 16) {
-        console.log("🎯 Nível máximo alcançado!");
-        return;
-    }
-    
-    const newAmoeba = {
-        x: (a.x + b.x) / 2,
-        y: (a.y + b.y) / 2,
-        size: 60,
-        level: newLevel,
-        dragging: false,
-        dx: (Math.random() * 2 - 1) * 2,
-        dy: (Math.random() * 2 - 1) * 2,
-        animScale: 1.5
-    };
+  const newLevel = a.level + 1;
+  
+  // ✅ PERMITIR FUSÃO ATÉ O NÍVEL 20
+  if (newLevel > 20) {
+      console.log("🎯 Nível máximo dos peixes alcançado!");
+      return;
+  }
+  
+  const newAmoeba = {
+      x: (a.x + b.x) / 2,
+      y: (a.y + b.y) / 2,
+      size: 60,
+      level: newLevel,
+      dragging: false,
+      dx: (Math.random() * 2 - 1) * 2,
+      dy: (Math.random() * 2 - 1) * 2,
+      animScale: 1.5
+  };
 
-    amoebas = amoebas.filter(x => x !== a && x !== b);
-    amoebas.push(newAmoeba);
+  amoebas = amoebas.filter(x => x !== a && x !== b);
+  amoebas.push(newAmoeba);
 
-    if (!discoveredLevels.has(newLevel)) {
-        discoveredLevels.add(newLevel);
-        showInfoPopup(newLevel);
-        saveDiscovered();
-    }
+  if (!discoveredLevels.has(newLevel)) {
+      discoveredLevels.add(newLevel);
+      showInfoPopup(newLevel);
+      saveDiscovered();
+  }
 }
 
 // ======== UTILITÁRIOS ========
@@ -998,9 +595,35 @@ function isColliding(a, b) {
     return distance < (a.size / 2 + b.size / 2);
 }
 
-function getColor(level) {
-    const colors = ["#FF6B6B", "#4ECDC4", "#45B7D1", "#96CEB4", "#FFEAA7", "#DDA0DD"];
-    return colors[(level - 1) % colors.length];
+function getFishColor(level) {
+    console.log("🔍 Procurando skin para peixes nível", level);
+    console.log("Skins equipadas:", equippedSkin);
+    
+    // Verificar se há skin equipada para peixes
+    if (equippedSkin.peixes) {
+        console.log("✅ Skin equipada encontrada:", equippedSkin.peixes);
+        
+        // Procurar a skin equipada em todos os níveis do inventário de peixes
+        for (let lvl in inventory.peixes) {
+            const skinsNoNivel = inventory.peixes[lvl];
+            console.log(`📦 Nível ${lvl} tem ${skinsNoNivel.length} skins`);
+            
+            const skinEncontrada = skinsNoNivel.find(skin => skin.id === equippedSkin.peixes);
+            if (skinEncontrada) {
+                console.log("🎨 Aplicando skin:", skinEncontrada.name, "cor:", skinEncontrada.color);
+                return skinEncontrada.color;
+            }
+        }
+        console.log("❌ Skin equipada não encontrada no inventário");
+    } else {
+        console.log("❌ Nenhuma skin equipada para peixes");
+    }
+    
+    // Cores padrão se não houver skin equipada
+    const colors = ["#FF6B6B", "#4ECDC4", "#45B7D1", "#96CEB4", "#FFEAA7"];
+    const corPadrao = colors[(level - 1) % colors.length];
+    console.log("🎯 Usando cor padrão:", corPadrao);
+    return corPadrao;
 }
 
 // ======== ÍMÃ ========
@@ -1041,7 +664,7 @@ function updateAmoebas(deltaTime) {
 
     spawnTimer += deltaTime;
     if (spawnTimer >= spawnInterval) {
-        spawnAmoeba();
+      spawnAmoeba(1, true);
         spawnTimer = 0;
     }
 }
@@ -1243,17 +866,16 @@ function showInfoPopup(level) {
 
 // ======== VERIFICAÇÃO DO NOVO NÍVEL TERRESTRE ========
 function checkNewLevelTerrestre() {
-    const hasLevel15 = amoebas.some(a => a.level >= 15);
-    const terrestreBtn = document.getElementById("newlevelbtn");
-    
-    if (hasLevel15) {
-        terrestreBtn.classList.remove("hidden");
-        terrestreBtn.style.display = "block";
-        terrestreBtn.textContent = "🌳 Novo Nível Terrestre";
-        terrestreBtn.onclick = function() { window.location.href = 'terrestre.html'; };
-        // Salvar que o nível foi desbloqueado
-        localStorage.setItem("nivel_terrestre_desbloqueado", "true");
-    }
+  const hasLevel20 = amoebas.some(a => a.level >= 20); // ✅ MUDAR PARA 20
+  const terrestreBtn = document.getElementById("newlevelbtn");
+  
+  if (hasLevel20) {
+      terrestreBtn.classList.remove("hidden");
+      terrestreBtn.style.display = "block";
+      terrestreBtn.textContent = "🌳 Novo Nível Terrestre";
+      terrestreBtn.onclick = function() { window.location.href = 'terrestre.html'; };
+      localStorage.setItem("nivel_terrestre_desbloqueado", "true");
+  }
 }
 
 // Modifique o game loop no peixes.js para incluir esta verificação:
@@ -1266,39 +888,6 @@ function gameLoop(timestamp) {
     
     // ✅ ADICIONAR VERIFICAÇÃO DO NOVO NÍVEL TERRESTRE
     checkNewLevelTerrestre();
-    
-    drawBackground();
-    drawAmoebas();
-    drawMoneyAnimations();
-    drawSpawnBar();
-
-    requestAnimationFrame(gameLoop);
-}
-
-// ======== VERIFICAÇÃO DO NOVO NÍVEL CÉU ========
-function checkNewLevelCeu() {
-    const hasLevel15 = amoebas.some(a => a.level >= 15);
-    const ceuBtn = document.getElementById("newlevelbtn");
-    
-    if (hasLevel15) {
-        ceuBtn.classList.remove("hidden");
-        ceuBtn.style.display = "block";
-        ceuBtn.textContent = "🌳 Novo Nível Terrestre ";
-        ceuBtn.onclick = function() { window.location.href = 'terrestre.html'; };
-        localStorage.setItem("nivel_ceu_desbloqueado", "true");
-    }
-}
-
-// Modifique o game loop no peixes.js para incluir esta verificação:
-function gameLoop(timestamp) {
-    const deltaTime = timestamp - lastTime;
-    lastTime = timestamp;
-
-    updateAmoebas(deltaTime);
-    updateMoneyAnimations();
-    
-    // ✅ ADICIONAR VERIFICAÇÃO DO NOVO NÍVEL CÉU
-    checkNewLevelCeu();
     
     drawBackground();
     drawAmoebas();
@@ -1378,3 +967,11 @@ canvas.addEventListener('contextmenu', (e) => {
   e.preventDefault();
   return false;
 });
+
+// ======== FUNÇÃO AUXILIAR PARA ATUALIZAÇÃO DE CORES ========
+// Função para forçar atualização de cores (usada pelo sistema de skins)
+function forceUpdateColors() {
+  console.log("🎨 Forçando atualização de cores dos peixes...");
+  // Esta função será chamada quando uma skin for equipada
+  // O game loop vai atualizar automaticamente na próxima frame
+}
