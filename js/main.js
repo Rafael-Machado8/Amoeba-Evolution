@@ -806,7 +806,7 @@ function drawMoneyAnimations() {
 }
 
 function drawSpawnBar() {
-  const barWidth = 200;
+  const barWidth = 150;
   const barHeight = 20;
   const x = canvas.width / 2 - barWidth / 2;
   const y = 20;
