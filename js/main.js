@@ -331,8 +331,8 @@ function loadGame() {
     coinElement.style.fontFamily = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
     coinElement.style.fontWeight = '800';
     coinElement.style.fontSize = '20px';
-    coinElement.style.textShadow = '2px 2px 4px rgba(0,0,0,0.8)';
-    coinElement.style.color = '#FFD700';
+    
+    coinElement.style.color = '#000000ff';
     coinElement.style.letterSpacing = '0.5px';
     
     // Verificar se já tem nível 20 ao carregar
@@ -375,6 +375,11 @@ function showInfoPopup(level) {
   };
 
   const popup = document.getElementById("info-popup");
+
+   const titleElement = popup.querySelector('h2');
+  if (titleElement) {
+    // ✅ AGORA MOSTRA: "🔬 Amoeba proteus Desbloqueada!"
+    titleElement.textContent = `🔬 ${info.name} Desbloqueada!`;
   document.getElementById("info-image").src = info.img;
   document.getElementById("info-date").textContent = info.date;
   document.getElementById("info-habitat").textContent = info.habitat;

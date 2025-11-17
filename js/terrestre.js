@@ -323,6 +323,14 @@ function loadGame() {
     spawnInterval = state.spawnInterval || 15000;
 
     document.getElementById("coins").innerText = `💰 ${coins}`;
+
+      const coinElement = document.getElementById("coins");
+      coinElement.style.fontFamily = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+      coinElement.style.fontWeight = '800';
+      coinElement.style.fontSize = '20px';
+        
+      coinElement.style.color = '#000000ff';
+      coinElement.style.letterSpacing = '0.5px';
 }
 
 function resetGame() {
@@ -553,6 +561,14 @@ setInterval(() => {
         const value = amoeba.level * upgrades.moreCoins.effect;
         coins += Math.floor(value);
         document.getElementById("coins").innerText = `💰 ${coins}`;
+
+        const coinElement = document.getElementById("coins");
+        coinElement.style.fontFamily = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+        coinElement.style.fontWeight = '800';
+        coinElement.style.fontSize = '20px';
+        
+        coinElement.style.color = '#000000ff';
+        coinElement.style.letterSpacing = '0.5px';
 
         moneyAnimations.push({
             x: amoeba.x + amoeba.size / 2,
