@@ -326,6 +326,14 @@ function loadGame() {
     spawnInterval = state.spawnInterval || 15000;
 
     document.getElementById("coins").innerText = `💰 ${coins}`;
+
+    const coinElement = document.getElementById("coins");
+    coinElement.style.fontFamily = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+    coinElement.style.fontWeight = '800';
+    coinElement.style.fontSize = '20px';
+    coinElement.style.textShadow = '2px 2px 4px rgba(0,0,0,0.8)';
+    coinElement.style.color = '#FFD700';
+    coinElement.style.letterSpacing = '0.5px';
     
     // Verificar se já tem nível 20 ao carregar
     setTimeout(() => {
@@ -777,10 +785,20 @@ function drawAmoebas() {
 function drawMoneyAnimations() {
   for (let anim of moneyAnimations) {
     ctx.globalAlpha = anim.alpha;
-    ctx.fillStyle = "yellow";
-    ctx.font = "16px Arial";
+    
+    // ✅ FONTE OTIMIZADA PARA MOBILE
+    ctx.font = "700 18px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
     ctx.textAlign = "center";
+    
+    // ✅ CONTORNO PARA MELHOR LEGIBILIDADE
+    ctx.strokeStyle = "rgba(0, 0, 0, 0.8)";
+    ctx.lineWidth = 3;
+    ctx.strokeText(anim.value, anim.x, anim.y);
+    
+    // ✅ TEXTO PRINCIPAL
+    ctx.fillStyle = "#FFD700";
     ctx.fillText(anim.value, anim.x, anim.y);
+    
     ctx.globalAlpha = 1;
   }
 }

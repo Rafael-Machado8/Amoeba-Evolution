@@ -810,14 +810,24 @@ function drawAmoebas() {
 }
 
 function drawMoneyAnimations() {
-    for (let anim of moneyAnimations) {
-        ctx.globalAlpha = anim.alpha;
-        ctx.fillStyle = "yellow";
-        ctx.font = "16px Arial";
-        ctx.textAlign = "center";
-        ctx.fillText(anim.value, anim.x, anim.y);
-        ctx.globalAlpha = 1;
-    }
+  for (let anim of moneyAnimations) {
+    ctx.globalAlpha = anim.alpha;
+    
+    // ✅ FONTE OTIMIZADA PARA MOBILE
+    ctx.font = "700 18px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+    ctx.textAlign = "center";
+    
+    // ✅ CONTORNO PARA MELHOR LEGIBILIDADE
+    ctx.strokeStyle = "rgba(0, 0, 0, 0.8)";
+    ctx.lineWidth = 3;
+    ctx.strokeText(anim.value, anim.x, anim.y);
+    
+    // ✅ TEXTO PRINCIPAL
+    ctx.fillStyle = "#FFD700";
+    ctx.fillText(anim.value, anim.x, anim.y);
+    
+    ctx.globalAlpha = 1;
+  }
 }
 
 function drawSpawnBar() {
