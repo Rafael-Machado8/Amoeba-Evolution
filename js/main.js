@@ -376,10 +376,7 @@ function showInfoPopup(level) {
 
   const popup = document.getElementById("info-popup");
 
-   const titleElement = popup.querySelector('h2');
-  if (titleElement) {
-    // ✅ AGORA MOSTRA: "🔬 Amoeba proteus Desbloqueada!"
-    titleElement.textContent = `🔬 ${info.name} Desbloqueada!`;
+  
   document.getElementById("info-image").src = info.img;
   document.getElementById("info-date").textContent = info.date;
   document.getElementById("info-habitat").textContent = info.habitat;
