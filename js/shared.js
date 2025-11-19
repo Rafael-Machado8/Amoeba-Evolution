@@ -315,6 +315,242 @@ function destroyAllPopups() {
     }
 }
 
+// ======== SISTEMA DE REINICIALIZAÇÃO RADICAL ========
+function initializeResetButton() {
+    console.log("🔄 Inicializando botão de reset...");
+    
+    const resetBtn = document.getElementById("resetBtn");
+    
+    if (!resetBtn) {
+        console.log("❌ Botão reset não encontrado! Tentando novamente em 1 segundo...");
+        setTimeout(initializeResetButton, 1000);
+        return;
+    }
+    
+    console.log("✅ Botão reset encontrado, adicionando evento...");
+    
+    // Remove qualquer evento anterior para evitar duplicação
+    resetBtn.replaceWith(resetBtn.cloneNode(true));
+    const newResetBtn = document.getElementById("resetBtn");
+    
+    newResetBtn.addEventListener("click", function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log("🎯 Botão reset clicado!");
+        showResetConfirmation();
+    });
+    
+    // Estilo visual para confirmar que está funcionando
+    newResetBtn.style.background = "linear-gradient(45deg, #ff6b6b, #ff8e8e)";
+    newResetBtn.style.border = "2px solid #ff5252";
+    newResetBtn.style.color = "white";
+    newResetBtn.style.fontWeight = "bold";
+    
+    console.log("✅ Evento de reset adicionado com sucesso!");
+}
+
+function showResetConfirmation() {
+    console.log("🔄 Mostrando confirmação de reset...");
+    
+    const confirmation = confirm(
+        "⚠️ REINICIAR JOGO COMPLETO ⚠️\n\n" +
+        "Tem certeza ABSOLUTA que deseja reiniciar?\n\n" +
+        "Isso vai APAGAR:\n" +
+        "• Todas as moedas e progresso\n" +
+        "• Todos os upgrades comprados\n" +
+        "• Todas as skins desbloqueadas\n" +
+        "• Todo o histórico de descobertas\n\n" +
+        "Esta ação NÃO pode ser desfeita!\n\n" +
+        "Cancelar = Manter tudo\nOK = APAGAR TUDO"
+    );
+    
+    if (confirmation) {
+        console.log("✅ Confirmação aceita! Reiniciando...");
+        resetAllGames();
+    } else {
+        console.log("❌ Reset cancelado pelo usuário");
+    }
+}
+
+function resetAllGames() {
+    console.log("🧹 INICIANDO RESET COMPLETO - TODOS OS NÍVEIS...");
+    
+    // Lista EXPANDIDA com TODAS as chaves possíveis
+    const allStorageKeys = [
+        // Saves de jogo principais
+        "gameState", "gameState_amoebas", "gameState_peixes", 
+        "gameState_terrestre", "gameState_ceu",
+        
+        // Descobertas
+        "discoveredAmoebas", "discoveredPeixes", "discoveredTerrestre", "discoveredCeu",
+        "amoebaDiscoveries", "peixeDiscoveries", "terrestreDiscoveries", "ceuDiscoveries",
+        
+        // Progresso de níveis
+        "nivel_peixes_desbloqueado", "nivel_terrestre_desbloqueado", "nivel_ceu_desbloqueado",
+        
+        // Sistema de skins
+        "skinInventory", "equippedSkin", "allSkins",
+
+        // CHAVES ALTERNATIVAS
+        "discoveredPeix", "peixesDiscoveries", "gameState_peix",
+        "peixes_unlocked", "peixes_levels", "fish_discoveries"
+    ];
+    
+    let removedCount = 0;
+    
+    // Remove cada item individualmente
+    allStorageKeys.forEach(key => {
+        if (localStorage.getItem(key)) {
+            localStorage.removeItem(key);
+            console.log(`🗑️ Removido: ${key}`);
+            removedCount++;
+        }
+    });
+
+    // 🔥 MÉTODO RADICAL: Remove TODAS as chaves relacionadas
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && (
+            key.toLowerCase().includes('peix') || 
+            key.toLowerCase().includes('fish') ||
+            key.toLowerCase().includes('peixe') ||
+            key.toLowerCase().includes('amoeba') ||
+            key.toLowerCase().includes('terrestre') ||
+            key.toLowerCase().includes('ceu') ||
+            key.toLowerCase().includes('game') ||
+            key.toLowerCase().includes('discovered') ||
+            key.toLowerCase().includes('nivel') ||
+            key.toLowerCase().includes('pescado') ||
+            key.toLowerCase().includes('aqua') ||
+            key.toLowerCase().includes('agua') ||
+            key.toLowerCase().includes('animal') ||
+            key.toLowerCase().includes('ave') ||
+            key.toLowerCase().includes('bird')
+        )) {
+            localStorage.removeItem(key);
+            console.log(`🔥 Removido (radical): ${key}`);
+            removedCount++;
+        }
+    }
+
+    // 🔥 LIMPEZA POR PREFIXOS
+    const prefixes = ['gameState', 'discovered', 'nivel_', 'amoeba', 'peixe', 'peix', 'terrestre', 'ceu', 'animal', 'ave'];
+    prefixes.forEach(prefix => {
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key && key.startsWith(prefix)) {
+                localStorage.removeItem(key);
+                console.log(`💥 Removido (prefixo): ${key}`);
+                removedCount++;
+            }
+        }
+    });
+    
+    console.log(`✅ Reset completo! ${removedCount} itens removidos.`);
+    
+    // 🔄 FORÇAR RESET DO ESTADO ATUAL EM MEMÓRIA
+    forceResetCurrentLevel();
+    
+    // Verificação final
+    setTimeout(() => {
+        console.log("🔍 VERIFICAÇÃO FINAL:");
+        const remaining = [];
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key && (
+                key.toLowerCase().includes('game') || 
+                key.toLowerCase().includes('discovered') ||
+                key.toLowerCase().includes('nivel')
+            )) {
+                remaining.push(key);
+            }
+        }
+        console.log("Chaves restantes:", remaining);
+        
+        if (remaining.length === 0) {
+            alert(`🎮 JOGO COMPLETAMENTE REINICIADO!\n\n${removedCount} itens removidos.\n\nTodos os níveis foram resetados.`);
+        } else {
+            alert(`⚠️ Reset parcial!\n\n${removedCount} itens removidos, mas ${remaining.length} chaves persistiram:\n${remaining.join(', ')}\n\nO jogo será recarregado.`);
+        }
+        
+        // 🔄 RECARREGAR A PÁGINA PARA APLICAR MUDANÇAS
+        setTimeout(() => {
+            location.reload();
+        }, 2000);
+    }, 500);
+}
+
+// 🔄 NOVA FUNÇÃO: Forçar reset do nível atual em memória
+function forceResetCurrentLevel() {
+    console.log("🔄 Forçando reset do nível atual...");
+    
+    // Verificar em qual nível estamos
+    const currentPage = window.location.pathname;
+    console.log("Página atual:", currentPage);
+    
+    // Chamar função de reset específica do nível atual
+    try {
+        if (currentPage.includes('peixes.html') || currentPage.includes('peixes')) {
+            if (typeof resetGameForPeixes === 'function') {
+                resetGameForPeixes();
+                console.log("✅ Reset específico dos peixes executado");
+            }
+        } else if (currentPage.includes('terrestre.html') || currentPage.includes('terrestre')) {
+            if (typeof resetGame === 'function') {
+                resetGame();
+                console.log("✅ Reset específico do terrestre executado");
+            }
+        } else if (currentPage.includes('ceu.html') || currentPage.includes('ceu')) {
+            if (typeof resetGame === 'function') {
+                resetGame();
+                console.log("✅ Reset específico do céu executado");
+            }
+        } else {
+            // Página principal (amoebas)
+            if (typeof resetGameForAmoebas === 'function') {
+                resetGameForAmoebas();
+                console.log("✅ Reset específico das amebas executado");
+            }
+        }
+    } catch (error) {
+        console.error("❌ Erro ao resetar nível atual:", error);
+    }
+    
+    // 🔄 ATUALIZAR UI IMEDIATAMENTE
+    const coinsElement = document.getElementById("coins");
+    if (coinsElement) {
+        coinsElement.textContent = `💰 0`;
+    }
+    
+    // 🔄 LIMPAR ESTADO VISUAL
+    if (typeof renderUpgradeList === 'function') {
+        setTimeout(() => {
+            renderUpgradeList();
+            if (typeof renderBuyList === 'function') {
+                renderBuyList();
+            }
+        }, 100);
+    }
+}
+
+// Função para detectar e forçar reset do nível atual via console
+window.debugReset = function() {
+    console.log("🐛 DEBUG: Estado atual do localStorage:");
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        console.log(`📝 ${key}:`, localStorage.getItem(key));
+    }
+    
+    console.log("🔄 Forçando reset...");
+    resetAllGames();
+};
+
+// Função para forçar reset via console (para testes)
+window.forceReset = function() {
+    console.log("💥 FORÇANDO RESET VIA CONSOLE...");
+    resetAllGames();
+};
+
 // Fechar com ESC
 document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
@@ -500,6 +736,7 @@ function initializeShopAndInventoryRadical() {
         shopBtn.addEventListener("click", () => {
             createPopupRadical('shop');
         });
+        console.log("✅ Shop inicializado");
     }
 
     // Inventário
@@ -508,9 +745,13 @@ function initializeShopAndInventoryRadical() {
         inventoryBtn.addEventListener("click", () => {
             createPopupRadical('inventory');
         });
+        console.log("✅ Inventário inicializado");
     }
 
-    console.log("✅ Sistema Radical inicializado!");
+    // Reset Button - AGORA OBRIGATÓRIO
+    initializeResetButton();
+
+    console.log("✅ Sistema Radical totalmente inicializado!");
 }
 
 // Inicializar skins padrão se não existirem

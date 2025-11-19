@@ -313,14 +313,11 @@ function loadGame() {
     spawnInterval = state.spawnInterval || 12000;
 
     document.getElementById("coins").innerText = `💰 ${coins}`;
-
-    const coinElement = document.getElementById("coins");
-    coinElement.style.fontFamily = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-    coinElement.style.fontWeight = '800';
-    coinElement.style.fontSize = '20px';
-      
-    coinElement.style.color = '#000000ff';
-    coinElement.style.letterSpacing = '0.5px';
+    
+    // ✅ VERIFICAR SE JÁ TEM NÍVEL 20 AO CARREGAR O JOGO
+    setTimeout(() => {
+        checkNewLevelUnlock();
+    }, 1000);
 }
 
 function resetGame() {
@@ -363,27 +360,45 @@ function saveDiscovered() {
     localStorage.setItem("ceuDiscoveries", JSON.stringify(discoveries));
 }
 
+// ======== VERIFICAÇÃO DO NOVO NÍVEL ========
+function checkNewLevelUnlock() {
+  const hasLevel20 = amoebas.some(a => a.level >= 20);
+  
+  console.log("Verificando nível máximo:", { 
+      hasLevel20, 
+      amoebas: amoebas.map(a => a.level) 
+  });
+  
+  if (hasLevel20) {
+      console.log("🎯 Nível máximo das aves alcançado!");
+      // Aqui você pode adicionar lógica para desbloquear algo especial
+  }
+}
+
 // ======== POPUPS ========
 function showInfoPopup(level) {
-    const info = CEU_INFO[level] || {
-        name: `Ave Nível ${level}`, 
-        img: "assets/images/ave1.jpg", 
-        date: `📅 Descoberta: ${1750 + level * 15}`,
-        habitat: "☁️ Habitat: Céu e atmosfera", 
-        desc: `Ave nível ${level}: espécie aérea em estudo.`
-    };
+  const info = CEU_INFO[level] || {
+      name: `Ave Nível ${level}`, 
+      img: "assets/images/ave1.jpg", 
+      date: `📅 Descoberta: ${1750 + level * 15}`,
+      habitat: "☁️ Habitat: Céu e atmosfera", 
+      desc: `Ave nível ${level}: espécie aérea em estudo.`
+  };
 
-    const popup = document.getElementById("info-popup");
-    document.getElementById("info-image").src = info.img;
-    document.getElementById("info-date").textContent = info.date;
-    document.getElementById("info-habitat").textContent = info.habitat;
-    document.getElementById("info-description").textContent = info.desc;
+  const popup = document.getElementById("info-popup");
+  
+  document.getElementById("info-title").textContent = "🔬 Nova Ave Descoberta!";
+  document.getElementById("info-name").textContent = info.name;
+  document.getElementById("info-image").src = info.img;
+  document.getElementById("info-date-text").textContent = info.date.replace("📅 ", "");
+  document.getElementById("info-habitat-text").textContent = info.habitat.replace("☁️ ", "");
+  document.getElementById("info-desc-text").textContent = info.desc;
 
-    popup.classList.remove("hidden");
-    popup.style.display = "block";
-    
-    saveDiscovered();
-    saveGame();
+  popup.classList.remove("hidden");
+  popup.style.display = "block";
+  
+  saveDiscovered();
+  saveGame();
 }
 
 document.getElementById("closeInfo").addEventListener("click", () => {
@@ -395,12 +410,15 @@ document.getElementById("closeInfo").addEventListener("click", () => {
 
 // ======== BOTÕES ========
 document.getElementById("upgradeBtn").addEventListener("click", () => {
-    showPopup("upgrade-popup");
+    const popup = document.getElementById("upgrade-popup");
+    popup.style.display = popup.style.display === "block" ? "none" : "block";
+    popup.classList.toggle("hidden");
     renderUpgradeList();
 });
 
 document.getElementById("closeUpgrade").addEventListener("click", () => {
-    hideAllPopups();
+    document.getElementById("upgrade-popup").style.display = "none";
+    document.getElementById("upgrade-popup").classList.add("hidden");
     saveGame();
 });
 
@@ -410,12 +428,15 @@ document.getElementById("libraryBtn").addEventListener("click", () => {
 });
 
 document.getElementById("buyAmoebaBtn").addEventListener("click", () => {
-    showPopup("buy-popup");
+    const popup = document.getElementById("buy-popup");
+    popup.style.display = popup.style.display === "block" ? "none" : "block";
+    popup.classList.toggle("hidden");
     renderBuyList();
 });
 
 document.getElementById("closeBuy").addEventListener("click", () => {
-    hideAllPopups();
+    document.getElementById("buy-popup").style.display = "none";
+    document.getElementById("buy-popup").classList.add("hidden");
     saveGame();
 });
 
@@ -426,10 +447,14 @@ function buyAmoeba(level = 1) {
       return;
   }
   
-  const cost = amoebaPrices[level] || (50 * level);
+  // PREÇO EXPONENCIAL: base * (1.6^(level-1))
+  const basePrice = 50;
+  const cost = amoebaPrices[level] || Math.floor(basePrice * Math.pow(1.6, level - 1));
+  
   if (coins >= cost) {
       coins -= cost;
       spawnAmoeba(level, false);
+      // Atualiza o preço para a próxima compra (aumenta 20% adicional)
       amoebaPrices[level] = Math.floor(cost * 1.2);
       document.getElementById("coins").innerText = `💰 ${coins}`;
       saveGame();
@@ -453,38 +478,85 @@ function buyUpgrade(type) {
         if (type === "ima") u.effect = 7 - u.level;
 
         document.getElementById("coins").innerText = `💰 ${coins}`;
+        renderUpgradeList(); // Atualiza a lista de upgrades
         saveGame();
     } else {
         alert("Moedas insuficientes!");
     }
 }
 
+// ======== FUNÇÃO PARA DIMINUIR UPGRADE ========
+function downgradeUpgrade(type) {
+  const u = upgrades[type];
+  if (!u || u.level <= 0) return;
+  
+  // Diminui o nível
+  u.level--;
+  
+  // Ajusta os efeitos
+  if (type === "moreCoins") u.effect = 1 + u.level;
+  if (type === "fasterSpawn") spawnInterval = 15000 * Math.pow(0.9, u.level);
+  if (type === "higherStart") u.effect = u.level;
+  if (type === "ima") u.effect = 6 - u.level;
+  
+  console.log(`⬇️ Upgrade ${type} diminuído para nível ${u.level}`);
+  saveGame();
+  renderUpgradeList();
+}
+
+// Adicione também uma função para acessar via console
+window.downgradeUpgrade = downgradeUpgrade;
+
+// ======== FUNÇÃO PARA LISTAR UPGRADES ========
+function listUpgrades() {
+  console.log("📊 UPGRADES ATUAIS:");
+  for (let key in upgrades) {
+      const u = upgrades[key];
+      console.log(`• ${u.name}: Nível ${u.level}/${u.max} (Efeito: ${u.effect})`);
+  }
+  return upgrades;
+}
+
+window.listUpgrades = listUpgrades;
+
 // ======== RENDER UPGRADES ========
 function renderUpgradeList() {
-    const container = document.getElementById("upgrade-list");
-    container.innerHTML = "";
+  const container = document.getElementById("upgrade-list");
+  container.innerHTML = "";
 
-    for (let key in upgrades) {
-        const u = upgrades[key];
-        const cost = u.baseCost * (u.level + 1);
+  for (let key in upgrades) {
+      const u = upgrades[key];
+      const cost = u.baseCost * (u.level + 1);
 
-        const item = document.createElement("div");
-        item.className = "upgrade-item";
-        item.innerHTML = `
-            <strong>${u.name}</strong> <br>
-            Nível: ${u.level}/${u.max} <br>
-            Custo: 💰 ${cost}
-            <br>
-            <button ${u.level >= u.max ? "disabled" : ""}>Comprar</button>
-        `;
+      const item = document.createElement("div");
+      item.className = "upgrade-item";
+      item.innerHTML = `
+          <strong>${u.name}</strong> <br>
+          Nível: ${u.level}/${u.max} <br>
+          Custo: 💰 ${cost}
+          <br>
+          <div style="display: flex; gap: 10px; margin-top: 8px;">
+              <button ${u.level >= u.max ? "disabled" : ""}>Comprar</button>
+              <button ${u.level <= 0 ? "disabled" : ""} 
+                      style="background: #ff6b6b;">Diminuir</button>
+          </div>
+      `;
 
-        item.querySelector("button").addEventListener("click", () => {
-            buyUpgrade(key);
-            renderUpgradeList();
-        });
+      // Botão comprar
+      item.querySelector("button:nth-child(1)").addEventListener("click", () => {
+          buyUpgrade(key);
+          renderUpgradeList();
+      });
 
-        container.appendChild(item);
-    }
+      // Botão diminuir
+      item.querySelector("button:nth-child(2)").addEventListener("click", () => {
+          if (confirm(`Diminuir ${u.name} para nível ${u.level - 1}?`)) {
+              downgradeUpgrade(key);
+          }
+      });
+
+      container.appendChild(item);
+  }
 }
 
 // ======== RENDER COMPRAR AVES ========
@@ -493,13 +565,15 @@ function renderBuyList() {
   container.innerHTML = "";
 
   for (let level = 1; level <= 20; level++) {
-      const cost = amoebaPrices[level] || (50 * level);
+      // PREÇO EXPONENCIAL: base * (1.6^(level-1))
+      const basePrice = 50;
+      const cost = amoebaPrices[level] || Math.floor(basePrice * Math.pow(1.6, level - 1));
       const isUnlocked = discoveredLevels.has(level);
 
       const item = document.createElement("div");
       item.className = `buy-item ${!isUnlocked ? 'locked' : ''}`;
       item.innerHTML = `
-          <strong>Peixe Nível ${level}</strong> <br>
+          <strong>Ave Nível ${level}</strong> <br>
           ${!isUnlocked ? '<span style="color: red;">🔒 Não desbloqueado</span><br>' : ''}
           Custo: 💰 ${cost} <br>
           <button ${!isUnlocked ? 'disabled' : ''}>${!isUnlocked ? 'Bloqueado' : 'Comprar'}</button>
@@ -513,6 +587,13 @@ function renderBuyList() {
       }
 
       container.appendChild(item);
+  }
+}
+
+function resetCurrentCeuGame() {
+  if (confirm("Deseja reiniciar apenas o nível das Aves?")) {
+      resetGameForPeixes();
+      location.reload();
   }
 }
 
@@ -538,6 +619,10 @@ function spawnAmoeba(level = 1, applyHigherStart = true) {
       showInfoPopup(lvl);
       saveDiscovered();
   }
+  
+  // ✅ VERIFICAR SE DESBLOQUEOU NOVO NÍVEL APÓS SPAWN
+  checkNewLevelUnlock();
+  saveGame();
 }
 
 // Gerar moedas
@@ -612,7 +697,7 @@ function mergeAmoebas(a, b) {
   
   // ✅ PERMITIR FUSÃO ATÉ O NÍVEL 20
   if (newLevel > 20) {
-      console.log("🎯 Nível máximo dos animais terrestres alcançado!");
+      console.log("🎯 Nível máximo das aves alcançado!");
       return;
   }
   
@@ -622,8 +707,8 @@ function mergeAmoebas(a, b) {
       size: 60,
       level: newLevel,
       dragging: false,
-      dx: (Math.random() * 2 - 1) * 1.5,
-      dy: (Math.random() * 2 - 1) * 1.5,
+      dx: (Math.random() * 2 - 1) * 2,
+      dy: (Math.random() * 2 - 1) * 2,
       animScale: 1.5
   };
 
@@ -635,6 +720,10 @@ function mergeAmoebas(a, b) {
       showInfoPopup(newLevel);
       saveDiscovered();
   }
+  
+  // ✅ VERIFICAR SE DESBLOQUEOU NOVO NÍVEL APÓS FUSÃO
+  checkNewLevelUnlock();
+  saveGame();
 }
 
 // ======== UTILITÁRIOS ========
@@ -900,6 +989,10 @@ function gameLoop(timestamp) {
 
     updateAmoebas(deltaTime);
     updateMoneyAnimations();
+    
+    // ✅ ADICIONAR VERIFICAÇÃO DO NOVO NÍVEL A CADA FRAME
+    checkNewLevelUnlock();
+    
     drawBackground();
     drawAmoebas();
     drawMoneyAnimations();
@@ -911,7 +1004,7 @@ function gameLoop(timestamp) {
 // ======== INICIALIZAÇÃO ========
 bg.onload = () => {
     loadGame();
-     loadAveImages(); // Adicione esta linha
+    loadAveImages();
     requestAnimationFrame(gameLoop);
 };
 

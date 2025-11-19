@@ -1,9 +1,11 @@
 /* ===== Reset & Base ===== */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
+
 body {
   margin: 0;
   padding: 0;
   background: #000;
-  font-family: "Comic Sans MS", cursive, sans-serif;
+  font-family: "Poppins", "Segoe UI", Roboto, sans-serif;
   overflow: hidden;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
@@ -661,4 +663,136 @@ button, .tab-button, .buy-lootbox {
 /* Prevenir zoom em double-tap */
 * {
   touch-action: manipulation;
+}
+
+/* ===== BOTÃO REINICIAR ===== */
+#resetBtn {
+  background: rgba(255, 107, 107, 0.95) !important;
+  border: 2px solid #ff6b6b !important;
+  color: white !important;
+}
+
+#resetBtn:hover {
+  background: #ff5252 !important;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+}
+
+/* ===== BOTÃO REINICIAR ===== */
+#resetBtn {
+  background: linear-gradient(45deg, #ff6b6b, #ff8e8e) !important;
+  border: 2px solid #ff5252 !important;
+  color: white !important;
+  font-weight: bold !important;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.3) !important;
+}
+
+#resetBtn:hover {
+  background: linear-gradient(45deg, #ff5252, #ff6b6b) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(255, 82, 82, 0.4) !important;
+}
+
+#resetBtn:active {
+  transform: translateY(0) !important;
+}
+
+/* ===== ESTILOS PARA O POPUP DE INFORMAÇÃO ===== */
+#info-popup .popup-content {
+  text-align: center;
+  max-width: 500px;
+}
+
+.info-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  margin: 20px 0;
+}
+
+#info-image {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 15px;
+  border: 3px solid #4CAF50;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.info-details {
+  text-align: left;
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 10px;
+  border-left: 4px solid #4CAF50;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+#info-name {
+  color: #4CAF50;
+  margin: 0 0 15px 0;
+  font-size: 1.4em;
+  text-align: center;
+  border-bottom: 2px solid #e0e0e0;
+  padding-bottom: 10px;
+}
+
+.info-details p {
+  margin: 12px 0;
+  line-height: 1.5;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.info-icon {
+  font-size: 1.1em;
+  min-width: 24px;
+}
+
+#info-description {
+  border-top: 1px solid #e0e0e0;
+  padding-top: 15px;
+  margin-top: 15px;
+}
+
+#info-desc-text {
+  display: block;
+  margin-top: 5px;
+  line-height: 1.6;
+  color: #555;
+}
+
+/* Responsividade para o popup de informação */
+@media (max-width: 600px) {
+  #info-popup .popup-content {
+    max-width: 95vw;
+    padding: 15px;
+  }
+  
+  .info-content {
+    gap: 10px;
+  }
+  
+  #info-image {
+    width: 150px;
+    height: 150px;
+  }
+  
+  .info-details {
+    padding: 15px;
+    font-size: 14px;
+  }
+  
+  #info-name {
+    font-size: 1.2em;
+  }
+  
+  .info-details p {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
 }

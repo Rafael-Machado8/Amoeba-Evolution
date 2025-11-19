@@ -20,7 +20,7 @@
 
     <!-- Botões principais -->
     <div id="ui-buttons">
-      <button id="homeBtn">🏠 Home</button>
+      <button id="resetBtn">🔄 Reiniciar</button>
       <button id="shopBtn">🛒 Shop</button>
         
         <!-- Popup de Loja (Lootboxes) -->
@@ -127,13 +127,16 @@
     <!-- Pop-up Educativo de Novo Peixe -->
     <div id="info-popup" class="hidden">
       <div class="popup-content">
-        <h2>🔬 Novo Peixe Desbloqueado!</h2>
-        <img id="info-image" src="assets/images/fundoPeixes.jpg" alt="Peixe" />
-        <p id="info-date"><strong>📅 Descoberta:</strong> 1800</p>
-        <p id="info-habitat"><strong>🌊 Habitat:</strong> Oceanos e mares</p>
-        <p id="info-description">
-          Este é um peixe incrível, adaptado para vida aquática com características únicas.
-        </p>
+        <h2 id="info-title">🔬 Nova Descoberta!</h2>
+        <div class="info-content">
+          <img id="info-image" src="assets/images/amoeba.jpg" alt="Novo ser descoberto" />
+          <div class="info-details">
+            <h3 id="info-name">Nome do Ser</h3>
+            <p id="info-date"><span class="info-icon">📅</span> <strong>Descoberta:</strong> <span id="info-date-text">1800</span></p>
+            <p id="info-habitat"><span class="info-icon">🌍</span> <strong>Habitat:</strong> <span id="info-habitat-text">Lagos e rios</span></p>
+            <p id="info-description"><span class="info-icon">📖</span> <strong>Descrição:</strong> <span id="info-desc-text">Descrição do ser.</span></p>
+          </div>
+        </div>
         <button id="closeInfo">Fechar</button>
       </div>
     </div>
