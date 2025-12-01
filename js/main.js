@@ -1,73 +1,95 @@
 // ======== SISTEMA DE IMAGENS PARA AMEBAS ========
-// Cache para imagens carregadas
 const amoebaImages = {};
 let imagesLoaded = 0;
 const totalImages = 20;
 
-// Função para carregar todas as imagens de amebas
 function loadAmoebaImages() {
   for (let i = 1; i <= totalImages; i++) {
     const img = new Image();
     img.onload = () => {
       imagesLoaded++;
       console.log(`Imagem da ameba ${i} carregada`);
-      // Forçar redesenho quando uma imagem carregar
-      if (imagesLoaded === 1) {
-        drawBackground();
-        drawAmoebas();
-      }
     };
     img.onerror = () => {
       console.error(`Erro ao carregar imagem da ameba ${i}`);
-      // Criar fallback mais robusto
       imagesLoaded++;
+      createFallbackAmoeba(i);
     };
-    // Adicionar cache busting para mobile
     img.src = `assets/images/amoeba${i}.jpg?t=${Date.now()}`;
     amoebaImages[i] = img;
   }
 }
 
-// Verificar se todas as imagens foram carregadas
-function allImagesLoaded() {
-  return imagesLoaded === totalImages;
+function createFallbackAmoeba(level) {
+  const canvas = document.createElement('canvas');
+  canvas.width = 100;
+  canvas.height = 100;
+  const ctx = canvas.getContext('2d');
+  
+  const colors = ["#FF6B6B", "#4ECDC4", "#45B7D1", "#96CEB4", "#FFEAA7", "#DDA0DD", "#98D8C8", "#F7DC6F", "#BB8FCE", "#85C1E9"];
+  const color = colors[(level - 1) % colors.length];
+  
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  ctx.arc(50, 50, 40, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = '#000';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  
+  ctx.fillStyle = 'white';
+  ctx.font = 'bold 16px Arial';
+  ctx.textAlign = 'center';
+  ctx.fillText(`Lv ${level}`, 50, 55);
+  
+  const img = new Image();
+  img.src = canvas.toDataURL();
+  amoebaImages[level] = img;
 }
 
-
-// ======== SISTEMA MELHORADO DE POPUPS ========
-// REMOVIDO: Funções showPopup e hideAllPopups (agora estão no shared.js)
-
+// ======== CONFIGURAÇÃO DO CANVAS ========
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
-
-// Tamanho original do canvas
 const CANVAS_WIDTH = 1280;
 const CANVAS_HEIGHT = 720;
 
-// ======== SISTEMA DE REDIMENSIONAMENTO IGUAL AOS OUTROS NÍVEIS ========
+// Sistema de fundo
+const bg = new Image();
+let bgLoaded = false;
+
+function loadBackground() {
+  const isMobile = window.innerWidth <= 768;
+  
+  bg.onload = function() {
+    bgLoaded = true;
+    console.log("✅ Fundo carregado com sucesso");
+  };
+  
+  bg.onerror = function() {
+    console.error("❌ Erro ao carregar fundo");
+    bgLoaded = false;
+  };
+  
+  bg.src = isMobile ? "assets/images/fundo1_mobile.jpg" : "assets/images/fundo1.jpg";
+}
+
 function resizeCanvas() {
   const isMobile = window.innerWidth <= 768;
 
   if (isMobile) {
-    // Em mobile, o canvas preenche a tela mantendo proporção
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
   } else {
-    // Em desktop, calculamos a escala para manter a proporção de 1280x720
     const container = document.getElementById("game-container");
     const scale = Math.min(container.clientWidth / CANVAS_WIDTH, container.clientHeight / CANVAS_HEIGHT);
     
-    // Define o tamanho de exibição (CSS) do canvas
     canvas.style.width = (CANVAS_WIDTH * scale) + 'px';
     canvas.style.height = (CANVAS_HEIGHT * scale) + 'px';
-
-    // Define a resolução interna para a qualidade original
     canvas.width = CANVAS_WIDTH;
     canvas.height = CANVAS_HEIGHT;
   }
 }
 
-// Função auxiliar para converter coordenadas do mouse/touch para coordenadas do canvas
 function getCanvasCoordinates(e) {
   const rect = canvas.getBoundingClientRect();
   const scaleX = canvas.width / rect.width;
@@ -75,11 +97,9 @@ function getCanvasCoordinates(e) {
   
   let clientX, clientY;
   if (e.touches) {
-    // Touch event
     clientX = e.touches[0].clientX;
     clientY = e.touches[0].clientY;
   } else {
-    // Mouse event
     clientX = e.clientX;
     clientY = e.clientY;
   }
@@ -90,202 +110,39 @@ function getCanvasCoordinates(e) {
   };
 }
 
-// Fundo
-const bg = new Image();
-// Detectar se é mobile e carregar versão mobile do fundo
-let lastMobileState = window.innerWidth <= 768;
-bg.src = lastMobileState ? "assets/images/fundo1_mobile.jpg" : "assets/images/fundo1.jpg";
-
-// Função para atualizar fundo quando necessário
-function updateBackground() {
-  const currentMobileState = window.innerWidth <= 768;
-  if (currentMobileState !== lastMobileState) {
-    const newSrc = currentMobileState ? "assets/images/fundo1_mobile.jpg" : "assets/images/fundo1.jpg";
-    // Recarregar a imagem completamente
-    bg.onload = function() {
-      // Imagem carregada, pode desenhar
-    };
-    bg.src = newSrc + "?t=" + Date.now(); // Adicionar timestamp para forçar recarregamento
-    lastMobileState = currentMobileState;
-  }
-}
-
-// Garantir que a imagem carregue antes de desenhar
-bg.onload = function() {
-  // Imagem carregada
-};
-
-// Redimensionar ao carregar e ao redimensionar a janela
-resizeCanvas();
-updateBackground();
-window.addEventListener('resize', () => {
-  resizeCanvas();
-  updateBackground();
-});
-window.addEventListener('orientationchange', () => {
-  setTimeout(() => {
-    resizeCanvas();
-    updateBackground();
-  }, 100);
-});
-
 // ======== POPUP EDUCATIVO ========
 const AMOEBA_INFO = {
-  1: { 
-    name: "Amoeba proteus", 
-    img: "assets/images/amoeba1.jpg", 
-    date: "📅 Descoberta: 1755",
-    habitat: "🌍 Habitat: Água doce", 
-    desc: "Rainha das amebas - move-se com pseudópodes elegantes. Idade: 1.2 bilhão de anos" 
-  },
-  2: { 
-    name: "Entamoeba histolytica", 
-    img: "assets/images/amoeba2.jpg", 
-    date: "📅 Descoberta: 1875",
-    habitat: "🌍 Habitat: Intestino humano", 
-    desc: "Parasita especializado em invasão celular. Idade: 1 bilhão de anos" 
-  },
-  3: { 
-    name: "Naegleria fowleri", 
-    img: "assets/images/amoeba3.jpg", 
-    date: "📅 Descoberta: 1965",
-    habitat: "🌍 Habitat: Águas mornas", 
-    desc: "Ameba comedora de cérebro - rara e fatal. Idade: 900 milhões de anos" 
-  },
-  4: { 
-    name: "Acanthamoeba", 
-    img: "assets/images/amoeba4.jpg", 
-    date: "📅 Descoberta: 1930",
-    habitat: "🌍 Habitat: Solo e água", 
-    desc: "Causa infecções oculares - muito resistente. Idade: 850 milhões de anos" 
-  },
-  5: { 
-    name: "Difflugia", 
-    img: "assets/images/amoeba5.jpg", 
-    date: "📅 Descoberta: 1816",
-    habitat: "🌍 Habitat: Lagos", 
-    desc: "Arquiteta microscópica com casinha de areia. Idade: 800 milhões de anos" 
-  },
-  6: { 
-    name: "Arcella", 
-    img: "assets/images/amoeba6.jpg", 
-    date: "📅 Descoberta: 1832", 
-    habitat: "🌍 Habitat: Pântanos",
-    desc: "Vive em cúpula quitinosa - mini castelo. Idade: 750 milhões de anos" 
-  },
-  7: { 
-    name: "Euglypha", 
-    img: "assets/images/amoeba7.jpg", 
-    date: "📅 Descoberta: 1845",
-    habitat: "🌍 Habitat: Musgos úmidos", 
-    desc: "Constrói escudos de sílica elaborados. Idade: 700 milhões de anos" 
-  },
-  8: { 
-    name: "Vampyrella", 
-    img: "assets/images/amoeba8.jpg", 
-    date: "📅 Descoberta: 1865",
-    habitat: "🌍 Habitat: Lagos com algas", 
-    desc: "Ameba laranja - perfura paredes celulares. Idade: 650 milhões de anos" 
-  },
-  9: { 
-    name: "Gromia", 
-    img: "assets/images/amoeba9.jpg", 
-    date: "📅 Descoberta: 1902",
-    habitat: "🌍 Habitat: Fundo oceânico", 
-    desc: "Ameba gigante - deixa rastros no mar. Idade: 600 milhões de anos" 
-  },
-  10: { 
-    name: "Foraminífero", 
-    img: "assets/images/amoeba10.jpg", 
-    date: "📅 Descoberta: 1826",
-    habitat: "🌍 Habitat: Oceanos", 
-    desc: "Constrói esculturas calcárias complexas. Idade: 550 milhões de anos" 
-  },
-  11: { 
-    name: "Radiolária", 
-    img: "assets/images/amoeba11.jpg", 
-    date: "📅 Descoberta: 1834",
-    habitat: "🌍 Habitat: Oceanos tropicais", 
-    desc: "Esqueleto de sílica - joia do plâncton. Idade: 500 milhões de anos" 
-  },
-  12: { 
-    name: "Heliozoa", 
-    img: "assets/images/amoeba12.jpg", 
-    date: "📅 Descoberta: 1860",
-    habitat: "🌍 Habitat: Águas com vegetação", 
-    desc: "Ameba solar - pseudópodes radiais. Idade: 450 milhões de anos" 
-  },
-  13: { 
-    name: "Chlamydophrys", 
-    img: "assets/images/amoeba13.jpg", 
-    date: "📅 Descoberta: 1879",
-    habitat: "🌍 Habitat: Solos florestais", 
-    desc: "Forma colônias complexas - comportamento social. Idade: 400 milhões de anos" 
-  },
-  14: { 
-    name: "Paulinella", 
-    img: "assets/images/amoeba14.jpg", 
-    date: "📅 Descoberta: 1895",
-    habitat: "🌍 Habitat: Águas marinhas", 
-    desc: "Roubou cloroplastos independentemente. Idade: 350 milhões de anos" 
-  },
-  15: { 
-    name: "Filamoeba", 
-    img: "assets/images/amoeba15.jpg", 
-    date: "📅 Descoberta: 1912",
-    habitat: "🌍 Habitat: Solos orgânicos", 
-    desc: "Forma filamentos ramificados - elo com fungos. Idade: 300 milhões de anos" 
-  },
-  16: { 
-    name: "Vannella", 
-    img: "assets/images/amoeba16.jpg", 
-    date: "📅 Descoberta: 1926",
-    habitat: "🌍 Habitat: Águas marinhas", 
-    desc: "Formato de leque - adaptação marinha. Idade: 250 milhões de anos" 
-  },
-  17: { 
-    name: "Cochliopodium", 
-    img: "assets/images/amoeba17.jpg", 
-    date: "📅 Descoberta: 1849",
-    habitat: "🌍 Habitat: Águas doces", 
-    desc: "Coberta por escamas orgânicas - armadura flexível. Idade: 200 milhões de anos" 
-  },
-  18: { 
-    name: "Mayorella", 
-    img: "assets/images/amoeba18.jpg", 
-    date: "📅 Descoberta: 1934",
-    habitat: "🌍 Habitat: Lagos e riachos", 
-    desc: "Pseudópodes largos - movimento fluido. Idade: 150 milhões de anos" 
-  },
-  19: { 
-    name: "Thecamoeba", 
-    img: "assets/images/amoeba19.jpg", 
-    date: "📅 Descoberta: 1961",
-    habitat: "🌍 Habitat: Solos pobres", 
-    desc: "Ectoplasma rígido - dobras características. Idade: 100 milhões de anos" 
-  },
-  20: { 
-    name: "Saccamoeba", 
-    img: "assets/images/amoeba20.jpg", 
-    date: "📅 Descoberta: 1973",
-    habitat: "🌍 Habitat: Águas ricas", 
-    desc: "Forma bolsas alimentares - eficiência. Idade: 50 milhões de anos" 
-  }
+  1: { name: "Amoeba proteus", date: "1755", habitat: "Água doce", desc: "Rainha das amebas - move-se com pseudópodes elegantes. Idade: 1.2 bilhão de anos" },
+  2: { name: "Entamoeba histolytica", date: "1875", habitat: "Intestino humano", desc: "Parasita especializado em invasão celular. Idade: 1 bilhão de anos" },
+  3: { name: "Naegleria fowleri", date: "1965", habitat: "Águas mornas", desc: "Ameba comedora de cérebro - rara e fatal. Idade: 900 milhões de anos" },
+  4: { name: "Acanthamoeba", date: "1930", habitat: "Solo e água", desc: "Causa infecções oculares - muito resistente. Idade: 850 milhões de anos" },
+  5: { name: "Difflugia", date: "1816", habitat: "Lagos", desc: "Arquiteta microscópica com casinha de areia. Idade: 800 milhões de anos" },
+  6: { name: "Arcella", date: "1832", habitat: "Pântanos", desc: "Vive em cúpula quitinosa - mini castelo. Idade: 750 milhões de anos" },
+  7: { name: "Euglypha", date: "1845", habitat: "Musgos úmidos", desc: "Constrói escudos de sílica elaborados. Idade: 700 milhões de anos" },
+  8: { name: "Vampyrella", date: "1865", habitat: "Lagos com algas", desc: "Ameba laranja - perfura paredes celulares. Idade: 650 milhões de anos" },
+  9: { name: "Gromia", date: "1902", habitat: "Fundos oceânicos", desc: "Ameba gigante - deixa rastros no mar. Idade: 600 milhões de anos" },
+  10: { name: "Foraminífero", date: "1826", habitat: "Oceanos", desc: "Constrói esculturas calcárias complexas. Idade: 550 milhões de anos" },
+  11: { name: "Radiolária", date: "1834", habitat: "Oceanos tropicais", desc: "Esqueleto de sílica - joia do plâncton. Idade: 500 milhões de anos" },
+  12: { name: "Heliozoa", date: "1860", habitat: "Águas com vegetação", desc: "Ameba solar - pseudópodes radiais. Idade: 450 milhões de anos" },
+  13: { name: "Chlamydophrys", date: "1879", habitat: "Solos florestais", desc: "Forma colônias complexas - comportamento social. Idade: 400 milhões de anos" },
+  14: { name: "Paulinella", date: "1895", habitat: "Águas marinhas", desc: "Roubou cloroplastos independentemente. Idade: 350 milhões de anos" },
+  15: { name: "Filamoeba", date: "1912", habitat: "Solos orgânicos", desc: "Forma filamentos ramificados - elo com fungos. Idade: 300 milhões de anos" },
+  16: { name: "Vannella", date: "1926", habitat: "Águas marinhas", desc: "Formato de leque - adaptação marinha. Idade: 250 milhões de anos" },
+  17: { name: "Cochliopodium", date: "1849", habitat: "Águas doces", desc: "Coberta por escamas orgânicas - armadura flexível. Idade: 200 milhões de anos" },
+  18: { name: "Mayorella", date: "1934", habitat: "Lagos e riachos", desc: "Pseudópodes largos - movimento fluido. Idade: 150 milhões de anos" },
+  19: { name: "Thecamoeba", date: "1961", habitat: "Solos pobres", desc: "Ectoplasma rígido - dobras características. Idade: 100 milhões de anos" },
+  20: { name: "Saccamoeba", date: "1973", habitat: "Águas ricas", desc: "Forma bolsas alimentares - eficiência. Idade: 50 milhões de anos" }
 };
 
 // ======== VARIÁVEIS DO JOGO ========
 let discoveredLevels = new Set(JSON.parse(localStorage.getItem("discoveredAmoebas")) || [1]);
-
-let amoebas = [
-  { x: 300, y: 300, size: 60, level: 1, dragging: false, dx: 2, dy: 1, animScale: 1 }
-];
-
+let amoebas = [{ x: 300, y: 300, size: 60, level: 1, dragging: false, dx: 2, dy: 1, animScale: 1 }];
 let coins = 0;
 let selectedAmoeba = null;
 let moneyAnimations = [];
 let spawnTimer = 0;
-let spawnInterval = 15000; // 15 segundos
-let amoebaPrices = {}; // preços por nível
+let spawnInterval = 15000;
+let amoebaPrices = {};
 
 let upgrades = {
   moreCoins: { name: "Mais moedas por amoeba", level: 0, max: 10, baseCost: 50, effect: 1 },
@@ -294,77 +151,56 @@ let upgrades = {
   ima: { name: "Ímã mágico", level: 0, max: 3, baseCost: 1000, effect: 5 }
 };
 
-// ======== SISTEMA DE SAVE/LOAD PARA AMOEBAS ========
+// ======== SISTEMA DE SAVE/LOAD ========
 function saveGame() {
-    const state = {
-        amoebas,
-        coins,
-        upgrades,
-        amoebaPrices,
-        discoveredLevels: [...discoveredLevels],
-        spawnTimer,
-        spawnInterval
-    };
-    localStorage.setItem("gameState_amoebas", JSON.stringify(state));
+  const state = {
+    amoebas,
+    coins,
+    upgrades,
+    amoebaPrices,
+    discoveredLevels: [...discoveredLevels],
+    spawnTimer,
+    spawnInterval
+  };
+  localStorage.setItem("gameState_amoebas", JSON.stringify(state));
 }
 
 function loadGame() {
-    const saved = localStorage.getItem("gameState_amoebas");
-    if (!saved) {
-        // Se não há save para amoebas, inicia do zero
-        resetGameForAmoebas();
-        return;
-    }
+  const saved = localStorage.getItem("gameState_amoebas");
+  if (!saved) {
+    resetGameForAmoebas();
+    return;
+  }
 
-    const state = JSON.parse(saved);
-    amoebas = state.amoebas || amoebas;
-    coins = state.coins || 0;
-    upgrades = state.upgrades || upgrades;
-    amoebaPrices = state.amoebaPrices || {};
-    discoveredLevels = new Set(state.discoveredLevels || [1]);
-    spawnTimer = state.spawnTimer || 0;
-    spawnInterval = state.spawnInterval || 15000;
+  const state = JSON.parse(saved);
+  amoebas = state.amoebas || amoebas;
+  coins = state.coins || 0;
+  upgrades = state.upgrades || upgrades;
+  amoebaPrices = state.amoebaPrices || {};
+  discoveredLevels = new Set(state.discoveredLevels || [1]);
+  spawnTimer = state.spawnTimer || 0;
+  spawnInterval = state.spawnInterval || 15000;
 
-    document.getElementById("coins").innerText = `💰 ${coins}`;
-<<<<<<< HEAD
-=======
-
-    const coinElement = document.getElementById("coins");
-    coinElement.style.fontFamily = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-    coinElement.style.fontWeight = '800';
-    coinElement.style.fontSize = '20px';
-    
-    coinElement.style.color = '#000000ff';
-    coinElement.style.letterSpacing = '0.5px';
->>>>>>> 2895053683ec9e2d6edd43291d116766459010df
-    
-    // Verificar se já tem nível 20 ao carregar
-    setTimeout(() => {
-        checkNewLevelUnlock();
-    }, 1000);
+  document.getElementById("coins").innerText = `💰 ${coins}`;
 }
 
 function resetGameForAmoebas() {
-    amoebas = [
-        { x: 300, y: 300, size: 60, level: 1, dragging: false, dx: 2, dy: 1, animScale: 1 }
-    ];
-    coins = 0;
-    amoebaPrices = {};
-    discoveredLevels = new Set([1]);
-    spawnTimer = 0;
-    spawnInterval = 15000;
-    
-    upgrades = {
-        moreCoins: { name: "Mais moedas por amoeba", level: 0, max: 10, baseCost: 50, effect: 1 },
-        fasterSpawn: { name: "Spawn mais rápido", level: 0, max: 5, baseCost: 100, effect: 0.9 },
-        higherStart: { name: "Amoebas começam mais fortes", level: 0, max: 5, baseCost: 200, effect: 0 },
-        ima: { name: "Ímã mágico", level: 0, max: 3, baseCost: 1000, effect: 5 }
-    };
-    
-    document.getElementById("coins").innerText = `💰 ${coins}`;
+  amoebas = [{ x: 300, y: 300, size: 60, level: 1, dragging: false, dx: 2, dy: 1, animScale: 1 }];
+  coins = 0;
+  amoebaPrices = {};
+  discoveredLevels = new Set([1]);
+  spawnTimer = 0;
+  spawnInterval = 15000;
+  
+  upgrades = {
+    moreCoins: { name: "Mais moedas por amoeba", level: 0, max: 10, baseCost: 50, effect: 1 },
+    fasterSpawn: { name: "Spawn mais rápido", level: 0, max: 5, baseCost: 100, effect: 0.9 },
+    higherStart: { name: "Amoebas começam mais fortes", level: 0, max: 5, baseCost: 200, effect: 0 },
+    ima: { name: "Ímã mágico", level: 0, max: 3, baseCost: 1000, effect: 5 }
+  };
+  
+  document.getElementById("coins").innerText = `💰 ${coins}`;
 }
-
-window.addEventListener("beforeunload", saveGame);
 
 // ======== POPUPS ========
 function saveDiscovered() {
@@ -374,31 +210,101 @@ function saveDiscovered() {
 function showInfoPopup(level) {
   const info = AMOEBA_INFO[level] || {
     name: `Ameba Nível ${level}`, 
-    img: "assets/images/amoeba.jpg", 
-    date: `📅 Descoberta: ${1800 + level}`,
-    habitat: "🌍 Habitat: Lagos e rios de água doce", 
+    date: `${1800 + level}`,
+    habitat: "Lagos e rios de água doce", 
     desc: `Ameba nível ${level}: informações ainda em estudo.`
   };
 
   const popup = document.getElementById("info-popup");
-<<<<<<< HEAD
   
-  // Define todos os elementos
+  // Atualizar todos os textos
   document.getElementById("info-title").textContent = "🔬 Nova Amoeba Descoberta!";
   document.getElementById("info-name").textContent = info.name;
-=======
-
-  
->>>>>>> 2895053683ec9e2d6edd43291d116766459010df
-  document.getElementById("info-image").src = info.img;
-  document.getElementById("info-date-text").textContent = info.date.replace("📅 ", "");
-  document.getElementById("info-habitat-text").textContent = info.habitat.replace("🌍 ", "");
+  document.getElementById("info-date-text").textContent = info.date;
+  document.getElementById("info-habitat-text").textContent = info.habitat;
   document.getElementById("info-desc-text").textContent = info.desc;
 
+  // Sistema robusto para carregar a imagem
+  const infoImage = document.getElementById("info-image");
+  
+  // Tentar usar a imagem do cache primeiro
+  const cachedImage = amoebaImages[level];
+  if (cachedImage && cachedImage.complete && cachedImage.naturalWidth > 0) {
+    infoImage.src = cachedImage.src;
+    console.log(`✅ Usando imagem cacheada para ameba ${level}`);
+  } else {
+    // Fallback: tentar carregar diretamente
+    const imagePath = `assets/images/amoeba${level}.jpg`;
+    infoImage.src = imagePath + `?t=${Date.now()}`; // Cache busting
+    
+    // Fallback secundário: criar imagem fallback
+    infoImage.onerror = function() {
+      console.warn(`❌ Imagem não encontrada: ${imagePath}, criando fallback`);
+      createPopupFallbackImage(level, infoImage);
+    };
+    
+    console.log(`🔄 Carregando imagem: ${imagePath}`);
+  }
+
+  // Forçar exibição do popup
   popup.classList.remove("hidden");
   popup.style.display = "block";
+  
+  // Adicionar estilos para garantir que a imagem seja visível
+  infoImage.style.display = "block";
+  infoImage.style.width = "100%";
+  infoImage.style.height = "auto";
+  infoImage.style.borderRadius = "10px";
+  infoImage.style.border = "3px solid #000";
+  
   saveGame();
-};
+}
+
+// Função para criar imagem fallback no popup
+function createPopupFallbackImage(level, imgElement) {
+  const canvas = document.createElement('canvas');
+  canvas.width = 200;
+  canvas.height = 200;
+  const ctx = canvas.getContext('2d');
+  
+  // Fundo gradiente
+  const gradient = ctx.createRadialGradient(100, 100, 0, 100, 100, 100);
+  gradient.addColorStop(0, '#4ECDC4');
+  gradient.addColorStop(1, '#45B7D1');
+  
+  ctx.fillStyle = gradient;
+  ctx.beginPath();
+  ctx.arc(100, 100, 80, 0, Math.PI * 2);
+  ctx.fill();
+  
+  // Borda
+  ctx.strokeStyle = '#000';
+  ctx.lineWidth = 4;
+  ctx.stroke();
+  
+  // Borda interna
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.arc(100, 100, 78, 0, Math.PI * 2);
+  ctx.stroke();
+  
+  // Ícone de ameba
+  ctx.fillStyle = 'white';
+  ctx.font = 'bold 40px Arial';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('🔬', 100, 90);
+  
+  // Texto do nível
+  ctx.fillStyle = 'white';
+  ctx.font = 'bold 20px Arial';
+  ctx.fillText(`Nível ${level}`, 100, 140);
+  
+  // Definir a imagem fallback
+  imgElement.src = canvas.toDataURL();
+}
+
 
 // ======== BOTÕES ========
 document.getElementById("upgradeBtn").addEventListener("click", () => {
@@ -432,26 +338,29 @@ document.getElementById("closeBuy").addEventListener("click", () => {
   saveGame();
 });
 
+document.getElementById("closeInfo").addEventListener("click", () => {
+  document.getElementById("info-popup").style.display = "none";
+  document.getElementById("info-popup").classList.add("hidden");
+});
+
 // ======== SISTEMA DE COMPRA ========
 function buyAmoeba(level = 1) {
   if (!discoveredLevels.has(level)) {
-      alert(`Você precisa desbloquear o nível ${level} primeiro!`);
-      return;
+    alert(`Você precisa desbloquear o nível ${level} primeiro!`);
+    return;
   }
   
-  // PREÇO EXPONENCIAL: base * (1.6^(level-1))
   const basePrice = 50;
   const cost = amoebaPrices[level] || Math.floor(basePrice * Math.pow(1.6, level - 1));
   
   if (coins >= cost) {
-      coins -= cost;
-      spawnAmoeba(level, false);
-      // Atualiza o preço para a próxima compra (aumenta 20% adicional)
-      amoebaPrices[level] = Math.floor(cost * 1.2);
-      document.getElementById("coins").innerText = `💰 ${coins}`;
-      saveGame();
+    coins -= cost;
+    spawnAmoeba(level, false);
+    amoebaPrices[level] = Math.floor(cost * 1.2);
+    document.getElementById("coins").innerText = `💰 ${coins}`;
+    saveGame();
   } else {
-      alert("Moedas insuficientes!");
+    alert("Moedas insuficientes!");
   }
 }
 
@@ -467,7 +376,7 @@ function buyUpgrade(type) {
     if (type === "moreCoins") u.effect = 1 + u.level;
     if (type === "fasterSpawn") spawnInterval = 15000 * Math.pow(0.9, u.level);
     if (type === "higherStart") u.effect = u.level;
-    if (type === "ima") u.effect = 6 - u.level; // menos tempo pro ímã
+    if (type === "ima") u.effect = 6 - u.level;
 
     document.getElementById("coins").innerText = `💰 ${coins}`;
     saveGame();
@@ -476,39 +385,20 @@ function buyUpgrade(type) {
   }
 }
 
-// ======== FUNÇÃO PARA DIMINUIR UPGRADE ========
 function downgradeUpgrade(type) {
   const u = upgrades[type];
   if (!u || u.level <= 0) return;
   
-  // Diminui o nível
   u.level--;
   
-  // Ajusta os efeitos
   if (type === "moreCoins") u.effect = 1 + u.level;
   if (type === "fasterSpawn") spawnInterval = 15000 * Math.pow(0.9, u.level);
   if (type === "higherStart") u.effect = u.level;
   if (type === "ima") u.effect = 6 - u.level;
   
-  console.log(`⬇️ Upgrade ${type} diminuído para nível ${u.level}`);
   saveGame();
   renderUpgradeList();
 }
-
-// Adicione também uma função para acessar via console
-window.downgradeUpgrade = downgradeUpgrade;
-
-// ======== FUNÇÃO PARA LISTAR UPGRADES ========
-function listUpgrades() {
-  console.log("📊 UPGRADES ATUAIS:");
-  for (let key in upgrades) {
-      const u = upgrades[key];
-      console.log(`• ${u.name}: Nível ${u.level}/${u.max} (Efeito: ${u.effect})`);
-  }
-  return upgrades;
-}
-
-window.listUpgrades = listUpgrades;
 
 // ======== RENDER UPGRADES ========
 function renderUpgradeList() {
@@ -516,37 +406,34 @@ function renderUpgradeList() {
   container.innerHTML = "";
 
   for (let key in upgrades) {
-      const u = upgrades[key];
-      const cost = u.baseCost * (u.level + 1);
+    const u = upgrades[key];
+    const cost = u.baseCost * (u.level + 1);
 
-      const item = document.createElement("div");
-      item.className = "upgrade-item";
-      item.innerHTML = `
-          <strong>${u.name}</strong> <br>
-          Nível: ${u.level}/${u.max} <br>
-          Custo: 💰 ${cost}
-          <br>
-          <div style="display: flex; gap: 10px; margin-top: 8px;">
-              <button ${u.level >= u.max ? "disabled" : ""}>Comprar</button>
-              <button ${u.level <= 0 ? "disabled" : ""} 
-                      style="background: #ff6b6b;">Diminuir</button>
-          </div>
-      `;
+    const item = document.createElement("div");
+    item.className = "upgrade-item";
+    item.innerHTML = `
+      <strong>${u.name}</strong> <br>
+      Nível: ${u.level}/${u.max} <br>
+      Custo: 💰 ${cost}
+      <br>
+      <div style="display: flex; gap: 10px; margin-top: 8px;">
+        <button ${u.level >= u.max ? "disabled" : ""}>Comprar</button>
+        <button ${u.level <= 0 ? "disabled" : ""} style="background: #ff6b6b;">Diminuir</button>
+      </div>
+    `;
 
-      // Botão comprar
-      item.querySelector("button:nth-child(1)").addEventListener("click", () => {
-          buyUpgrade(key);
-          renderUpgradeList();
-      });
+    item.querySelector("button:nth-child(1)").addEventListener("click", () => {
+      buyUpgrade(key);
+      renderUpgradeList();
+    });
 
-      // Botão diminuir
-      item.querySelector("button:nth-child(2)").addEventListener("click", () => {
-          if (confirm(`Diminuir ${u.name} para nível ${u.level - 1}?`)) {
-              downgradeUpgrade(key);
-          }
-      });
+    item.querySelector("button:nth-child(2)").addEventListener("click", () => {
+      if (confirm(`Diminuir ${u.name} para nível ${u.level - 1}?`)) {
+        downgradeUpgrade(key);
+      }
+    });
 
-      container.appendChild(item);
+    container.appendChild(item);
   }
 }
 
@@ -556,35 +443,27 @@ function renderBuyList() {
   container.innerHTML = "";
 
   for (let level = 1; level <= 20; level++) {
-      // PREÇO EXPONENCIAL: base * (1.6^(level-1))
-      const basePrice = 50;
-      const cost = amoebaPrices[level] || Math.floor(basePrice * Math.pow(1.6, level - 1));
-      const isUnlocked = discoveredLevels.has(level);
+    const basePrice = 50;
+    const cost = amoebaPrices[level] || Math.floor(basePrice * Math.pow(1.6, level - 1));
+    const isUnlocked = discoveredLevels.has(level);
 
-      const item = document.createElement("div");
-      item.className = `buy-item ${!isUnlocked ? 'locked' : ''}`;
-      item.innerHTML = `
-          <strong>Amoeba Nível ${level}</strong> <br>
-          ${!isUnlocked ? '<span style="color: red;">🔒 Não desbloqueado</span><br>' : ''}
-          Custo: 💰 ${cost} <br>
-          <button ${!isUnlocked ? 'disabled' : ''}>${!isUnlocked ? 'Bloqueado' : 'Comprar'}</button>
-      `;
+    const item = document.createElement("div");
+    item.className = `buy-item ${!isUnlocked ? 'locked' : ''}`;
+    item.innerHTML = `
+      <strong>Amoeba Nível ${level}</strong> <br>
+      ${!isUnlocked ? '<span style="color: red;">🔒 Não desbloqueado</span><br>' : ''}
+      Custo: 💰 ${cost} <br>
+      <button ${!isUnlocked ? 'disabled' : ''}>${!isUnlocked ? 'Bloqueado' : 'Comprar'}</button>
+    `;
 
-      if (isUnlocked) {
-          item.querySelector("button").addEventListener("click", () => {
-              buyAmoeba(level);
-              renderBuyList();
-          });
-      }
+    if (isUnlocked) {
+      item.querySelector("button").addEventListener("click", () => {
+        buyAmoeba(level);
+        renderBuyList();
+      });
+    }
 
-      container.appendChild(item);
-  }
-}
-
-function resetCurrentAmoebaGame() {
-  if (confirm("Deseja reiniciar apenas o nível das Amoebas?")) {
-      resetGameForAmoebas();
-      location.reload();
+    container.appendChild(item);
   }
 }
 
@@ -593,22 +472,22 @@ function spawnAmoeba(level = 1, applyHigherStart = true) {
   const lvl = applyHigherStart ? (level + upgrades.higherStart.effect) : level;
   
   const newAmoeba = {
-      x: Math.random() * (canvas.width - 60),
-      y: Math.random() * (canvas.height - 60),
-      size: 60,
-      level: lvl,
-      dragging: false,
-      dx: (Math.random() * 2 - 1) * 2,
-      dy: (Math.random() * 2 - 1) * 2,
-      animScale: 1
+    x: Math.random() * (canvas.width - 60),
+    y: Math.random() * (canvas.height - 60),
+    size: 60,
+    level: lvl,
+    dragging: false,
+    dx: (Math.random() * 2 - 1) * 2,
+    dy: (Math.random() * 2 - 1) * 2,
+    animScale: 1
   };
 
   amoebas.push(newAmoeba);
 
   if (!discoveredLevels.has(lvl)) {
-      discoveredLevels.add(lvl);
-      showInfoPopup(lvl);
-      saveDiscovered();
+    discoveredLevels.add(lvl);
+    showInfoPopup(lvl);
+    saveDiscovered();
   }
 }
 
@@ -636,10 +515,8 @@ canvas.addEventListener("mousedown", e => {
   const mouseY = coords.y;
 
   for (let amoeba of amoebas) {
-    if (
-      mouseX > amoeba.x && mouseX < amoeba.x + amoeba.size &&
-      mouseY > amoeba.y && mouseY < amoeba.y + amoeba.size
-    ) {
+    if (mouseX > amoeba.x && mouseX < amoeba.x + amoeba.size &&
+        mouseY > amoeba.y && mouseY < amoeba.y + amoeba.size) {
       selectedAmoeba = amoeba;
       amoeba.dragging = true;
     }
@@ -674,7 +551,6 @@ canvas.addEventListener("mouseup", () => {
 function mergeAmoebas(a, b) {
   const newLevel = a.level + 1;
   
-  // ✅ PERMITIR FUSÃO ATÉ O NÍVEL 20
   if (newLevel > 20) {
     console.log("🎯 Nível máximo das amebas alcançado!");
     return;
@@ -700,7 +576,6 @@ function mergeAmoebas(a, b) {
     saveDiscovered();
   }
   
-  // ✅ VERIFICAR SE DESBLOQUEOU NOVO NÍVEL APÓS FUSÃO
   checkNewLevelUnlock();
   saveGame();
 }
@@ -714,19 +589,7 @@ function isColliding(a, b) {
 }
 
 function getColor(level) {
-  // Verificar se há skin equipada para amoebas
-  if (equippedSkin.amoebas) {
-    // Encontrar a skin equipada
-    for (let lvl in inventory.amoebas) {
-      const skin = inventory.amoebas[lvl].find(s => s.id === equippedSkin.amoebas);
-      if (skin && parseInt(lvl) === level) {
-        return skin.color;
-      }
-    }
-  }
-  
-  // Cores padrão se não houver skin equipada
-  const colors = ["limegreen", "blue", "orange", "purple", "red", "gold"];
+  const colors = ["#FF6B6B", "#4ECDC4", "#45B7D1", "#96CEB4", "#FFEAA7", "#DDA0DD", "#98D8C8", "#F7DC6F", "#BB8FCE", "#85C1E9"];
   return colors[(level - 1) % colors.length];
 }
 
@@ -783,14 +646,30 @@ function updateMoneyAnimations() {
 
 // ======== DESENHO ========
 function drawBackground() {
-  // Verificar se a imagem está carregada antes de desenhar
-  if (bg.complete && bg.naturalWidth > 0) {
-    ctx.drawImage(bg, 0, 0, canvas.width, canvas.height);
-  } else {
-    // Se não carregou ainda, desenhar fundo preto temporário
-    ctx.fillStyle = "#000";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  
+  if (bgLoaded && bg.complete && bg.naturalWidth > 0) {
+    try {
+      ctx.drawImage(bg, 0, 0, canvas.width, canvas.height);
+      return;
+    } catch (error) {
+      console.error("Erro ao desenhar fundo:", error);
+    }
   }
+  
+  // Fallback: fundo gradiente
+  const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+  gradient.addColorStop(0, '#1a1a2e');
+  gradient.addColorStop(0.5, '#16213e');
+  gradient.addColorStop(1, '#0f3460');
+  
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  
+  ctx.fillStyle = 'white';
+  ctx.font = '16px Arial';
+  ctx.textAlign = 'center';
+  ctx.fillText('🌊 Mundo das Amebas', canvas.width / 2, 30);
 }
 
 function drawAmoebas() {
@@ -799,36 +678,57 @@ function drawAmoebas() {
     const size = amoeba.size * scale;
     const x = amoeba.x;
     const y = amoeba.y;
-    const borderRadius = 30; // Ajuste este valor para controlar o arredondamento
     
-    // Verificar se a imagem para este nível está carregada
     const amoebaImage = amoebaImages[amoeba.level];
     
     if (amoebaImage && amoebaImage.complete) {
-      // DESENHAR COM BORDAS ARREDONDADAS
+      // Desenhar a imagem com borda
       ctx.save();
       
-      // Criar um caminho retangular com bordas arredondadas
+      // Criar caminho para borda arredondada
       ctx.beginPath();
-      ctx.moveTo(x + borderRadius, y);
-      ctx.lineTo(x + size - borderRadius, y);
-      ctx.quadraticCurveTo(x + size, y, x + size, y + borderRadius);
-      ctx.lineTo(x + size, y + size - borderRadius);
-      ctx.quadraticCurveTo(x + size, y + size, x + size - borderRadius, y + size);
-      ctx.lineTo(x + borderRadius, y + size);
-      ctx.quadraticCurveTo(x, y + size, x, y + size - borderRadius);
-      ctx.lineTo(x, y + borderRadius);
-      ctx.quadraticCurveTo(x, y, x + borderRadius, y);
+      ctx.arc(
+        x + size / 2, 
+        y + size / 2, 
+        size / 2, 
+        0, 
+        Math.PI * 2
+      );
       ctx.closePath();
-      ctx.clip(); // Aplica o clipping path
+      ctx.clip(); // Aplicar máscara circular
       
       // Desenhar a imagem
       ctx.drawImage(amoebaImage, x, y, size, size);
+      ctx.restore(); // Remover máscara
       
-      ctx.restore(); // Remove o clipping path
+      // Desenhar borda
+      ctx.strokeStyle = "#000";
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(
+        x + size / 2, 
+        y + size / 2, 
+        size / 2, 
+        0, 
+        Math.PI * 2
+      );
+      ctx.stroke();
+      
+      // Desenhar borda interna brilhante
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.5)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.arc(
+        x + size / 2, 
+        y + size / 2, 
+        size / 2 - 1, 
+        0, 
+        Math.PI * 2
+      );
+      ctx.stroke();
       
     } else {
-      // Fallback: desenhar círculo colorido
+      // Fallback: círculo colorido com borda
       const centerX = amoeba.x + amoeba.size / 2;
       const centerY = amoeba.y + amoeba.size / 2;
       const radius = (amoeba.size / 2) * scale;
@@ -837,35 +737,44 @@ function drawAmoebas() {
       ctx.beginPath();
       ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
       ctx.fill();
-      ctx.strokeStyle = "black";
+      
+      // Borda principal
+      ctx.strokeStyle = "#000";
+      ctx.lineWidth = 3;
+      ctx.stroke();
+      
+      // Borda interna brilhante
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.5)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, radius - 1, 0, Math.PI * 2);
       ctx.stroke();
     }
 
-    // Texto do nível
+    
+    
     ctx.fillStyle = "white";
-    ctx.font = "16px Arial";
+    ctx.font = "bold 14px Arial";
     ctx.textAlign = "center";
-    ctx.fillText(`Lv ${amoeba.level}`, amoeba.x + amoeba.size / 2, amoeba.y + amoeba.size / 2 + 5);
+    ctx.textBaseline = "middle";
+    ctx.fillText(
+      `Lv ${amoeba.level}`, 
+      amoeba.x + amoeba.size / 2, 
+      amoeba.y + amoeba.size / 2 + 15
+    );
   }
 }
 
 function drawMoneyAnimations() {
   for (let anim of moneyAnimations) {
     ctx.globalAlpha = anim.alpha;
-    
-    // ✅ FONTE OTIMIZADA PARA MOBILE
-    ctx.font = "700 18px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+    ctx.font = "700 18px Arial";
     ctx.textAlign = "center";
-    
-    // ✅ CONTORNO PARA MELHOR LEGIBILIDADE
     ctx.strokeStyle = "rgba(0, 0, 0, 0.8)";
     ctx.lineWidth = 3;
     ctx.strokeText(anim.value, anim.x, anim.y);
-    
-    // ✅ TEXTO PRINCIPAL
     ctx.fillStyle = "#FFD700";
     ctx.fillText(anim.value, anim.x, anim.y);
-    
     ctx.globalAlpha = 1;
   }
 }
@@ -879,20 +788,10 @@ function drawSpawnBar() {
 
   ctx.fillStyle = "rgba(0,0,0,0.6)";
   ctx.fillRect(x, y, barWidth, barHeight);
-
   ctx.fillStyle = "lime";
   ctx.fillRect(x, y, barWidth * progress, barHeight);
-
   ctx.strokeStyle = "white";
   ctx.strokeRect(x, y, barWidth, barHeight);
-}
-
-// ======== FUNÇÃO AUXILIAR PARA ATUALIZAÇÃO DE CORES ========
-// Função para forçar atualização de cores (usada pelo sistema de skins)
-function forceUpdateColors() {
-  console.log("🎨 Forçando atualização de cores...");
-  // Esta função será chamada quando uma skin for equipada
-  // O game loop vai atualizar automaticamente na próxima frame
 }
 
 // ======== VERIFICAÇÃO DO NOVO NÍVEL ========
@@ -900,51 +799,21 @@ function checkNewLevelUnlock() {
   const hasLevel20 = amoebas.some(a => a.level >= 20);
   const newLevelBtn = document.getElementById("newlevelbtn");
   
-  console.log("Verificando novo nível:", { 
-      hasLevel20, 
-      amoebas: amoebas.map(a => a.level) 
-  });
-  
   if (hasLevel20) {
-      newLevelBtn.classList.remove("hidden");
-      newLevelBtn.style.display = "block";
-      // Salvar que o nível foi desbloqueado
-      localStorage.setItem("nivel_peixes_desbloqueado", "true");
-      console.log("✅ Botão do novo nível liberado!");
+    newLevelBtn.classList.remove("hidden");
+    newLevelBtn.style.display = "block";
+    localStorage.setItem("nivel_peixes_desbloqueado", "true");
   } else {
-      newLevelBtn.classList.add("hidden");
-      newLevelBtn.style.display = "none";
+    newLevelBtn.classList.add("hidden");
+    newLevelBtn.style.display = "none";
   }
 }
 
-// ======== LOOP DO JOGO ========
-let lastTime = 0;
-function gameLoop(timestamp) {
-    const deltaTime = timestamp - lastTime;
-    lastTime = timestamp;
-
-    updateAmoebas(deltaTime);
-    updateMoneyAnimations();
-    
-    // ✅ ADICIONAR VERIFICAÇÃO DO NOVO NÍVEL A CADA FRAME
-    checkNewLevelUnlock();
-    
-    drawBackground();
-    drawAmoebas();
-    drawMoneyAnimations();
-    drawSpawnBar();
-
-    requestAnimationFrame(gameLoop);
-}
-
-// ======== SISTEMA DE TOUCH PARA MOBILE ========
-
-// Variáveis para controle de touch
+// ======== TOUCH PARA MOBILE ========
 let touchStartX = 0;
 let touchStartY = 0;
 let isTouching = false;
 
-// Touch events para mobile
 canvas.addEventListener('touchstart', handleTouchStart, { passive: false });
 canvas.addEventListener('touchmove', handleTouchMove, { passive: false });
 canvas.addEventListener('touchend', handleTouchEnd, { passive: false });
@@ -960,12 +829,9 @@ function handleTouchStart(e) {
     const mouseX = coords.x;
     const mouseY = coords.y;
     
-    // Verificar se tocou em uma amoeba
     for (let amoeba of amoebas) {
-      if (
-        mouseX > amoeba.x && mouseX < amoeba.x + amoeba.size &&
-        mouseY > amoeba.y && mouseY < amoeba.y + amoeba.size
-      ) {
+      if (mouseX > amoeba.x && mouseX < amoeba.x + amoeba.size &&
+          mouseY > amoeba.y && mouseY < amoeba.y + amoeba.size) {
         selectedAmoeba = amoeba;
         amoeba.dragging = true;
         isTouching = true;
@@ -979,7 +845,6 @@ function handleTouchMove(e) {
   e.preventDefault();
   if (isTouching && selectedAmoeba && selectedAmoeba.dragging && e.touches.length === 1) {
     const coords = getCanvasCoordinates(e);
-    // Limitar movimento dentro dos bounds do canvas
     const maxX = canvas.width - selectedAmoeba.size;
     const maxY = canvas.height - selectedAmoeba.size;
     
@@ -993,12 +858,11 @@ function handleTouchEnd(e) {
   if (selectedAmoeba) {
     selectedAmoeba.dragging = false;
     
-    // Verificar fusão (mesma lógica do mouse)
     for (let other of amoebas) {
       if (other !== selectedAmoeba && isColliding(selectedAmoeba, other)) {
         if (selectedAmoeba.level === other.level) {
           mergeAmoebas(selectedAmoeba, other);
-          break; // Sair após fusão
+          break;
         }
       }
     }
@@ -1008,122 +872,47 @@ function handleTouchEnd(e) {
   isTouching = false;
 }
 
-// Prevenir menu de contexto em mobile
 canvas.addEventListener('contextmenu', (e) => {
   e.preventDefault();
   return false;
 });
 
-// ======== INICIALIZAÇÃO ========
-bg.onload = () => {
-  loadAmoebaImages(); // Adicione esta linha
-  loadGame();
+// ======== LOOP DO JOGO ========
+let lastTime = 0;
+function gameLoop(timestamp) {
+  const deltaTime = timestamp - lastTime;
+  lastTime = timestamp;
+
+  updateAmoebas(deltaTime);
+  updateMoneyAnimations();
+  checkNewLevelUnlock();
+  
+  drawBackground();
+  drawAmoebas();
+  drawMoneyAnimations();
+  drawSpawnBar();
+
   requestAnimationFrame(gameLoop);
-  // ======== INICIALIZAÇÃO =======z
-};
-
-
-// ======== AJUSTES DE PERFORMANCE PARA MOBILE ========
-
-// Otimizar game loop para mobile
-let mobileFrameRate = 60;
-let lastMobileTime = 0;
-
-function optimizedGameLoop(timestamp) {
-  // Controlar framerate em dispositivos móveis
-  if (timestamp - lastMobileTime >= 1000 / mobileFrameRate) {
-    const deltaTime = timestamp - lastTime;
-    lastTime = timestamp;
-    lastMobileTime = timestamp;
-
-    updateAmoebas(deltaTime);
-    updateMoneyAnimations();
-    checkNewLevelUnlock();
-    
-    drawBackground();
-    drawAmoebas();
-    drawMoneyAnimations();
-    drawSpawnBar();
-  }
-  
-  requestAnimationFrame(optimizedGameLoop);
 }
 
-// ======== DETECÇÃO DE DISPOSITIVO MÓVEL ========
-function isMobileDevice() {
-  return (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1);
-}
-
-// Ajustar configurações baseado no dispositivo
-if (isMobileDevice()) {
-  // Reduzir número máximo de amoebas em mobile
-  const MAX_AMOEBAS_MOBILE = 15;
+// ======== INICIALIZAÇÃO ========
+document.addEventListener('DOMContentLoaded', function() {
+  console.log("🚀 Inicializando jogo das amebas...");
   
-  // Interceptar spawn para limitar quantidade
-  const originalSpawnAmoeba = spawnAmoeba;
-  spawnAmoeba = function(level = 1) {
-    if (amoebas.length < MAX_AMOEBAS_MOBILE) {
-      originalSpawnAmoeba(level);
-    }
-  };
-  
-  // Ajustar framerate para economizar bateria
-  mobileFrameRate = 45;
-  
-  // Usar o game loop otimizado
-  bg.onload = () => {
-    loadGame();
-    requestAnimationFrame(optimizedGameLoop);
-  };
-}
-
-// ✅ SISTEMA DE PERSISTÊNCIA DE IMAGENS ENTRE PÁGINAS
-let imageReloadAttempts = 0;
-const MAX_RELOAD_ATTEMPTS = 3;
-
-// ✅ VERIFICAR AO INICIAR A PÁGINA
-function initializeAmoebaPage() {
-  console.log("🔄 Inicializando página de amebas...");
-  
-  // Verificar se já temos algumas imagens carregadas
-  const currentlyLoaded = countLoadedImages();
-  console.log(`📊 Imagens já carregadas: ${currentlyLoaded}/${totalImages}`);
-  
-  if (currentlyLoaded < totalImages && imageReloadAttempts < MAX_RELOAD_ATTEMPTS) {
-    console.log("🔄 Carregando imagens faltantes...");
-    loadAmoebaImages();
-    imageReloadAttempts++;
-  }
-}
-
-// ✅ CONTAR IMAGENS CARREGADAS
-function countLoadedImages() {
-  let count = 0;
-  for (let i = 1; i <= totalImages; i++) {
-    if (amoebaImages[i] && amoebaImages[i].complete && amoebaImages[i].naturalWidth > 0) {
-      count++;
-    }
-  }
-  return count;
-}
-
-// ✅ MODIFICAR A INICIALIZAÇÃO
-bg.onload = () => {
+  resizeCanvas();
+  loadBackground();
   loadAmoebaImages();
   loadGame();
   
-  // ✅ INICIALIZAR VERIFICAÇÕES
-  initializeAmoebaPage();
-  
-  // ✅ VERIFICAÇÃO PERIÓDICA (apenas para debug)
-  setTimeout(() => {
-    const loaded = countLoadedImages();
-    console.log(`✅ Status final: ${loaded}/${totalImages} imagens carregadas`);
-    
-    if (loaded < totalImages) {
-      console.log("⚠️ Algumas imagens não carregaram, usando fallbacks");
-    }
-  }, 3000);
-  
   requestAnimationFrame(gameLoop);
-};
+});
+
+window.addEventListener('resize', resizeCanvas);
+window.addEventListener('orientationchange', () => {
+  setTimeout(() => {
+    resizeCanvas();
+    loadBackground();
+  }, 100);
+});
+
+window.addEventListener("beforeunload", saveGame);
