@@ -1,149 +1,31 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Amoeba Evolution - Peixes</title>
-  <link rel="stylesheet" href="css/style.css">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-</head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#101d20"><meta name="description" content="Da primeira célula ao cosmos. Um jogo de fusão, descoberta e pequenos encontros em oito mundos vivos."><meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<title>Amoeba Evolution — Da gota ao cosmos</title><link rel="icon" href="assets/icon.svg" type="image/svg+xml"><link rel="manifest" href="manifest.webmanifest"><link rel="stylesheet" href="css/evolution.css">
+</head><body>
+<a class="skip" href="#world">Ir para o jogo</a>
+<div class="shell">
+<header><div class="brand"><img src="assets/icon.svg" width="42" height="42" alt=""><div><strong>AMOEBA</strong><small>EVOLUTION</small></div></div><nav class="tools" aria-label="Menu principal"><button id="journey">Jornada</button><button id="collection">Coleção</button><button id="settings" aria-label="Abrir opções">Opções</button></nav></header>
+<div class="layout"><main>
+<div class="scene-heading"><div><span class="eyebrow" id="chapterLabel">01 / MICROMUNDO</span><h1 id="habitatTitle">Uma gota de vida.</h1><p id="subtitle">Tudo começa com um encontro.</p></div><div class="balance"><span class="eyebrow">Energia</span><strong id="coins">45</strong><small id="income">+4 / segundo</small></div></div>
+<nav class="habitats" id="habitats" aria-label="Habitats"></nav>
+<div class="field"><span class="field-label" id="fieldLabel">MICROMUNDO / CULTURA VIVA</span><span class="field-count" id="count">4 / 32</span><div id="combo" class="combo" hidden><b id="comboValue">2 encontros</b><span><i id="comboProgress"></i></span></div>
+<canvas id="world" tabindex="0" role="application" aria-label="Habitat. Arraste ou toque em duas formas iguais. Teclado: setas selecionam, Enter combina, C cultiva e P ativa o pulso." aria-describedby="hint"></canvas>
+<div class="field-footer"><div class="spawn-group"><p id="spawnText">Uma nova vida em 7s</p><div class="spawn" role="progressbar" aria-label="Próximo nascimento" aria-valuemin="0" aria-valuemax="100" id="spawnBar"><i id="spawnProgress"></i></div></div><div class="field-actions"><button id="pulse" title="Combina até 3 pares quando a carga chega a 100%">Pulso · 0%</button><button class="primary" id="buy">+ Cultivar · 18</button></div></div>
+<div class="pause-cover" id="pauseCover" hidden><span class="eyebrow">TEMPO PARA RESPIRAR</span><h2>Seu universo espera.</h2><button class="primary" id="resume">Continuar</button></div></div>
+<div class="under-field"><p class="hint" id="hint">Arraste uma criatura sobre outra igual. Ou toque nas duas.</p><button class="quiet" id="pause">Pausar</button></div>
+<div class="selected-strip"><span id="selectedInfo">Escolha uma forma para conhecê-la.</span><button class="quiet" id="recycle" disabled>Devolver à natureza</button></div>
+</main>
+<aside><section class="chapter"><span class="eyebrow">PRÓXIMO HORIZONTE</span><h2 id="objectiveTitle">O oceano espera.</h2><p id="objective"></p><div class="progress"><i id="objectiveProgress"></i></div><div class="caption"><span id="best"></span><span id="discovered"></span></div><button class="primary next-world" id="nextWorld" hidden>Explorar</button></section>
+<section class="mission"><div class="section-title"><span class="eyebrow">DIÁRIO DE CAMPO</span><span id="missionIndex"></span></div><h3 id="missionTitle"></h3><p id="missionDescription"></p><button id="claim"></button></section>
+<section class="upgrades"><span class="eyebrow">SEU LABORATÓRIO</span><div id="upgradeList"></div></section>
+<div class="biome-rule"><span class="rule-dot"></span><div><strong id="ruleTitle"></strong><p id="ruleDescription"></p></div></div>
+</aside></div>
+<footer class="bottom"><button id="credits" class="quiet">DA GOTA AO COSMOS · 0.3.0</button><span id="saveStatus">PROGRESSO LOCAL</span><button id="help" class="quiet">Como jogar</button></footer>
+</div>
+<dialog id="modal" aria-labelledby="modalTitle"><div class="modal-head"><div><span class="eyebrow" id="modalEyebrow">AMOEBA EVOLUTION</span><h2 id="modalTitle"></h2></div><button id="closeModal" aria-label="Fechar janela">Fechar</button></div><div id="modalContent"></div></dialog>
+<div id="toast" role="status" aria-live="polite"></div><p id="announcer" class="sr-only" aria-live="polite"></p>
+<script src="js/native.js"></script><script src="js/content.js"></script><script src="js/evolution-core.js"></script><script src="js/storage.js"></script><script src="js/art.js"></script><script src="js/audio.js"></script><script src="js/evolution.js"></script>
+</body></html>
 
-
-  
-<body>
-  <div id="game-container">
-    <canvas id="gameCanvas" width="1280" height="720"></canvas>
-
-    <!-- HUD de moedas -->
-    <div id="hud">
-      <span id="coins">💰 0</span>
-    </div>
-
-    <!-- Botões principais -->
-    <div id="ui-buttons">
-      <button id="resetBtn">🔄 Reiniciar</button>
-      <button id="shopBtn">🛒 Shop</button>
-        
-        <!-- Popup de Loja (Lootboxes) -->
-        <div id="shop-popup" class="hidden">
-          <div class="popup-content">
-            <h2>🛒 Loja - Caixas Misteriosas</h2>
-            <div class="lootbox-section">
-              <div class="lootbox-container">
-                <!-- Caixa Comum -->
-                <div class="lootbox-item">
-                  <div class="lootbox-icon common">📦</div>
-                  <h4>Caixa Comum</h4>
-                  <p>• 60% Comum<br>• 30% Rara<br>• 10% Épica</p>
-                  <p class="price">💰 500</p>
-                  <button class="buy-lootbox" data-type="common">Comprar</button>
-                </div>
-                
-                <!-- Caixa Rara -->
-                <div class="lootbox-item">
-                  <div class="lootbox-icon rare">🎁</div>
-                  <h4>Caixa Rara</h4>
-                  <p>• 30% Comum<br>• 50% Rara<br>• 20% Épica</p>
-                  <p class="price">💰 5.000</p>
-                  <button class="buy-lootbox" data-type="rare">Comprar</button>
-                </div>
-                
-                <!-- Caixa Épica -->
-                <div class="lootbox-item">
-                  <div class="lootbox-icon epic">💎</div>
-                  <h4>Caixa Épica</h4>
-                  <p>• 10% Comum<br>• 30% Rara<br>• 60% Épica</p>
-                  <p class="price">💰 50.000</p>
-                  <button class="buy-lootbox" data-type="epic">Comprar</button>
-                </div>
-              </div>
-            </div>
-            <button id="closeShop">Fechar</button>
-          </div>
-        </div>
-
-        <!-- Popup de Recompensa -->
-        <div id="reward-popup" class="hidden">
-          <div class="popup-content reward-content">
-            <h2>🎉 Parabéns!</h2>
-            <div id="reward-item"></div>
-            <button id="closeReward">Fechar</button>
-          </div>
-        </div>
-
-        <!-- Popup de Inventário -->
-        <div id="inventory-popup" class="hidden">
-          <div class="popup-content">
-            <h2>🎒 Inventário de Skins</h2>
-            <div class="inventory-tabs">
-              <button class="tab-button active" data-tab="amoebas">🦠 Amoebas</button>
-              <button class="tab-button" data-tab="peixes">🐟 Peixes</button>
-              <button class="tab-button" data-tab="terrestre">🌳 Terrestre</button>
-              <button class="tab-button" data-tab="ceu">☁️ Céu</button>
-            </div>
-            <div id="inventory-content" class="inventory-content">
-              <!-- Itens serão carregados aqui -->
-            </div>
-            <button id="closeInventory">Fechar</button>
-          </div>
-        </div>
-
-
-
-      <button id="libraryBtn">📚 Biblioteca</button>
-      <button id="inventoryBtn">🎒 Inventário</button>
-    </div>
-
-    <!-- Botão de upgrade -->
-    <button id="upgradeBtn">🧬</button>
-
-    <!-- Botão de compra de peixe -->
-    <button id="buyAmoebaBtn">➕ Peixe</button>
-
-  
-    <!--novo nivel-->
-    <button id="newlevelbtn" class="hidden" style="display: none;">🌳 Novo Nível Terrestre</button>
-      <!-- Botão voltar para amoebas -->
-    <button id="backToAmoebasBtn" class="back-button" onclick="window.location.href='index.html';">🌍 Voltar às Amoebas</button>
-
-
-    <!-- Pop-up de Upgrades -->
-    <div id="upgrade-popup" class="hidden">
-      <div class="popup-content">
-        <h2>✨ Upgrades ✨</h2>
-        <div id="upgrade-list"></div>
-        <button id="closeUpgrade">Fechar</button>
-      </div>
-    </div>
-
-    <!-- Pop-up de Compra de Peixes -->
-    <div id="buy-popup" class="hidden">
-      <div class="popup-content">
-        <h2>🐟 Comprar Peixes</h2>
-        <div id="buy-list"></div>
-        <button id="closeBuy">Fechar</button>
-      </div>
-    </div>
-
-    <!-- Pop-up Educativo de Novo Peixe -->
-    <div id="info-popup" class="hidden">
-      <div class="popup-content">
-        <h2 id="info-title">🔬 Nova Descoberta!</h2>
-        <div class="info-content">
-          <img id="info-image" src="assets/images/amoeba.jpg" alt="Novo ser descoberto" />
-          <div class="info-details">
-            <h3 id="info-name">Nome do Ser</h3>
-            <p id="info-date"><span class="info-icon">📅</span> <strong>Descoberta:</strong> <span id="info-date-text">1800</span></p>
-            <p id="info-habitat"><span class="info-icon">🌍</span> <strong>Habitat:</strong> <span id="info-habitat-text">Lagos e rios</span></p>
-            <p id="info-description"><span class="info-icon">📖</span> <strong>Descrição:</strong> <span id="info-desc-text">Descrição do ser.</span></p>
-          </div>
-        </div>
-        <button id="closeInfo">Fechar</button>
-      </div>
-    </div>
-  </div>
-
-<script src="js/shared.js"></script>
-<script src="js/peixes.js"></script> <!-- Novo arquivo para peixes -->
-
-</body>
-</html>

@@ -1,0 +1,18 @@
+{
+ "id":"amoeba-evolution",
+ "name":"Amoeba Evolution",
+ "short_name":"Amoeba",
+ "description":"Da primeira célula ao cosmos. Um jogo de fusão em oito mundos vivos.",
+ "start_url":"./index.html",
+ "scope":"./",
+ "display":"standalone",
+ "background_color":"#101d20",
+ "theme_color":"#101d20",
+ "lang":"pt-BR",
+ "categories":["games"],
+ "icons":[
+  {"src":"assets/icon-192.png","sizes":"192x192","type":"image/png","purpose":"any"},
+  {"src":"assets/icon-512.png","sizes":"512x512","type":"image/png","purpose":"any"},
+  {"src":"assets/icon-maskable.png","sizes":"512x512","type":"image/png","purpose":"maskable"}
+ ]
+}

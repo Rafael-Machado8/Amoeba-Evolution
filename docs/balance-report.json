@@ -1,0 +1,148 @@
+{
+  "generatedAt": "2026-09-11T19:13:33.460Z",
+  "note": "Simulation, not human playtesting. Bots pick any available pair and spend energy without reaction or navigation time.",
+  "runs": [
+    {
+      "strategy": "Active, one action every 2 seconds",
+      "actionIntervalSeconds": 2,
+      "totalMinutes": 18.3,
+      "habitats": [
+        {
+          "habitat": "Micromundo",
+          "seconds": 111,
+          "merges": 32,
+          "best": 8,
+          "coins": 3976,
+          "upgrades": "6/5/3"
+        },
+        {
+          "habitat": "Oceano",
+          "seconds": 103,
+          "merges": 29,
+          "best": 8,
+          "coins": 5705,
+          "upgrades": "6/5/3"
+        },
+        {
+          "habitat": "Terra firme",
+          "seconds": 129,
+          "merges": 39,
+          "best": 9,
+          "coins": 16505,
+          "upgrades": "7/6/3"
+        },
+        {
+          "habitat": "Céu",
+          "seconds": 129,
+          "merges": 42,
+          "best": 9,
+          "coins": 11752,
+          "upgrades": "7/6/3"
+        },
+        {
+          "habitat": "Órbita",
+          "seconds": 155,
+          "merges": 49,
+          "best": 10,
+          "coins": 28862,
+          "upgrades": "8/7/3"
+        },
+        {
+          "habitat": "Nebulosa",
+          "seconds": 99,
+          "merges": 27,
+          "best": 10,
+          "coins": 12783,
+          "upgrades": "7/7/3"
+        },
+        {
+          "habitat": "Galáxia",
+          "seconds": 167,
+          "merges": 54,
+          "best": 11,
+          "coins": 166566,
+          "upgrades": "8/8/3"
+        },
+        {
+          "habitat": "Além",
+          "seconds": 203,
+          "merges": 68,
+          "best": 12,
+          "coins": 311058,
+          "upgrades": "8/8/3"
+        }
+      ]
+    },
+    {
+      "strategy": "Relaxed, one action every 5 seconds",
+      "actionIntervalSeconds": 5,
+      "totalMinutes": 58.7,
+      "habitats": [
+        {
+          "habitat": "Micromundo",
+          "seconds": 316,
+          "merges": 52,
+          "best": 8,
+          "coins": 44209,
+          "upgrades": "8/8/3"
+        },
+        {
+          "habitat": "Oceano",
+          "seconds": 321,
+          "merges": 53,
+          "best": 8,
+          "coins": 56458,
+          "upgrades": "8/8/3"
+        },
+        {
+          "habitat": "Terra firme",
+          "seconds": 381,
+          "merges": 68,
+          "best": 9,
+          "coins": 322815,
+          "upgrades": "8/8/3"
+        },
+        {
+          "habitat": "Céu",
+          "seconds": 421,
+          "merges": 78,
+          "best": 9,
+          "coins": 278940,
+          "upgrades": "8/8/3"
+        },
+        {
+          "habitat": "Órbita",
+          "seconds": 501,
+          "merges": 99,
+          "best": 10,
+          "coins": 793087,
+          "upgrades": "8/8/3"
+        },
+        {
+          "habitat": "Nebulosa",
+          "seconds": 371,
+          "merges": 65,
+          "best": 10,
+          "coins": 760973,
+          "upgrades": "8/8/3"
+        },
+        {
+          "habitat": "Galáxia",
+          "seconds": 591,
+          "merges": 118,
+          "best": 11,
+          "coins": 1715580,
+          "upgrades": "8/8/3"
+        },
+        {
+          "habitat": "Além",
+          "seconds": 621,
+          "merges": 141,
+          "best": 12,
+          "coins": 3085176,
+          "upgrades": "8/8/3"
+        }
+      ]
+    }
+  ]
+}
