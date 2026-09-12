@@ -7,11 +7,11 @@ const biomes = [
 { id:'sky', name:'Céu', title:'Solte o horizonte.', tagline:'A próxima descoberta tem asas.', color:'#c8c6f4', hue:251, bg:'#303e59', file:'ceu.html', unlock:9, rule:'Vento a favor', perk:'O cultivo automático é 20% mais rápido.', lore:'O vento vira estrada. Onde antes havia limite, agora existe uma direção.', names:'Pluma|Brisa|Asinha|Planador|Andorinha|Vento sul|Nuvem|Albatroz|Pipa viva|Tempestade|Arco-íris|Fênix|Trovão|Solar|Cúmulo|Celeste|Estratos|Serafim|Zênite|Dona do vento' },
 { id:'orbit', name:'Órbita', title:'A gravidade é um convite.', tagline:'A vida encontrou um jeito de partir.', color:'#e9c18c', hue:32, bg:'#202a45', file:'orbita.html', unlock:10, rule:'Gravidade leve', perk:'Cada fusão carrega 25% mais o pulso evolutivo.', lore:'Um pequeno planeta gira em silêncio. A primeira viajante descobre que o vazio também pode ser um lar.', names:'Poeira|Fragmento|Meteoro|Satélite|Viajante|Lunar|Anel|Planetoide|Errante|Atmosfera|Terra nova|Mundo vivo|Gigante|Pastora|Cinturão|Peregrina|Horizonte|Sistema|Arca|Semente cósmica' },
 { id:'nebula', name:'Nebulosa', title:'Onde nascem as estrelas.', tagline:'A escuridão está cheia de cor.', color:'#eab2dd', hue:310, bg:'#39264b', file:'nebulosa.html', unlock:10, rule:'Berçário estelar', perk:'Criaturas cultivadas começam um nível acima.', lore:'Nuvens antigas se dobram em luz. Cada encontro acende uma cor que ainda não tinha nome.', names:'Névoa|Íon|Filamento|Plasma|Flâmula|Roseta|Pulsar|Violeta|Berçário|Estrela jovem|Véu rosa|Supernova|Catedral|Crina|Coração rubro|Borboleta|Carina|Oráculo|Árvore de luz|Mãe das estrelas' },
-{ id:'galaxy', name:'Galáxia', title:'Mil sóis. Uma só história.', tagline:'Pequenos encontros desenham o infinito.', color:'#9cbafa', hue:222, bg:'#252642', file:'galaxia.html', unlock:11, rule:'Ressonância', perk:'Bônus de energia das fusões valem o dobro.', lore:'A distância entre duas estrelas parece imensa. Vistas de longe, elas pertencem ao mesmo desenho.', names:'Faísca|Dupla|Tríade|Aglomerado|Braço azul|Espiral|Via clara|Disco|Constelação|Redemoinho|Galáxia viva|Andrômeda|Encontro|Arquipélago|Quasar|Coroa de sóis|Superenxame|Filamento azul|Cartógrafa|Universo em flor' },
+{ id:'galaxy', name:'Galáxia', title:'Mil sóis. Uma só história.', tagline:'Pequenos encontros desenham o infinito.', color:'#9cbafa', hue:222, bg:'#252642', file:'galaxia.html', unlock:11, rule:'Ressonância', perk:'Fusões rendem 50% mais energia.', lore:'A distância entre duas estrelas parece imensa. Vistas de longe, elas pertencem ao mesmo desenho.', names:'Faísca|Dupla|Tríade|Aglomerado|Braço azul|Espiral|Via clara|Disco|Constelação|Redemoinho|Galáxia viva|Andrômeda|Encontro|Arquipélago|Quasar|Coroa de sóis|Superenxame|Filamento azul|Cartógrafa|Universo em flor' },
 { id:'beyond', name:'Além', title:'O fim também é uma semente.', tagline:'O universo aprendeu a recomeçar.', color:'#f3dbac', hue:44, bg:'#343344', file:'alem.html', unlock:12, rule:'Eterno retorno', perk:'O pulso evolutivo combina até 5 pares.', lore:'Depois da última estrela, um brilho insiste. Você reconhece aquela forma: parece uma pequena gota.', names:'Eco|Memória|Reflexo|Instante|Laço|Sonhadora|Horizonte|Infinita|Paradoxo|Harmonia|Última luz|Nova origem|Tempo|Possibilidade|Eternidade|Abraço|Tudo|Silêncio|Recomeço|Uma gota de vida' }
 ].map(b => ({...b, names:b.names.split('|')}));
 const upgrades = [
-{ name:'Metabolismo', desc:'+35% de produção por melhoria', max:8, base:65 },
+{ name:'Metabolismo', desc:'+20% de produção por melhoria', max:8, base:65 },
 { name:'Ritmo de cultivo', desc:'Reduz o intervalo entre nascimentos', max:8, base:100 },
 { name:'Cultura avançada', desc:'Aproxima o cultivo da sua melhor forma', max:3, base:180 }
 ];
@@ -22,7 +22,7 @@ const missions = [
 {title:'O ritmo da vida',desc:'Use o pulso evolutivo uma vez.',type:'pulses',target:1,reward:450},
 {title:'Horizonte aberto',desc:'Alcance o nível que abre a próxima etapa.',type:'best',target:null,reward:800}
 ];
-const api = {biomes,upgrades,missions,version:'0.3.0',maxLevel:20,capacity:32};
+const api = {biomes,upgrades,missions,version:'0.4.0',maxLevel:20,capacity:32};
 if(typeof module !== 'undefined') module.exports=api; else root.EvolutionContent=api;
 })(globalThis);
 

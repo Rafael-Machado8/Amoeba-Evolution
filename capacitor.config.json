@@ -4,5 +4,5 @@
  "webDir":"dist",
  "server":{"androidScheme":"https"},
  "android":{"backgroundColor":"#101d20","allowMixedContent":false},
- "plugins":{"SplashScreen":{"launchShowDuration":0}}
+ "ios":{"backgroundColor":"#101d20","contentInset":"never"}
 }

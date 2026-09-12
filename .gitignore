@@ -8,3 +8,6 @@ android/**/build/
 *.jks
 *.keystore
 .env
+ios/App/build/
+ios/DerivedData/
+ios/**/xcuserdata/
