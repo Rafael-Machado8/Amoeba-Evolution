@@ -22,7 +22,8 @@ const missions = [
 {title:'O ritmo da vida',desc:'Use o pulso evolutivo uma vez.',type:'pulses',target:1,reward:450},
 {title:'Horizonte aberto',desc:'Alcance o nível que abre a próxima etapa.',type:'best',target:null,reward:800}
 ];
-const api = {biomes,upgrades,missions,version:'0.4.0',maxLevel:20,capacity:32};
+const api = {biomes,upgrades,missions,version:'0.5.0',maxLevel:20,capacity:32};
 if(typeof module !== 'undefined') module.exports=api; else root.EvolutionContent=api;
 })(globalThis);
+
 

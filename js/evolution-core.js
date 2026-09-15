@@ -15,14 +15,16 @@ function clean(value){
  s.discovered=[...new Set([1,...(Array.isArray(value.discovered)?value.discovered:[]),...s.creatures.map(c=>c.level)])].filter(n=>Number.isInteger(n)&&n>=1&&n<=C.maxLevel).sort((a,b)=>a-b);
  s.best=Math.max(s.best,...s.discovered);return s;
 }
-const freshGame=()=>({version:4,started:false,active:0,unlocked:0,worlds:C.biomes.map(fresh),cycles:0,archive:C.biomes.map(()=>[]),medals:[],tutorial:false,completed:false,savedAt:Date.now(),cheated:false,settings:{language:'pt-BR',sound:true,music:false,volume:.4,motion:true,quality:'high'}});
+const record=()=>({merges:0,pulses:0,events:0,maxCombo:0,mission:0,best:1});
+const freshGame=()=>({version:4,started:false,active:0,unlocked:0,worlds:C.biomes.map(fresh),records:C.biomes.map(record),cycles:0,archive:C.biomes.map(()=>[]),medals:[],tutorial:false,completed:false,savedAt:Date.now(),cheated:false,settings:{language:'pt-BR',sound:true,music:false,volume:.4,motion:true,quality:'high'}});
 function cleanGame(data){
  if(![2,3,4].includes(data?.version)||!Array.isArray(data.worlds)||![4,8].includes(data.worlds.length))throw new Error('Formato de progresso incompatível.');
  const g=freshGame();g.worlds=C.biomes.map((_,i)=>clean(data.worlds[i]));g.unlocked=int(data.unlocked,0,7);
  if(data.version<4)for(let i=0;i<=g.unlocked&&i<7;i++)if(g.worlds[i].best>=C.biomes[i].unlock)g.unlocked=Math.max(g.unlocked,i+1);
  g.started=data.started===true||data.version<4;g.cheated=data.cheated===true;g.active=int(data.active,0,g.unlocked);g.cycles=int(data.cycles,0,100);g.completed=data.completed===true;
  g.archive=C.biomes.map((_,i)=>Array.isArray(data.archive?.[i])?[...new Set(data.archive[i])].filter(n=>Number.isInteger(n)&&n>0&&n<=20):[]);
- g.medals=Array.isArray(data.medals)?data.medals.filter(v=>typeof v==='string'&&v.length<40).slice(0,30):[];
+ g.medals=Array.isArray(data.medals)?[...new Set(data.medals.filter(v=>typeof v==='string'&&v.length<40))].slice(0,100):[];
+ g.records=C.biomes.map((_,i)=>{const r=record(),v=data.records?.[i]||{};for(const k of ['merges','pulses','events'])r[k]=int(v[k],0,1e12);r.maxCombo=int(v.maxCombo,0,10);r.mission=int(v.mission,0,5);r.best=int(v.best,1,20);return r;});
  g.tutorial=data.tutorial===true||data.version===2;g.savedAt=data.savedAt?clamp(data.savedAt,0,Date.now()):Date.now();
  if(data.settings)g.settings={language:data.settings.language==='en'?'en':'pt-BR',sound:data.settings.sound===true,music:data.settings.music===true,volume:clamp(data.settings.volume,0,1),motion:data.settings.motion!==false,quality:data.settings.quality==='low'?'low':'high'};
  else if(data.version===2)g.settings.sound=data.sound===true;
@@ -83,8 +85,9 @@ function cheat(g,code){const s=g.worlds[g.active];switch(code.toUpperCase()){
  }g.cheated=true;return true;}
 
 function offline(g,now=Date.now()){const seconds=Math.min(7200,Math.max(0,(now-g.savedAt)/1000));const s=g.worlds[g.active];const reward=seconds>=60?Math.min(1e12-s.coins,Math.floor(income(s,g.active,g.cycles)*seconds*.1)):0;s.coins+=reward;g.savedAt=now;return reward;}
-function rebirth(g){if(!g.completed)return false;g.worlds.forEach((s,i)=>g.archive[i]=[...new Set([...g.archive[i],...s.discovered])]);g.cycles=Math.min(100,g.cycles+1);g.worlds=C.biomes.map(fresh);g.active=0;g.unlocked=0;g.completed=false;return true;}
-const api={creaturePrice,travelCost,buyTravel,orphanLevel,buyPartner,focusCost,setFocus,gather,cheat,clamp,fresh,clean,freshGame,cleanGame,startLevel,income,price,upgradePrice,interval,pair,merge,add,buyUpgrade,pulse,tick,mission,claim,unlock,offline,rebirth};
+function remember(g,i){const s=g.worlds[i],r=g.records[i];for(const k of ['merges','pulses','events'])r[k]=Math.min(1e12,r[k]+s[k]);for(const k of ['maxCombo','mission','best'])r[k]=Math.max(r[k],s[k]);g.archive[i]=[...new Set([...g.archive[i],...s.discovered])];}
+function rebirth(g){if(!g.completed)return false;g.worlds.forEach((_,i)=>remember(g,i));g.cycles=Math.min(100,g.cycles+1);g.worlds=C.biomes.map(fresh);g.active=0;g.unlocked=0;g.completed=false;return true;}
+const api={remember,creaturePrice,travelCost,buyTravel,orphanLevel,buyPartner,focusCost,setFocus,gather,cheat,clamp,fresh,clean,freshGame,cleanGame,startLevel,income,price,upgradePrice,interval,pair,merge,add,buyUpgrade,pulse,tick,mission,claim,unlock,offline,rebirth};
 if(typeof module!=='undefined')module.exports=api;else root.Evolution=api;
 })(globalThis);
 

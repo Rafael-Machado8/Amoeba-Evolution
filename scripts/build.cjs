@@ -2,7 +2,7 @@ const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypt
 const root=path.resolve(__dirname,'..'),out=path.join(root,'dist'),C=require('../js/content.js');
 async function build(){
  fs.mkdirSync(out,{recursive:true});
- const files=['css/evolution.css','js/content.js','js/i18n.js','js/evolution-core.js','js/storage.js','js/art.js','js/audio.js','js/evolution.js','assets/icon.svg','assets/icon-192.png','assets/icon-512.png','assets/icon-maskable.png','manifest.webmanifest'];
+ const files=['css/evolution.css','js/content.js','js/i18n.js','js/evolution-core.js','js/achievements.js','js/storage.js','js/art.js','js/audio.js','js/evolution.js','assets/icon.svg','assets/icon-192.png','assets/icon-512.png','assets/icon-maskable.png','manifest.webmanifest','THIRD_PARTY_NOTICES.txt'];
  for(const file of files){const dest=path.join(out,file);fs.mkdirSync(path.dirname(dest),{recursive:true});fs.copyFileSync(path.join(root,file),dest);}
  const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
  const routes=[...C.biomes.map(b=>b.file),'library.html','library-peixes.html','library-terrestre.html','library-ceu.html'];
@@ -16,3 +16,4 @@ async function build(){
  console.log(`Built ${all.length+2} files in dist; content hash ${version}.`);
 }
 build().catch(e=>{console.error(e);process.exitCode=1;});
+
